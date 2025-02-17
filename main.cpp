@@ -12,5 +12,9 @@ int main(int argc, char *argv[])
 
     SDL_RenderPresent(renderer);
 
+    SDL_Delay(3000);
+
+    SDL_Quit();
+
     return 0;
 }
