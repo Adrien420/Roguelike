@@ -1,8 +1,8 @@
 # Roguelike
 ## Auteurs
-Adrien MILL
-Bastien COUQUE
-Clarence PFISTER
+Adrien MILL  
+Bastien COUQUE  
+Clarence PFISTER  
 
 ## Commandes Git
 ```
