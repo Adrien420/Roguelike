@@ -1,6 +1,6 @@
 # Roguelike
 ## Auteurs
-Adrien MILL  
+Adrien MILLE  
 Bastien COUQUE  
 Clarence PFISTER  
 
