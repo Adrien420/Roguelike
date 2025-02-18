@@ -25,6 +25,12 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 		isRunning = true;
 	}
 
+	if (!map.init(window))
+	{
+		std::cerr << "Erreur lors de l'initialisation de la map." << std::endl;
+		isRunning = false;
+	}
+
 	SDL_Color white = { 255, 255, 255, 255 };
 
 }
@@ -57,7 +63,7 @@ void GameManager::update()
 void GameManager::render()
 {
 	SDL_RenderClear(renderer);
-
+	map.render(renderer);
 	SDL_RenderPresent(renderer);
 }
 

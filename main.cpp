@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include "src/GameManager.hpp"
+#include "src/Entity.hpp"
 
 int main(int argc, char *argv[])
 {
