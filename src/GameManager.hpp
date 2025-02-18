@@ -4,6 +4,8 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <vector>
+#include "Map.hpp"
+
 
 class GameManager
 {
@@ -11,6 +13,8 @@ class GameManager
         bool isRunning = false;
         int cnt = 0;
 	    SDL_Window *window;
+        Map map;
+
 
     public:
         GameManager(const char* title, int width, int height, bool fullscreen);
