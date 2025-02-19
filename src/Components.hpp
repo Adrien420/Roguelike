@@ -4,7 +4,7 @@
 #include "Entity.hpp"
 #include "TransformComponent.hpp"
 #include "SpriteComponent.hpp"
-//#include "KeyboardController.hpp"
+#include "KeyboardController.hpp"
 // #include "ColliderComponent.h"
 // #include "TileComponent.h"
 // #include "ProjectileComponent.h"

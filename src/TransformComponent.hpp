@@ -24,7 +24,7 @@ public:
 	int width = 32;
 	int scale = 1;
 
-	int speed = 3;
+	float speed = 0.1;
 
 	bool blocked = false;
 

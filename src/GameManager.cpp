@@ -40,7 +40,7 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 
 	assets->AddTexture("player", "../assets/player.png");
 
-	player = Entity(TransformComponent(0,0,32,32,2), SpriteComponent("player"));
+	player = Entity(TransformComponent(0,0,32,32,2), SpriteComponent("player"), KeyboardController());
 
 }
 

@@ -77,7 +77,7 @@ public:
 
 	void draw() override
 	{
-		SDL_RenderCopyEx(GameManager::renderer, texture, &srcRect, &destRect, 0.0, NULL, spriteFlip);
+		SDL_RenderCopyEx(GameManager::renderer, texture, NULL, &destRect, 0, NULL, spriteFlip);
 	}
 
 	void Play(const char* animName)
