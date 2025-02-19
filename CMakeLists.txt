@@ -8,12 +8,9 @@ project(Roguelike)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Trouve la bibliothèque SDL2
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
+# Définit le nom de l'exécutable
+set(EXEC Game)
 
-# Crée l'exécutable à partir du fichier main.cpp
-add_executable(${PROJECT_NAME} main.cpp)
-
-# Lie l'exécutable avec la bibliothèque SDL2
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
+# Définit les dossiers
+set(SRC ${CMAKE_SOURCE_DIR}/src)
+add_subdirectory(${SRC})

@@ -1,11 +1,9 @@
 #pragma once
 
-#include "Components.h"
-#include "SDL.h"
-#include "../TextureManager.h"
-#include "Animation.h"
+#include "Components.hpp"
+#include "SDL2/SDL.h"
+#include "GameManager.hpp"
 #include <map>
-#include "../AssetManager.h"
 
 class SpriteComponent : public Component
 {
@@ -21,8 +19,7 @@ private:
 public:
 
 	int animIndex = 0;
-	std::map<const char*, Animation> animations;
-
+	std::map<const char*, std::map<const char*, int>> animations;
 	SDL_RendererFlip spriteFlip = SDL_FLIP_NONE;
 
 	SpriteComponent() = default;
@@ -35,11 +32,8 @@ public:
 	{
 		animated = isAnimated;
 
-		Animation idle = Animation(0, 3, 100);
-		Animation walk = Animation(1, 8, 100);
-
-		animations.emplace("Idle", idle);
-		animations.emplace("Walk", walk);
+		animations["Idle"] = {{"index",0}, {"frames",3}, {"speed", 100}};
+		animations["Walk"] = {{"index",1}, {"frames",8}, {"speed", 100}};
 
 		Play("Idle");
 
@@ -52,7 +46,7 @@ public:
 
 	void setTex(std::string id)
 	{
-		texture = Game::assets->GetTexture(id);
+		texture = GameManager::assets->GetTexture(id);
 	}
 
 	void init() override
@@ -75,22 +69,22 @@ public:
 
 		srcRect.y = animIndex * transform->height;
 
-		destRect.x = static_cast<int>(transform->position.x - Game::camera.x);
-		destRect.y = static_cast<int>(transform->position.y - Game::camera.y);
+		destRect.x = transform->position.getX();
+		destRect.y = transform->position.getY();
 		destRect.w = transform->width * transform->scale;
 		destRect.h = transform->height * transform->scale;
 	}
 
 	void draw() override
 	{
-		TextureManager::Draw(texture, srcRect, destRect, spriteFlip);
+		SDL_RenderCopyEx(GameManager::renderer, texture, &srcRect, &destRect, NULL, NULL, spriteFlip);
 	}
 
 	void Play(const char* animName)
 	{
-		frames = animations[animName].frames;
-		animIndex = animations[animName].index;
-		speed = animations[animName].speed;
+		frames = animations[animName]["frames"];
+		animIndex = animations[animName]["index"];
+		speed = animations[animName]["speed"];
 	}
 
 };

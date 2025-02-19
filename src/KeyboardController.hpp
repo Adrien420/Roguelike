@@ -1,7 +1,7 @@
 #pragma once
 
-// #include "../Game.h"
-// #include "ECS.h"
+#include "GameManager.hpp"
+#include "Entity.hpp"
 #include "Components.hpp"
 
 class KeyboardController : public Component
@@ -18,25 +18,25 @@ public:
 
 	void update() override
 	{
-		if (Game::event.type == SDL_KEYDOWN)
+		if (GameManager::event.type == SDL_KEYDOWN)
 		{
-			switch (Game::event.key.keysym.sym)
+			switch (GameManager::event.key.keysym.sym)
 			{
 			case SDLK_z:
-				transform->velocity.y = -1;
+				transform->direction.setY(-1);
 				sprite->Play("Walk Up");
 				break;
 			case SDLK_q:
-				transform->velocity.x = -1;
+				transform->direction.setX(-1);
 				sprite->Play("Walk Left");
 				sprite->spriteFlip = SDL_FLIP_HORIZONTAL;
 				break;
 			case SDLK_d:
-				transform->velocity.x = 1;
+				transform->direction.setX(1);
 				sprite->Play("Walk Right");
 				break;
 			case SDLK_s:
-				transform->velocity.y = 1;
+				transform->direction.setY(1);
 				sprite->Play("Walk Down");
 				break;
 			default:
@@ -44,29 +44,29 @@ public:
 			}
 		}
 	
-		if (Game::event.type == SDL_KEYUP)
+		if (GameManager::event.type == SDL_KEYUP)
 		{
-			switch (Game::event.key.keysym.sym)
+			switch (GameManager::event.key.keysym.sym)
 			{
 			case SDLK_z:
-				transform->velocity.y = 0;
+				transform->direction.setY(0);
 				sprite->Play("Idle Up");
 				break;
 			case SDLK_q:
-				transform->velocity.x = 0;
+				transform->direction.setX(0);
 				sprite->Play("Idle Left");
 				sprite->spriteFlip = SDL_FLIP_NONE;
 				break;
 			case SDLK_d:
-				transform->velocity.x = 0;
+				transform->direction.setX(0);
 				sprite->Play("Idle Right");
 				break;
 			case SDLK_s:
-				transform->velocity.y = 0;
+				transform->direction.setY(0);
 				sprite->Play("Idle Down");
 				break;
 			case SDLK_ESCAPE:
-				Game::isRunning = false;
+				GameManager::isRunning = false;
 			default:
 				break;
 			}

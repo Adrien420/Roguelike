@@ -1,8 +1,9 @@
 #include "GameManager.hpp"
 
-
 SDL_Renderer* GameManager::renderer = nullptr;
 SDL_Event GameManager::event;
+
+AssetManager* GameManager::assets = new AssetManager();
 
 GameManager::GameManager(const char* title, int width, int height, bool fullscreen)
 {
