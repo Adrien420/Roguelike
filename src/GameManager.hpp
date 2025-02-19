@@ -8,6 +8,8 @@
 #include "Map.hpp"
 #include "AssetManager.hpp"
 
+class AssetManager;
+
 class GameManager
 {
     private:
@@ -16,7 +18,6 @@ class GameManager
         Map map;
 
     public:
-        static bool isRunning;
         GameManager(const char* title, int width, int height, bool fullscreen);
 
         void handleEvents();
@@ -26,6 +27,7 @@ class GameManager
 
         static SDL_Renderer *renderer;
         static SDL_Event event;
+        static bool isRunning;
         static AssetManager* assets;
 
         ~GameManager();

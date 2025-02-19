@@ -1,9 +1,13 @@
 #include "GameManager.hpp"
+#include "Entity.hpp"
+#include "Components.hpp"
 
 SDL_Renderer* GameManager::renderer = nullptr;
 SDL_Event GameManager::event;
-
+bool GameManager::isRunning = false;
 AssetManager* GameManager::assets = new AssetManager();
+
+Entity player;
 
 GameManager::GameManager(const char* title, int width, int height, bool fullscreen)
 {
@@ -34,6 +38,10 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 
 	SDL_Color white = { 255, 255, 255, 255 };
 
+	assets->AddTexture("player", "../assets/player.png");
+
+	player = Entity(TransformComponent(0,0,32,32,2), SpriteComponent("player"));
+
 }
 
 GameManager::~GameManager()
@@ -55,16 +63,16 @@ void GameManager::handleEvents()
 	}
 }
 
-
-
 void GameManager::update()
 {	
+	player.update();
 }
 
 void GameManager::render()
 {
 	SDL_RenderClear(renderer);
 	map.render(renderer);
+	player.draw();
 	SDL_RenderPresent(renderer);
 }
 

@@ -1,3 +1,6 @@
+#ifndef ENTITY_HPP
+#define ENTITY_HPP
+
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -57,7 +60,7 @@ class Entity
         // 🌟 Constructeur simplifié : ajoute plusieurs composants directement
         template <typename... TArgs>
         Entity(TArgs&&... args) {
-            (addComponent(std::forward<TArgs>(args)), ...);
+            (addComponent<TArgs>(std::forward<TArgs>(args)), ...);
         }
 
         // 🌟 Version originale de `addComponent`
@@ -113,3 +116,5 @@ class Entity
             groupBitset[mGroup] = false;
         }
 };
+
+#endif

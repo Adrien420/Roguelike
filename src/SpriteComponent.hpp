@@ -1,6 +1,6 @@
-#pragma once
+#ifndef SPRITECOMPONENT_HPP
+#define SPRITECOMPONENT_JPP
 
-#include "Components.hpp"
 #include "SDL2/SDL.h"
 #include "GameManager.hpp"
 #include <map>
@@ -77,7 +77,7 @@ public:
 
 	void draw() override
 	{
-		SDL_RenderCopyEx(GameManager::renderer, texture, &srcRect, &destRect, NULL, NULL, spriteFlip);
+		SDL_RenderCopyEx(GameManager::renderer, texture, &srcRect, &destRect, 0.0, NULL, spriteFlip);
 	}
 
 	void Play(const char* animName)
@@ -88,3 +88,5 @@ public:
 	}
 
 };
+
+#endif
