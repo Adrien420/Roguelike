@@ -20,7 +20,6 @@ public:
 
 	int animIndex = 0;
 	std::map<const char*, std::map<const char*, int>> animations;
-	SDL_RendererFlip spriteFlip = SDL_FLIP_NONE;
 
 	SpriteComponent() = default;
 	SpriteComponent(std::string id)
@@ -32,11 +31,17 @@ public:
 	{
 		animated = isAnimated;
 
-		animations["Idle"] = {{"index",0}, {"frames",3}, {"speed", 100}};
-		animations["Walk"] = {{"index",1}, {"frames",8}, {"speed", 100}};
+		animations["Idle Down"] = {{"index",0}, {"frames",4}, {"speed", 150}};
+		animations["Idle Up"] = {{"index",1}, {"frames",4}, {"speed", 150}};
+		animations["Idle Left"] = {{"index",2}, {"frames",4}, {"speed", 150}};
+		animations["Idle Right"] = {{"index",3}, {"frames",4}, {"speed", 150}};
+		animations["Walk Down"] = {{"index",4}, {"frames",8}, {"speed", 150}};
+		animations["Walk Up"] = {{"index",5}, {"frames",8}, {"speed", 150}};
+		animations["Walk Left"] = {{"index",6}, {"frames",8}, {"speed", 150}};
+		animations["Walk Right"] = {{"index",7}, {"frames",8}, {"speed", 150}};
 
-		Play("Idle");
-
+		Play("Idle Down");
+ 
 		setTex(id);
 	}
 
@@ -77,7 +82,7 @@ public:
 
 	void draw() override
 	{
-		SDL_RenderCopyEx(GameManager::renderer, texture, NULL, &destRect, 0, NULL, spriteFlip);
+		SDL_RenderCopyEx(GameManager::renderer, texture, &srcRect, &destRect, 0, NULL, SDL_FLIP_NONE);
 	}
 
 	void Play(const char* animName)

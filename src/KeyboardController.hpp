@@ -38,7 +38,6 @@ public:
 				transform->direction.setX(-1);
 				isBeingPressed["left"] = true;
 				sprite->Play("Walk Left");
-				sprite->spriteFlip = SDL_FLIP_HORIZONTAL;
 				break;
 			case SDLK_d:
 				transform->direction.setX(1);
@@ -61,39 +60,58 @@ public:
 			{
 			case SDLK_z:
 				if(!isBeingPressed["down"])
+				{
 					transform->direction.setY(0);
+					sprite->Play("Idle Up");
+				}
 				else
+				{
 					transform->direction.setY(-1);
+					sprite->Play("Walk Down");
+				}
 				isBeingPressed["up"] = false;
-				sprite->Play("Idle Up");
 				break;
 
 			case SDLK_q:
 				if(!isBeingPressed["right"])
+				{
 					transform->direction.setX(0);
+					sprite->Play("Idle Left");
+				}
 				else
+				{
 					transform->direction.setX(1);
+					sprite->Play("Walk Right");
+				}
 				isBeingPressed["left"] = false;
-				sprite->Play("Idle Left");
-				sprite->spriteFlip = SDL_FLIP_NONE;
 				break;
 
 			case SDLK_d:
 				if(!isBeingPressed["left"])
+				{
 					transform->direction.setX(0);
+					sprite->Play("Idle Right");
+				}
 				else
+				{
 					transform->direction.setX(-1);
+					sprite->Play("Walk Left");
+				}
 				isBeingPressed["right"] = false;
-				sprite->Play("Idle Right");
 				break;
 
 			case SDLK_s:
 				if(!isBeingPressed["up"])
+				{
 					transform->direction.setY(0);
+					sprite->Play("Idle Down");
+				}
 				else
+				{
 					transform->direction.setY(1);
+					sprite->Play("Walk Up");
+				}
 				isBeingPressed["down"] = false;
-				sprite->Play("Idle Down");
 				break;
 
 			case SDLK_ESCAPE:

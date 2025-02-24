@@ -38,9 +38,9 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 
 	SDL_Color white = { 255, 255, 255, 255 };
 
-	assets->AddTexture("player", "../assets/player.png");
+	assets->AddTexture("orc", "../assets/orc.png");
 
-	player = Entity(TransformComponent(0,0,32,32,2), SpriteComponent("player"), KeyboardController());
+	player = Entity(TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), KeyboardController());
 
 }
 

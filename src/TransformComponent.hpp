@@ -20,18 +20,15 @@ public:
 	Vector2 position;
     Vector2 direction; 
 
-	int height = 32;
-	int width = 32;
+	int height = 64;
+	int width = 64;
 	int scale = 1;
 
-	float speed = 0.1;
+	float speed = 0.05;
 
 	bool blocked = false;
 
-	TransformComponent(int sc)
-	{
-		scale = sc;
-	}
+	TransformComponent(){}
 
 	TransformComponent(float x, float y, int h, int w, int sc)
 	{
