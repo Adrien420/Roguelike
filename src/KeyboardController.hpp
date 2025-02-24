@@ -14,13 +14,48 @@ public:
 	// Si d est pressé (direction.x = 1), puis q est pressé (direction.x = -1) et relâché (direction = 0)
 	// Même si d est toujours pressé, direction.x reste à 0
 	// Donc l'idée de ce dictionnaire est de vérifier si la touche pour la direction opposée a bien été relâchée avant de remettre la direction à 0
-	std::map<const char*, bool> isBeingPressed = {{"up",false}, {"down",false}, {"left",false}, {"right",false}};
+	std::map<const std::string, bool> isBeingPressed = {{"Up",false}, {"Down",false}, {"Left",false}, {"Right",false}};
+	std::map<const std::string, int> velocity = {{"Up",-1}, {"Down",1}, {"Left",-1}, {"Right",1}};
 
 
 	void init() override
 	{
 		transform = &entity->getComponent<TransformComponent>();
 		sprite = &entity->getComponent<SpriteComponent>();
+	}
+
+	void applyDirection(std::string direction)
+	{
+		if(direction == "Up" || direction == "Down")
+		{
+			transform->direction.setY(velocity[direction]);
+			transform->direction.setX(0);
+		}
+		else
+		{
+			transform->direction.setY(0);
+			transform->direction.setX(velocity[direction]);
+		}
+		isBeingPressed[direction] = true;
+		sprite->Play("Walk " + direction);
+	}
+
+	void changeDirection(std::string direction)
+	{
+		isBeingPressed[direction] = false;
+		for (const auto& pair : isBeingPressed) {
+			// Si une autre touche directionnelle est encore pressée : changement de direction (ordre de priorité arbitraire -> déterminé par la map)
+			if(pair.first != direction && pair.second)
+			{
+				applyDirection(pair.first);
+				return;
+			}
+		}
+		if(direction == "Up" || direction == "Down")
+			transform->direction.setY(0);
+		else
+			transform->direction.setX(0);
+		sprite->Play("Idle " + direction);
 	}
 
 	void update() override
@@ -30,24 +65,16 @@ public:
 			switch (GameManager::event.key.keysym.sym)
 			{
 			case SDLK_z:
-				transform->direction.setY(-1);
-				isBeingPressed["up"] = true;
-				sprite->Play("Walk Up");
+				applyDirection("Up");
 				break;
 			case SDLK_q:
-				transform->direction.setX(-1);
-				isBeingPressed["left"] = true;
-				sprite->Play("Walk Left");
+				applyDirection("Left");
 				break;
 			case SDLK_d:
-				transform->direction.setX(1);
-				isBeingPressed["right"] = true;
-				sprite->Play("Walk Right");
+				applyDirection("Right");
 				break;
 			case SDLK_s:
-				transform->direction.setY(1);
-				isBeingPressed["down"] = true;
-				sprite->Play("Walk Down");
+				applyDirection("Down");
 				break;
 			default:
 				break;
@@ -59,59 +86,19 @@ public:
 			switch (GameManager::event.key.keysym.sym)
 			{
 			case SDLK_z:
-				if(!isBeingPressed["down"])
-				{
-					transform->direction.setY(0);
-					sprite->Play("Idle Up");
-				}
-				else
-				{
-					transform->direction.setY(-1);
-					sprite->Play("Walk Down");
-				}
-				isBeingPressed["up"] = false;
+				changeDirection("Up");
 				break;
 
 			case SDLK_q:
-				if(!isBeingPressed["right"])
-				{
-					transform->direction.setX(0);
-					sprite->Play("Idle Left");
-				}
-				else
-				{
-					transform->direction.setX(1);
-					sprite->Play("Walk Right");
-				}
-				isBeingPressed["left"] = false;
+				changeDirection("Left");
 				break;
 
 			case SDLK_d:
-				if(!isBeingPressed["left"])
-				{
-					transform->direction.setX(0);
-					sprite->Play("Idle Right");
-				}
-				else
-				{
-					transform->direction.setX(-1);
-					sprite->Play("Walk Left");
-				}
-				isBeingPressed["right"] = false;
+				changeDirection("Right");
 				break;
 
 			case SDLK_s:
-				if(!isBeingPressed["up"])
-				{
-					transform->direction.setY(0);
-					sprite->Play("Idle Down");
-				}
-				else
-				{
-					transform->direction.setY(1);
-					sprite->Play("Walk Up");
-				}
-				isBeingPressed["down"] = false;
+				changeDirection("Down");
 				break;
 
 			case SDLK_ESCAPE:

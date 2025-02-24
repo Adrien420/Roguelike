@@ -19,7 +19,7 @@ private:
 public:
 
 	int animIndex = 0;
-	std::map<const char*, std::map<const char*, int>> animations;
+	std::map<const std::string, std::map<const char*, int>> animations;
 
 	SpriteComponent() = default;
 	SpriteComponent(std::string id)
@@ -85,7 +85,7 @@ public:
 		SDL_RenderCopyEx(GameManager::renderer, texture, &srcRect, &destRect, 0, NULL, SDL_FLIP_NONE);
 	}
 
-	void Play(const char* animName)
+	void Play(const std::string animName)
 	{
 		frames = animations[animName]["frames"];
 		animIndex = animations[animName]["index"];
