@@ -14,7 +14,8 @@ private:
 
 	bool animated = false;
 	int frames = 0;
-	int speed = 100;
+	int frameTime = 100; // Durée d'une frame de l'animation en ms
+	Uint32 animStartTime = 0;
 
 public:
 
@@ -31,14 +32,18 @@ public:
 	{
 		animated = isAnimated;
 
-		animations["Idle Down"] = {{"index",0}, {"frames",4}, {"speed", 150}};
-		animations["Idle Up"] = {{"index",1}, {"frames",4}, {"speed", 150}};
-		animations["Idle Left"] = {{"index",2}, {"frames",4}, {"speed", 150}};
-		animations["Idle Right"] = {{"index",3}, {"frames",4}, {"speed", 150}};
-		animations["Walk Down"] = {{"index",4}, {"frames",8}, {"speed", 150}};
-		animations["Walk Up"] = {{"index",5}, {"frames",8}, {"speed", 150}};
-		animations["Walk Left"] = {{"index",6}, {"frames",8}, {"speed", 150}};
-		animations["Walk Right"] = {{"index",7}, {"frames",8}, {"speed", 150}};
+		animations["Idle Down"] = {{"index",0}, {"frames",4}, {"frameTime", 150}};
+		animations["Idle Up"] = {{"index",1}, {"frames",4}, {"frameTime", 150}};
+		animations["Idle Left"] = {{"index",2}, {"frames",4}, {"frameTime", 150}};
+		animations["Idle Right"] = {{"index",3}, {"frames",4}, {"frameTime", 150}};
+		animations["Walk Down"] = {{"index",4}, {"frames",8}, {"frameTime", 150}};
+		animations["Walk Up"] = {{"index",5}, {"frames",8}, {"frameTime", 150}};
+		animations["Walk Left"] = {{"index",6}, {"frames",8}, {"frameTime", 150}};
+		animations["Walk Right"] = {{"index",7}, {"frames",8}, {"frameTime", 150}};
+		animations["Attack Down"] = {{"index",8}, {"frames",8}, {"frameTime", 200}};
+		animations["Attack Up"] = {{"index",9}, {"frames",8}, {"frameTime", 200}};
+		animations["Attack Left"] = {{"index",10}, {"frames",8}, {"frameTime", 200}};
+		animations["Attack Right"] = {{"index", 11}, {"frames",8}, {"frameTime", 200}};
 
 		Play("Idle Down");
  
@@ -66,16 +71,19 @@ public:
 
 	void update() override
 	{
-
 		if (animated)
 		{
-			srcRect.x = srcRect.w * static_cast<int>((SDL_GetTicks() / speed) % frames);
+			// Grâce à animStartTime, on s'assure que la nouvelle animation seléctionnée démarre bien à la première frame
+			int elapsedTime = SDL_GetTicks() - animStartTime;
+			// Dès que frameTime ms passsent, elapsedTime / frameTime augmente de 1, et la frame suivante de l'animation est sélectionnée
+			// La durée totale de l'animation est donc de frameTime * frames ms
+			srcRect.x = srcRect.w * static_cast<int>((elapsedTime / frameTime) % frames);
 		}
 
 		srcRect.y = animIndex * transform->height;
 
-		destRect.x = transform->position.getX();
-		destRect.y = transform->position.getY();
+		destRect.x = transform->position.x;
+		destRect.y = transform->position.y;
 		destRect.w = transform->width * transform->scale;
 		destRect.h = transform->height * transform->scale;
 	}
@@ -89,7 +97,8 @@ public:
 	{
 		frames = animations[animName]["frames"];
 		animIndex = animations[animName]["index"];
-		speed = animations[animName]["speed"];
+		frameTime = animations[animName]["frameTime"];
+		animStartTime = SDL_GetTicks();
 	}
 
 };
