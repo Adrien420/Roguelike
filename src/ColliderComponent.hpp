@@ -54,8 +54,8 @@ public:
 			collider.h = transform->height * transform->scale;
 		}
 
-		destR.x = collider.x - Game::camera.x;
-		destR.y = collider.y - Game::camera.y;
+		// destR.x = collider.x - Game::camera.x;
+		// destR.y = collider.y - Game::camera.y;
 	}
 
 	void draw() override
