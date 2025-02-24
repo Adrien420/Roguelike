@@ -2,6 +2,8 @@
 #include <string>
 #include <SDL2/SDL.h>
 #include "Components.hpp"
+#include "Entity.hpp"
+
 // #include "../TextureManager.h"
 
 class ColliderComponent : public Component

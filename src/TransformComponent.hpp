@@ -1,24 +1,20 @@
 #include "Entity.hpp"
 
-class Vector2 
+class Vector2D 
 {
-    private:
-        float x = 0;
-        float y = 0;
+public:
+    float x = 0;
+    float y = 0;
 
-    public:
-        float getX() const { return x; }
-        float getY() const { return y; }
-
-        void setX(float x_) { x = x_; }
-        void setY(float y_) { y = y_; }
+    Vector2D() = default;
+    Vector2D(float x_, float y_) : x(x_), y(y_) {}
 };
 
 class TransformComponent : public Component
 {
 public:
-	Vector2 position;
-    Vector2 direction; 
+	Vector2D position;
+    Vector2D direction; 
 
 	int height = 64;
 	int width = 64;
@@ -32,8 +28,8 @@ public:
 
 	TransformComponent(float x, float y, int h, int w, int sc)
 	{
-		position.setX(x);
-		position.setY(y);
+		position.x = x;
+		position.y = y;
 		height = h;
 		width = w;
 		scale = sc;
@@ -41,8 +37,8 @@ public:
 
 	void update() override
 	{
-		position.setX(position.getX()+direction.getX()*speed);
-		position.setY(position.getY()+direction.getY()*speed);
+		position.x = position.x + direction.x*speed;
+		position.y = position.y + direction.y*speed;
 	}
 
 };
