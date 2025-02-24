@@ -20,7 +20,7 @@ public:
 	int width = 64;
 	int scale = 1;
 
-	float speed = 0.05;
+	float speed = 0.02;
 
 	bool blocked = false;
 
