@@ -4,7 +4,7 @@
 
 int main(int argc, char *argv[])
 {
-    GameManager game_manager = GameManager("Roguelike", 600, 400, false);
+    GameManager game_manager = GameManager("Roguelike", 1280, 720, false);
 
     const int FPS = 60;
 	const int frameDelay = 1 / FPS;

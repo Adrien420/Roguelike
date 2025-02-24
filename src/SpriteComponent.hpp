@@ -16,6 +16,7 @@ private:
 	int frames = 0;
 	int frameTime = 100; // Durée d'une frame de l'animation en ms
 	Uint32 animStartTime = 0;
+	std::string currentAnimation = "";
 
 public:
 
@@ -32,18 +33,18 @@ public:
 	{
 		animated = isAnimated;
 
-		animations["Idle Down"] = {{"index",0}, {"frames",4}, {"frameTime", 150}};
-		animations["Idle Up"] = {{"index",1}, {"frames",4}, {"frameTime", 150}};
-		animations["Idle Left"] = {{"index",2}, {"frames",4}, {"frameTime", 150}};
-		animations["Idle Right"] = {{"index",3}, {"frames",4}, {"frameTime", 150}};
-		animations["Walk Down"] = {{"index",4}, {"frames",8}, {"frameTime", 150}};
-		animations["Walk Up"] = {{"index",5}, {"frames",8}, {"frameTime", 150}};
-		animations["Walk Left"] = {{"index",6}, {"frames",8}, {"frameTime", 150}};
-		animations["Walk Right"] = {{"index",7}, {"frames",8}, {"frameTime", 150}};
-		animations["Attack Down"] = {{"index",8}, {"frames",8}, {"frameTime", 200}};
-		animations["Attack Up"] = {{"index",9}, {"frames",8}, {"frameTime", 200}};
-		animations["Attack Left"] = {{"index",10}, {"frames",8}, {"frameTime", 200}};
-		animations["Attack Right"] = {{"index", 11}, {"frames",8}, {"frameTime", 200}};
+		animations["Idle Down"] = {{"index",0}, {"frames",4}, {"frameTime", 100}};
+		animations["Idle Up"] = {{"index",1}, {"frames",4}, {"frameTime", 100}};
+		animations["Idle Left"] = {{"index",2}, {"frames",4}, {"frameTime", 100}};
+		animations["Idle Right"] = {{"index",3}, {"frames",4}, {"frameTime", 100}};
+		animations["Walk Down"] = {{"index",4}, {"frames",8}, {"frameTime", 100}};
+		animations["Walk Up"] = {{"index",5}, {"frames",8}, {"frameTime", 100}};
+		animations["Walk Left"] = {{"index",6}, {"frames",8}, {"frameTime", 100}};
+		animations["Walk Right"] = {{"index",7}, {"frames",8}, {"frameTime", 100}};
+		animations["Attack Down"] = {{"index",8}, {"frames",8}, {"frameTime", 120}};
+		animations["Attack Up"] = {{"index",9}, {"frames",8}, {"frameTime", 120}};
+		animations["Attack Left"] = {{"index",10}, {"frames",8}, {"frameTime", 120}};
+		animations["Attack Right"] = {{"index", 11}, {"frames",8}, {"frameTime", 120}};
 
 		Play("Idle Down");
  
@@ -78,6 +79,7 @@ public:
 			// Dès que frameTime ms passsent, elapsedTime / frameTime augmente de 1, et la frame suivante de l'animation est sélectionnée
 			// La durée totale de l'animation est donc de frameTime * frames ms
 			srcRect.x = srcRect.w * static_cast<int>((elapsedTime / frameTime) % frames);
+			//std::cout << elapsedTime << " / " << srcRect.x / srcRect.w << std::endl;
 		}
 
 		srcRect.y = animIndex * transform->height;
@@ -98,7 +100,9 @@ public:
 		frames = animations[animName]["frames"];
 		animIndex = animations[animName]["index"];
 		frameTime = animations[animName]["frameTime"];
-		animStartTime = SDL_GetTicks();
+		if(animName != currentAnimation)
+			animStartTime = SDL_GetTicks();
+		currentAnimation = animName;
 	}
 
 };

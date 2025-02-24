@@ -36,7 +36,7 @@ public:
 			transform->direction.x = 0;
 			return;
 		}
-		
+
 		isBeingPressed[direction] = true;
 		if(isAttacking)
 			return;
