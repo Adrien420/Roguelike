@@ -5,7 +5,7 @@
 #include "TransformComponent.hpp"
 #include "SpriteComponent.hpp"
 #include "KeyboardController.hpp"
-// #include "ColliderComponent.h"
+#include "ColliderComponent.hpp"
 // #include "TileComponent.h"
 // #include "ProjectileComponent.h"
 // #include "UILabel.h"
