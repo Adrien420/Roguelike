@@ -7,7 +7,7 @@ SDL_Event GameManager::event;
 bool GameManager::isRunning = false;
 AssetManager* GameManager::assets = new AssetManager();
 
-Entity player;
+Entity player, player2;
 
 GameManager::GameManager(const char* title, int width, int height, bool fullscreen)
 {
@@ -40,7 +40,8 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 
 	assets->AddTexture("orc", "../assets/orc.png");
 
-	player = Entity(TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), KeyboardController());
+	player = Entity(TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), KeyboardController("player1"));
+	player2 = Entity(TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), KeyboardController("player2"));
 
 }
 
@@ -66,6 +67,7 @@ void GameManager::handleEvents()
 void GameManager::update()
 {	
 	player.update();
+	player2.update();
 }
 
 void GameManager::render()
@@ -73,6 +75,7 @@ void GameManager::render()
 	SDL_RenderClear(renderer);
 	map.render(renderer);
 	player.draw();
+	player2.draw();
 	SDL_RenderPresent(renderer);
 }
 
