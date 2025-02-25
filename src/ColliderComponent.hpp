@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 #include "Components.hpp"
 #include "Entity.hpp"
-// #include "../TextureManager.h"
+#include "../TextureManager.h"
 
 /*
 Utiliser -DDEBUG dans les options du compilateur pour activer le mode debug
@@ -70,5 +70,16 @@ public:
 #ifdef DEBUG
         TextureManager::Draw(tex, srcR, destR, SDL_FLIP_NONE);
 #endif
+    }
+
+    bool checkCollision(const ColliderComponent& other) const
+    {
+        const auto& recA = collider;
+        const auto& recB = other.collider;
+
+        return recA.x + recA.w >= recB.x &&
+               recB.x + recB.w >= recA.x &&
+               recA.y + recA.h >= recB.y &&
+               recB.y + recB.h >= recA.y;
     }
 };
