@@ -1,9 +1,7 @@
 #pragma once
 #include <string>
-#include <SDL2/SDL.h>
 #include "Components.hpp"
-#include "Entity.hpp"
-#include "../TextureManager.h"
+#include "TextureManager.hpp"
 
 /*
 Utiliser -DDEBUG dans les options du compilateur pour activer le mode debug
@@ -17,24 +15,15 @@ public:
     TransformComponent* transform = nullptr;
     
 #ifdef DEBUG
-    SDL_Texture* tex = nullptr;
-    SDL_Rect srcR{ 0, 0, 32, 32 };
-    SDL_Rect destR{};
+    #define DEBUG_COLOR 255, 0, 0, 255 // Rouge
 #endif
 
 	// Constructeur EXPLICITE pour empêcher les conversions implicites
     explicit ColliderComponent(std::string t) 
-        : tag(std::move(t)) {}	// std::move pour éviter des copies inutiles
+        : tag(std::move(t)), collider{0, 0, 0, 0} {}	// std::move pour éviter des copies inutiles
 
     ColliderComponent(std::string t, int x, int y, int w, int h)
-        : tag(std::move(t)), collider{ x, y, w, h } {}
-
-    ~ColliderComponent() override
-    {
-#ifdef DEBUG
-        if (tex) SDL_DestroyTexture(tex);
-#endif
-    }
+        : tag(std::move(t)), collider{x, y, w, h} {}
 
     void init() override
     {
@@ -44,10 +33,6 @@ public:
         }
 
         transform = &entity->getComponent<TransformComponent>();
-
-#ifdef DEBUG
-        tex = TextureManager::LoadTexture("assets/coltex.png");
-#endif
     }
 
     void update() override
@@ -59,16 +44,13 @@ public:
             collider.w = transform->width * transform->scale;
             collider.h = transform->height * transform->scale;
         }
-
-#ifdef DEBUG
-        destR = { collider.x - Game::camera.x, collider.y - Game::camera.y, collider.w, collider.h };
-#endif
     }
 
     void draw() override
     {
 #ifdef DEBUG
-        TextureManager::Draw(tex, srcR, destR, SDL_FLIP_NONE);
+        SDL_SetRenderDrawColor(GameManager::renderer, DEBUG_COLOR);
+        SDL_RenderDrawRect(GameManager::renderer, &collider);
 #endif
     }
 
