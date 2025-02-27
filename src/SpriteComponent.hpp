@@ -24,36 +24,33 @@ public:
 	std::map<const std::string, std::map<const char*, int>> animations;
 
 	SpriteComponent() = default;
-	SpriteComponent(std::string id)
-	{
-		setTex(id);
-	}
 
 	SpriteComponent(std::string id, bool isAnimated)
 	{
 		animated = isAnimated;
 
-		animations["Idle Down"] = {{"index",0}, {"frames",4}, {"frameTime", 100}};
-		animations["Idle Up"] = {{"index",1}, {"frames",4}, {"frameTime", 100}};
-		animations["Idle Left"] = {{"index",2}, {"frames",4}, {"frameTime", 100}};
-		animations["Idle Right"] = {{"index",3}, {"frames",4}, {"frameTime", 100}};
-		animations["Walk Down"] = {{"index",4}, {"frames",8}, {"frameTime", 100}};
-		animations["Walk Up"] = {{"index",5}, {"frames",8}, {"frameTime", 100}};
-		animations["Walk Left"] = {{"index",6}, {"frames",8}, {"frameTime", 100}};
-		animations["Walk Right"] = {{"index",7}, {"frames",8}, {"frameTime", 100}};
-		animations["Attack Down"] = {{"index",8}, {"frames",8}, {"frameTime", 120}};
-		animations["Attack Up"] = {{"index",9}, {"frames",8}, {"frameTime", 120}};
-		animations["Attack Left"] = {{"index",10}, {"frames",8}, {"frameTime", 120}};
-		animations["Attack Right"] = {{"index", 11}, {"frames",8}, {"frameTime", 120}};
+		if(animated)
+		{
+			animations["Idle Down"] = {{"index",0}, {"frames",4}, {"frameTime", 100}};
+			animations["Idle Up"] = {{"index",1}, {"frames",4}, {"frameTime", 100}};
+			animations["Idle Left"] = {{"index",2}, {"frames",4}, {"frameTime", 100}};
+			animations["Idle Right"] = {{"index",3}, {"frames",4}, {"frameTime", 100}};
+			animations["Walk Down"] = {{"index",4}, {"frames",8}, {"frameTime", 100}};
+			animations["Walk Up"] = {{"index",5}, {"frames",8}, {"frameTime", 100}};
+			animations["Walk Left"] = {{"index",6}, {"frames",8}, {"frameTime", 100}};
+			animations["Walk Right"] = {{"index",7}, {"frames",8}, {"frameTime", 100}};
+			animations["Attack Down"] = {{"index",8}, {"frames",8}, {"frameTime", 120}};
+			animations["Attack Up"] = {{"index",9}, {"frames",8}, {"frameTime", 120}};
+			animations["Attack Left"] = {{"index",10}, {"frames",8}, {"frameTime", 120}};
+			animations["Attack Right"] = {{"index", 11}, {"frames",8}, {"frameTime", 120}};
 
-		Play("Idle Down");
+			Play("Idle Down");
+		}
  
 		setTex(id);
 	}
 
-	~SpriteComponent()
-	{
-	}
+	~SpriteComponent() {}
 
 	void setTex(std::string id)
 	{
