@@ -90,14 +90,9 @@ public:
 		destRect.h = transform->height * transform->scale;
 	}
 
-	void Draw(SDL_Texture * tex, SDL_Rect src, SDL_Rect dest, SDL_RendererFlip flip)
-	{
-		SDL_RenderCopyEx(GameManager::renderer, tex, &src, &dest, 0, NULL, flip);
-	}
-
 	void draw() override
 	{
-		Draw(texture, srcRect, destRect, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(GameManager::renderer, texture, &srcRect, &destRect, 0, NULL, SDL_FLIP_NONE);
 	}
 
 	void Play(const std::string animName)
