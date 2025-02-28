@@ -1,5 +1,5 @@
-#ifndef HEALTH_HPP
-#define HEALTH_HPP
+#ifndef HEALTHCOMPONENT_HPP
+#define HEALTHCOMPONENT_HPP
 
 #include "SDL2/SDL.h"
 #include "Components.hpp"
@@ -39,8 +39,6 @@ class HealthComponent : public Component
         {
             if(health > 0)
                 updateHealth(-0.005);
-            else
-                std::cout << "Dead" << std::endl;
 
             healthPercent = health / fullHealth;
 

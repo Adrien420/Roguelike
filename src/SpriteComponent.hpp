@@ -3,12 +3,14 @@
 
 #include "SDL2/SDL.h"
 #include "GameManager.hpp"
+#include "StatisticsComponent.hpp"
 #include <map>
 
 class SpriteComponent : public Component
 {
 private:
-	TransformComponent * transform;
+	TransformComponent *transform;
+	StatisticsComponent *stats;
 	SDL_Texture *texture;
 	SDL_Rect srcRect, destRect;
 
@@ -28,25 +30,6 @@ public:
 	SpriteComponent(std::string id, bool isAnimated)
 	{
 		animated = isAnimated;
-
-		if(animated)
-		{
-			animations["Idle Down"] = {{"index",0}, {"frames",4}, {"frameTime", 100}};
-			animations["Idle Up"] = {{"index",1}, {"frames",4}, {"frameTime", 100}};
-			animations["Idle Left"] = {{"index",2}, {"frames",4}, {"frameTime", 100}};
-			animations["Idle Right"] = {{"index",3}, {"frames",4}, {"frameTime", 100}};
-			animations["Walk Down"] = {{"index",4}, {"frames",8}, {"frameTime", 100}};
-			animations["Walk Up"] = {{"index",5}, {"frames",8}, {"frameTime", 100}};
-			animations["Walk Left"] = {{"index",6}, {"frames",8}, {"frameTime", 100}};
-			animations["Walk Right"] = {{"index",7}, {"frames",8}, {"frameTime", 100}};
-			animations["Attack Down"] = {{"index",8}, {"frames",8}, {"frameTime", 120}};
-			animations["Attack Up"] = {{"index",9}, {"frames",8}, {"frameTime", 120}};
-			animations["Attack Left"] = {{"index",10}, {"frames",8}, {"frameTime", 120}};
-			animations["Attack Right"] = {{"index", 11}, {"frames",8}, {"frameTime", 120}};
-
-			Play("Idle Down");
-		}
- 
 		setTex(id);
 	}
 
@@ -57,10 +40,32 @@ public:
 		texture = GameManager::assets->GetTexture(id);
 	}
 
+	void setAnimation(std::string type, int index, int nbFrames, float animDuration)
+	{
+		animations[type + " Down"] = {{"index",index}, {"frames",nbFrames}, {"frameTime", animDuration/nbFrames}};
+		animations[type + " Up"] = {{"index",index+1}, {"frames",nbFrames}, {"frameTime", animDuration/nbFrames}};
+		animations[type + " Left"] = {{"index",index+2}, {"frames",nbFrames}, {"frameTime", animDuration/nbFrames}};
+		animations[type + " Right"] = {{"index",index+3}, {"frames",nbFrames}, {"frameTime", animDuration/nbFrames}};
+	}
+
+	void initAnimations()
+	{
+		setAnimation("Idle", 0, 4, 400);
+		setAnimation("Walk", 4, 8, 800);
+		setAnimation("Attack", 8, 8, stats->attackDuration);
+
+		Play("Idle Down");
+	}
+
 	void init() override
 	{
-
 		transform = &entity->getComponent<TransformComponent>();
+		stats = &entity->getComponent<StatisticsComponent>();
+
+		if(animated)
+		{
+			initAnimations();
+		}
 
 		srcRect.x = srcRect.y = 0;
 		srcRect.w = transform->width;
