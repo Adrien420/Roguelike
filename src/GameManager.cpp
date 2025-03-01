@@ -6,7 +6,7 @@ SDL_Renderer* GameManager::renderer = nullptr;
 SDL_Event GameManager::event;
 bool GameManager::isRunning = false;
 AssetManager* GameManager::assets = new AssetManager();
-
+EntitiesManager entitiesManager;
 Entity player, player2;
 
 GameManager::GameManager(const char* title, int width, int height, bool fullscreen)
@@ -44,6 +44,8 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
 	player = Entity(TransformComponent(0,0,64,64,2), StatisticsComponent(800, 100, 0.07, 100), SpriteComponent("orc", true), KeyboardController("player1"), HealthComponent(100));
 	player2 = Entity(TransformComponent(100,100,64,64,2), StatisticsComponent(800, 100, 0.07, 100), SpriteComponent("orc", true), KeyboardController("player2"), HealthComponent(100));
+	entitiesManager.addEntity(std::move(player));
+	entitiesManager.addEntity(std::move(player2));
 
 }
 
@@ -68,16 +70,15 @@ void GameManager::handleEvents()
 
 void GameManager::update()
 {	
-	player.update();
-	player2.update();
+	entitiesManager.refresh();
+	entitiesManager.update();
 }
 
 void GameManager::render()
 {
 	SDL_RenderClear(renderer);
 	map.render(renderer);
-	player.draw();
-	player2.draw();
+	entitiesManager.draw();
 	SDL_RenderPresent(renderer);
 }
 

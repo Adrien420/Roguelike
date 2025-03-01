@@ -3,11 +3,14 @@
 #include "GameManager.hpp"
 #include "Entity.hpp"
 #include "Components.hpp"
+#include "ProjectileComponent.hpp"
 #include <map>
 
 class KeyboardController : public Component
 {
 	private:
+		EntitiesManager entitiesManager;
+		StatisticsComponent *stats;
 		std::string playerId;
 		SDL_KeyCode upKey;
 		int attackDuration;
@@ -31,6 +34,7 @@ class KeyboardController : public Component
 		void init() override
 		{
 			transform = &entity->getComponent<TransformComponent>();
+			stats = &entity->getComponent<StatisticsComponent>();
 			sprite = &entity->getComponent<SpriteComponent>();
 			attackDuration = sprite->animations["Attack Down"]["frameTime"] * sprite->animations["Attack Down"]["frames"];
 		}
@@ -82,26 +86,36 @@ class KeyboardController : public Component
 		void attack()
 		{
 			applyDirection("None");
+			Vector2D projectileDirection = Vector2D();
 			int directionIndex = sprite->animIndex%4;
 			switch(directionIndex)
 			{
 				case 0:
 					sprite->Play("Attack Down");
+					projectileDirection.y = 1;
 					break;
 				case 1:
 					sprite->Play("Attack Up");
+					projectileDirection.y = -1;
 					break;
 				case 2:
 					sprite->Play("Attack Left");
+					projectileDirection.x = -1;
 					break;
 				case 3:
 					sprite->Play("Attack Right");
+					projectileDirection.x = 1;
 					break;
 				default:
 					break;
 			}
 			isAttacking = true;
 			attackStart = SDL_GetTicks();
+			if(stats->hasProjectiles)
+			{
+				Entity projectile = Entity(TransformComponent(0,0,64,64,2), StatisticsComponent(800, 100, 0.07, 100), SpriteComponent("orc", false), ProjectileComponent(projectileDirection));
+				entitiesManager.addEntity(std::move(projectile));
+			}
 		}
 
 		void update() override

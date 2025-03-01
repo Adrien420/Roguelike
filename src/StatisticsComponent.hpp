@@ -12,6 +12,7 @@ class StatisticsComponent : public Component
         float damages;
         float speed;
         float health;
+        bool hasProjectiles = true;
 
         StatisticsComponent(float attackDuration_, float damages_, float speed_, float health_)
         {

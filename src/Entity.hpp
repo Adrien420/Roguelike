@@ -28,10 +28,8 @@ template <typename T> inline ComponentID getComponentTypeID() noexcept
 }
 
 constexpr std::size_t maxComponents = 32;
-constexpr std::size_t maxGroups = 32;
 
 using ComponentBitSet = std::bitset<maxComponents>;
-using GroupBitset = std::bitset<maxGroups>;
 
 using ComponentArray = std::array<Component*, maxComponents>;
 
@@ -54,7 +52,6 @@ class Entity
 
         ComponentArray componentArray;
         ComponentBitSet componentBitset;
-        GroupBitset groupBitset;
 
     public:
         // 🌟 Constructeur simplifié : ajoute plusieurs composants directement
@@ -103,17 +100,37 @@ class Entity
         bool isActive() const { return active; }
 
         void destroy() { active = false; }
+};
 
-        bool hasGroup(Group mGroup)
+class EntitiesManager
+{
+    private:
+        std::vector<std::unique_ptr<Entity>> entities;
+    public:
+        void update()
         {
-            return groupBitset[mGroup];
+            for (auto& e : entities) e->update();
         }
 
-        void addGroup(Group mGroup);
-
-        void delGroup(Group mGroup)
+        void draw()
         {
-            groupBitset[mGroup] = false;
+            for (auto& e : entities) e->draw();
+        } 
+
+        void refresh()
+        {
+            entities.erase(std::remove_if(std::begin(entities), std::end(entities),
+                [](const std::unique_ptr<Entity> &mEntity)
+            {
+                return !mEntity->isActive();
+            }),
+                std::end(entities));
+        }
+
+        void addEntity(Entity&& entity)
+        {
+            // std::move() transfère la propriété du pointeur unique dans le vecteur
+            entities.emplace_back(std::make_unique<Entity>(std::move(entity)));
         }
 };
 
