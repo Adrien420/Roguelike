@@ -7,6 +7,7 @@
 #include <vector>
 #include "Map.hpp"
 #include "AssetManager.hpp"
+#include "Entity.hpp"
 
 class AssetManager;
 
@@ -29,6 +30,7 @@ class GameManager
         static SDL_Event event;
         static bool isRunning;
         static AssetManager* assets;
+        static EntitiesManager entitiesManager;
 
         ~GameManager();
 };

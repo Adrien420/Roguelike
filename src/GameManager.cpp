@@ -1,13 +1,12 @@
 #include "GameManager.hpp"
-#include "Entity.hpp"
 #include "Components.hpp"
 
 SDL_Renderer* GameManager::renderer = nullptr;
 SDL_Event GameManager::event;
 bool GameManager::isRunning = false;
 AssetManager* GameManager::assets = new AssetManager();
-EntitiesManager entitiesManager;
-Entity player, player2;
+EntitiesManager GameManager::entitiesManager;
+Entity *player, *player2;
 
 GameManager::GameManager(const char* title, int width, int height, bool fullscreen)
 {
@@ -42,11 +41,10 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	assets->AddTexture("health", "../assets/health.png");
 
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
-	player = Entity(TransformComponent(0,0,64,64,2), StatisticsComponent(800, 100, 0.07, 100), SpriteComponent("orc", true), KeyboardController("player1"), HealthComponent(100));
-	player2 = Entity(TransformComponent(100,100,64,64,2), StatisticsComponent(800, 100, 0.07, 100), SpriteComponent("orc", true), KeyboardController("player2"), HealthComponent(100));
-	entitiesManager.addEntity(std::move(player));
-	entitiesManager.addEntity(std::move(player2));
-
+	player = new Entity(TransformComponent(0,0,64,64,2), StatisticsComponent(800, 100, 0.07, 100), SpriteComponent("orc", true), KeyboardController("player1"), HealthComponent(100));
+	player2 = new Entity(TransformComponent(100,100,64,64,2), StatisticsComponent(800, 100, 0.07, 100), SpriteComponent("orc", true), KeyboardController("player2"), HealthComponent(100));
+	entitiesManager.addEntity(player);
+	entitiesManager.addEntity(player2);
 }
 
 GameManager::~GameManager()
@@ -70,7 +68,7 @@ void GameManager::handleEvents()
 
 void GameManager::update()
 {	
-	entitiesManager.refresh();
+	//entitiesManager.refresh();
 	entitiesManager.update();
 }
 

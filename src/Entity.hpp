@@ -105,11 +105,16 @@ class Entity
 class EntitiesManager
 {
     private:
-        std::vector<std::unique_ptr<Entity>> entities;
+        std::vector<Entity*> entities;
     public:
         void update()
         {
-            for (auto& e : entities) e->update();
+            int i = 0;
+            for (size_t j = 0; j < entities.size(); ++j) {
+                if (entities[j]) {  // Vérifie si l'entité est valide
+                    entities[j]->update();
+            }
+        }
         }
 
         void draw()
@@ -117,7 +122,7 @@ class EntitiesManager
             for (auto& e : entities) e->draw();
         } 
 
-        void refresh()
+        /*void refresh()
         {
             entities.erase(std::remove_if(std::begin(entities), std::end(entities),
                 [](const std::unique_ptr<Entity> &mEntity)
@@ -125,12 +130,12 @@ class EntitiesManager
                 return !mEntity->isActive();
             }),
                 std::end(entities));
-        }
+        }*/
 
-        void addEntity(Entity&& entity)
+        void addEntity(Entity* entity)
         {
             // std::move() transfère la propriété du pointeur unique dans le vecteur
-            entities.emplace_back(std::make_unique<Entity>(std::move(entity)));
+            entities.emplace_back(entity);
         }
 };
 

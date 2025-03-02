@@ -9,7 +9,7 @@
 class KeyboardController : public Component
 {
 	private:
-		EntitiesManager entitiesManager;
+		EntitiesManager& entitiesManager = GameManager::entitiesManager;
 		StatisticsComponent *stats;
 		std::string playerId;
 		SDL_KeyCode upKey;
@@ -28,6 +28,7 @@ class KeyboardController : public Component
 	public:
 		TransformComponent *transform;
 		SpriteComponent *sprite;
+		Entity *projectile;
 
 		KeyboardController(std::string playerId_) : playerId(playerId_) {}
 
@@ -113,8 +114,8 @@ class KeyboardController : public Component
 			attackStart = SDL_GetTicks();
 			if(stats->hasProjectiles)
 			{
-				Entity projectile = Entity(TransformComponent(0,0,64,64,2), StatisticsComponent(800, 100, 0.07, 100), SpriteComponent("orc", false), ProjectileComponent(projectileDirection));
-				entitiesManager.addEntity(std::move(projectile));
+				projectile = new Entity(TransformComponent(transform->position.x,transform->position.y,64,64,2), StatisticsComponent(800, 100, 0.07, 100), SpriteComponent("orc", false), ProjectileComponent(projectileDirection));
+				entitiesManager.addEntity(projectile);
 			}
 		}
 
