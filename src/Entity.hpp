@@ -60,6 +60,10 @@ class Entity
             (addComponent<TArgs>(std::forward<TArgs>(args)), ...);
         }
 
+        ~Entity() {
+            components.clear();
+        }
+
         // 🌟 Version originale de `addComponent`
         template <typename T, typename... TArgs>
         T& addComponent(TArgs&&... mArgs) {
@@ -107,14 +111,21 @@ class EntitiesManager
     private:
         std::vector<Entity*> entities;
     public:
+        ~EntitiesManager() {
+            for (Entity* e : entities) {
+                delete e;  // Libère la mémoire allouée dynamiquement
+            }
+            entities.clear();  // Vide le vecteur après avoir libéré la mémoire
+        }
+
         void update()
         {
             int i = 0;
             for (size_t j = 0; j < entities.size(); ++j) {
                 if (entities[j]) {  // Vérifie si l'entité est valide
                     entities[j]->update();
+                }
             }
-        }
         }
 
         void draw()

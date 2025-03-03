@@ -83,7 +83,15 @@ void GameManager::render()
 
 void GameManager::clean()
 {
-	SDL_DestroyWindow(window);
-	SDL_DestroyRenderer(renderer);
-	SDL_Quit();
+	if (renderer) {
+        SDL_DestroyRenderer(renderer);
+        renderer = nullptr;  // Évite l'accès à des pointeurs sauvages
+    }
+
+    if (window) {
+        SDL_DestroyWindow(window);
+        window = nullptr;  // Évite l'accès à des pointeurs sauvages
+    }
+
+    SDL_Quit();
 }
