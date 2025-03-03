@@ -4,6 +4,7 @@
 SDL_Renderer* GameManager::renderer = nullptr;
 SDL_Event GameManager::event;
 bool GameManager::isRunning = false;
+bool GameManager::isPausing = false;
 AssetManager* GameManager::assets = new AssetManager();
 EntitiesManager GameManager::entitiesManager;
 Entity *player, *player2;
@@ -59,6 +60,16 @@ void GameManager::handleEvents()
 
 	switch (event.type)
 	{
+	case SDL_KEYDOWN:
+		switch(event.key.keysym.sym)
+		{
+			case SDLK_p:
+				pause(!isPausing);
+				break;
+			default:
+				break;
+		}
+		break;
 	case SDL_QUIT :
 		isRunning = false;
 		break;
@@ -94,4 +105,9 @@ void GameManager::clean()
     }
 
     SDL_Quit();
+}
+
+void GameManager::pause(bool isPausing_)
+{
+	isPausing = isPausing_;
 }

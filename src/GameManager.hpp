@@ -26,9 +26,12 @@ class GameManager
         void render();
         void clean();
 
+        void pause(bool isPausing_);
+
         static SDL_Renderer *renderer;
         static SDL_Event event;
         static bool isRunning;
+        static bool isPausing;
         static AssetManager* assets;
         static EntitiesManager entitiesManager;
 

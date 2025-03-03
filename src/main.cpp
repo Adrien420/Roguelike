@@ -7,15 +7,19 @@ int main(int argc, char *argv[])
     GameManager game_manager = GameManager("Roguelike", 1280, 720, false);
 
     const int FPS = 60;
-	const int frameDelay = 1 / FPS;
+	const float frameDelay = 1.0 / FPS;
     Uint32 frameStart;
-	int frameTime;
+	float frameTime;
     
     while(game_manager.isRunning)
-    {
-        frameStart = SDL_GetTicks();
-        
+    {   
         game_manager.handleEvents();
+
+        if(game_manager.isPausing)
+            continue;
+
+        frameStart = SDL_GetTicks();
+
 		game_manager.update();
 		game_manager.render();
 
