@@ -16,6 +16,7 @@ class KeyboardController : public Component
 		int attackDuration;
 		Uint32 attackStart;
 		bool isAttacking = false;
+		bool projectileSent = false;
 		// Commentaire temporaire : 
 		// Si d est pressé (direction.x = 1), puis q est pressé (direction.x = -1) et relâché (direction = 0)
 		// Même si d est toujours pressé, direction.x reste à 0
@@ -86,36 +87,46 @@ class KeyboardController : public Component
 
 		void attack()
 		{
+			if(isAttacking)
+				return;
 			applyDirection("None");
 			Vector2D projectileDirection = Vector2D();
+			Vector2D projectilePosition = Vector2D(transform->position.x, transform->position.y);
 			int directionIndex = sprite->animIndex%4;
 			switch(directionIndex)
 			{
 				case 0:
 					sprite->Play("Attack Down");
 					projectileDirection.y = 1;
+					projectilePosition.x += transform->width/2;
+					projectilePosition.y += transform->height;
 					break;
 				case 1:
 					sprite->Play("Attack Up");
 					projectileDirection.y = -1;
+					projectilePosition.x += transform->width/2;
 					break;
 				case 2:
 					sprite->Play("Attack Left");
 					projectileDirection.x = -1;
+					projectilePosition.y += transform->height/2;
 					break;
 				case 3:
 					sprite->Play("Attack Right");
 					projectileDirection.x = 1;
+					projectilePosition.x += transform->width;
+					projectilePosition.y += transform->height/2;
 					break;
 				default:
 					break;
 			}
 			isAttacking = true;
 			attackStart = SDL_GetTicks();
-			if(stats->hasProjectiles)
+			if(stats->hasProjectiles && (!projectileSent))
 			{
-				projectile = new Entity(TransformComponent(transform->position.x,transform->position.y,64,64,2), StatisticsComponent(800, 100, 0.07, 100), SpriteComponent("orc", false), ProjectileComponent(projectileDirection));
+				projectile = new Entity(TransformComponent(projectilePosition.x, projectilePosition.y,64,64,0.75), StatisticsComponent(800, 100, 0.12, 100), ProjectileComponent(projectileDirection));
 				entitiesManager.addEntity(projectile);
+				projectileSent = true;
 			}
 		}
 
@@ -124,6 +135,7 @@ class KeyboardController : public Component
 			if(isAttacking && (SDL_GetTicks() - attackStart > attackDuration))
 			{
 				isAttacking = false;
+				projectileSent = false;
 				int directionIndex = sprite->animIndex%4;
 				switch(directionIndex)
 				{
