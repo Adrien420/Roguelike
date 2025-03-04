@@ -82,6 +82,12 @@ void GameManager::update()
 {	
 	//entitiesManager.refresh();
 	entitiesManager.update();
+
+	// Test de collision entre player1 et player2
+	if (player->getComponent<ColliderComponent>().checkCollision(player2->getComponent<ColliderComponent>()))
+	{
+		std::cout << "Collision détectée entre player1 et player2 !" << std::endl;
+	}
 }
 
 void GameManager::render()
