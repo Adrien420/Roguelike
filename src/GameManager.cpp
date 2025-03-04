@@ -8,7 +8,7 @@ bool GameManager::isPausing = false;
 AssetManager* GameManager::assets = new AssetManager();
 EntitiesManager GameManager::entitiesManager;
 CardsManager GameManager::cardsManager;
-Entity *player, *player2;
+Entity *player, *player2, *UI;
 
 GameManager::GameManager(const char* title, int width, int height, bool fullscreen)
 {
