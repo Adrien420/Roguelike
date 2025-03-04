@@ -8,8 +8,10 @@
 #include "Map.hpp"
 #include "AssetManager.hpp"
 #include "Entity.hpp"
+#include "CardsManager.hpp"
 
 class AssetManager;
+class CardsManager;
 
 class GameManager
 {
@@ -34,6 +36,7 @@ class GameManager
         static bool isPausing;
         static AssetManager* assets;
         static EntitiesManager entitiesManager;
+        static CardsManager cardsManager;
 
         ~GameManager();
 };

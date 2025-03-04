@@ -7,7 +7,7 @@ include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(/usr/include/SDL2)
 
 #Ajout des fichiers source
-set(SRC AssetManager.cpp GameManager.cpp main.cpp Map.cpp)
+set(SRC AssetManager.cpp GameManager.cpp main.cpp Map.cpp CardsManager.cpp)
 
 # Crée l'exécutable à partir du fichier main.cpp
 add_executable(${EXEC} ${SRC})

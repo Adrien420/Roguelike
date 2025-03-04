@@ -7,7 +7,8 @@ bool GameManager::isRunning = false;
 bool GameManager::isPausing = false;
 AssetManager* GameManager::assets = new AssetManager();
 EntitiesManager GameManager::entitiesManager;
-Entity *player, *player2, *UI;
+CardsManager GameManager::cardsManager;
+Entity *player, *player2;
 
 GameManager::GameManager(const char* title, int width, int height, bool fullscreen)
 {
@@ -41,6 +42,7 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	assets->AddTexture("orc", "../assets/orc.png");
 	assets->AddTexture("health", "../assets/health.png");
 	assets->AddTexture("projectile", "../assets/projectile.png");
+	assets->AddTexture("border", "../assets/card_border.jpeg");
 
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
 	player = new Entity(TransformComponent(0,0,64,64,2), StatisticsComponent(500, 100, 0.07, 100), SpriteComponent("orc", true), ColliderComponent("player1", 0, 0, 64, 64), KeyboardController("player1"), HealthComponent(100));
@@ -70,6 +72,11 @@ void GameManager::handleEvents()
 		{
 			case SDLK_p:
 				pause(!isPausing);
+				break;
+			case SDLK_o:
+				if(!isPausing)
+					pause(true);
+				cardsManager.endRound();
 				break;
 			default:
 				break;
