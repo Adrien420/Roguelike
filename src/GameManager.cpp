@@ -7,7 +7,7 @@ bool GameManager::isRunning = false;
 bool GameManager::isPausing = false;
 AssetManager* GameManager::assets = new AssetManager();
 EntitiesManager GameManager::entitiesManager;
-Entity *player, *player2;
+Entity *player, *player2, *UI;
 
 GameManager::GameManager(const char* title, int width, int height, bool fullscreen)
 {
@@ -47,6 +47,11 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	player2 = new Entity(TransformComponent(100,100,64,64,2), StatisticsComponent(500, 100, 0.07, 100), SpriteComponent("orc", true), ColliderComponent("player2", 100, 100, 64, 64), KeyboardController("player2"), HealthComponent(100));
 	entitiesManager.addEntity(player);
 	entitiesManager.addEntity(player2);
+
+	// Ajout d'un texte au jeu
+	UI = new Entity(UILabelComponent("../assets/font.ttf", 24, "Nothing", {255, 0, 0, 255}));
+	UI->getComponent<UILabelComponent>().setPosition(500, 50);
+	entitiesManager.addEntity(UI);
 }
 
 GameManager::~GameManager()
@@ -86,7 +91,7 @@ void GameManager::update()
 	// Test de collision entre player1 et player2
 	if (player->getComponent<ColliderComponent>().checkCollision(player2->getComponent<ColliderComponent>()))
 	{
-		std::cout << "Collision détectée entre player1 et player2 !" << std::endl;
+		UI->getComponent<UILabelComponent>().setText("Collision !");
 	}
 }
 

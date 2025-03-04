@@ -9,7 +9,7 @@
 #include "HealthComponent.hpp"
 #include "StatisticsComponent.hpp"
 #include "ProjectileComponent.hpp"
+#include "UILabelComponent.hpp"
 // #include "TileComponent.h"
-// #include "UILabel.h"
 
 #endif
