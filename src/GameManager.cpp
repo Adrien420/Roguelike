@@ -31,6 +31,12 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 		isRunning = true;
 	}
 
+	if (TTF_Init() == -1) {
+        std::cerr << "Erreur SDL_ttf : " << TTF_GetError() << std::endl;
+        isRunning = false;
+    }
+
+
 	if (!map.init(window))
 	{
 		std::cerr << "Erreur lors de l'initialisation de la map." << std::endl;
@@ -43,6 +49,7 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	assets->AddTexture("health", "../assets/health.png");
 	assets->AddTexture("projectile", "../assets/projectile.png");
 	assets->AddTexture("border", "../assets/card_border.jpeg");
+	assets->AddFont("mainFont","../assets/04B_30__.TTF", 24);
 
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
 	player = new Entity(TransformComponent(0,0,64,64,2), StatisticsComponent(500, 100, 0.07, 100), SpriteComponent("orc", true), ColliderComponent("player1", 0, 0, 64, 64), KeyboardController("player1"), HealthComponent(100));
@@ -51,8 +58,8 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	entitiesManager.addEntity(player2);
 
 	// Ajout d'un texte au jeu
-	UI = new Entity(UILabelComponent("../assets/font.ttf", 24, "Nothing", {255, 0, 0, 255}));
-	UI->getComponent<UILabelComponent>().setPosition(500, 50);
+	UI = new Entity(UILabelComponent("mainFont", "Hello", {255, 0, 0, 255}));
+	UI->getComponent<UILabelComponent>().setPosition(500, 500);
 	entitiesManager.addEntity(UI);
 }
 
@@ -98,7 +105,11 @@ void GameManager::update()
 	// Test de collision entre player1 et player2
 	if (player->getComponent<ColliderComponent>().checkCollision(player2->getComponent<ColliderComponent>()))
 	{
-		UI->getComponent<UILabelComponent>().setText("Collision !");
+		UI->getComponent<UILabelComponent>().setText("Collision");
+	}
+	else
+	{
+		UI->getComponent<UILabelComponent>().setText("Not Collision");
 	}
 }
 
@@ -122,6 +133,7 @@ void GameManager::clean()
         window = nullptr;  // Évite l'accès à des pointeurs sauvages
     }
 
+	TTF_Quit();
     SDL_Quit();
 }
 

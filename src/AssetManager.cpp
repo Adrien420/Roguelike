@@ -21,9 +21,20 @@ SDL_Texture* AssetManager::GetTexture(std::string id)
 
 void AssetManager::AddFont(std::string id, std::string path, int fontSize)
 {
-	fonts.emplace(id, TTF_OpenFont(path.c_str(), fontSize));
+	TTF_Font* font = TTF_OpenFont(path.c_str(), fontSize);
+    if (!font) {
+        std::cerr << "Erreur : Impossible de charger la police " << path << " : " << TTF_GetError() << std::endl;
+    } else {
+        fonts.emplace(id, font);
+    }
 }
+
 TTF_Font* AssetManager::GetFont(std::string id)
 {
-	return fonts[id];
+	if (fonts.find(id) == fonts.end())
+    {
+        std::cerr << "Erreur : police " << id << " non trouvée !" << std::endl;
+        return nullptr;
+    }
+    return fonts[id];
 }

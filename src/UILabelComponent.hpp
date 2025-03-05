@@ -14,32 +14,61 @@ private:
     std::string text;
 
 public:
-    explicit UILabelComponent(const std::string& fontPath, int fontSize, const std::string& message, SDL_Color textColor)
-        : font(nullptr), texture(nullptr), text(message), color(textColor) {
-        
-        font = TTF_OpenFont(fontPath.c_str(), fontSize);
+    explicit UILabelComponent(const std::string& fontId, const std::string& message, SDL_Color textColor)
+    : font(nullptr), texture(nullptr), text(message), color(textColor)
+    {
+        font = GameManager::assets->GetFont(fontId);
         if (!font) {
-            std::cerr << "Erreur : Impossible de charger la police " << fontPath << " : " << TTF_GetError() << std::endl;
+            std::cerr << "Erreur : Police avec l'ID '" << fontId << "' non trouvée dans AssetManager !" << std::endl;
+            return;
         }
+
         setText(message);
+        setPosition(0, 0);
     }
 
-    ~UILabelComponent() {
+    ~UILabelComponent()
+    {
         if (texture) SDL_DestroyTexture(texture);
-        if (font) TTF_CloseFont(font);
     }
 
-    void setText(const std::string& newText) {
+    void setText(const std::string& newText)
+    {
+        if (!font) {
+            std::cerr << "Impossible de mettre à jour le texte, police non chargée !" << std::endl;
+            return;
+        }
+    
+        if (!GameManager::renderer) {
+            std::cerr << "Erreur : Renderer non initialisé !" << std::endl;
+            return;
+        }
+
+        if (texture) {
+            SDL_DestroyTexture(texture);  // Évite les fuites mémoire
+            texture = nullptr;
+        }
+    
         text = newText;
         SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), color);
         if (!surface) {
             std::cerr << "Erreur : Impossible de créer la surface du texte : " << TTF_GetError() << std::endl;
             return;
         }
+    
         texture = SDL_CreateTextureFromSurface(GameManager::renderer, surface);
-        destRect = {100, 50, surface->w, surface->h}; // Position par défaut
+        if (!texture) {
+            std::cerr << "Erreur : Impossible de créer la texture du texte : " << SDL_GetError() << std::endl;
+            SDL_FreeSurface(surface);
+            return;
+        }
+    
+        destRect.w = surface->w;
+        destRect.h = surface->h;
+
         SDL_FreeSurface(surface);
     }
+    
 
     void setPosition(int x, int y) {
         destRect.x = x;
