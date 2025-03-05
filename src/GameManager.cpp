@@ -50,6 +50,7 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	assets->AddTexture("health", "../assets/health.png");
 	assets->AddTexture("projectile", "../assets/projectile.png");
 	assets->AddTexture("border", "../assets/card_border.jpeg");
+	assets->AddTexture("selection", "../assets/selection.jpeg");
 	assets->AddFont("mainFont","../assets/04B_30__.TTF", 24);
 
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
