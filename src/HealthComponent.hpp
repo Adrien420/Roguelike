@@ -22,7 +22,7 @@ class HealthComponent : public Component
             health = fullHealth = health_;
         }
 
-        void init()
+        void init() override
         {
             transform = &entity->getComponent<TransformComponent>();
 
@@ -35,7 +35,7 @@ class HealthComponent : public Component
             health += amount;
         }
 
-        void update()
+        void update() override
         {
             if(health > 0)
                 updateHealth(-0.005);
@@ -53,12 +53,17 @@ class HealthComponent : public Component
             healthFill.y += 2.5 * transform->scale;
         }
 
-        void draw()
+        void draw() override
         {
             SDL_SetRenderDrawColor(GameManager::renderer, 255, 0, 0, 255);
             SDL_RenderFillRect(GameManager::renderer, &healthFill);
             SDL_SetRenderDrawColor(GameManager::renderer, 255, 255, 0, 255);
             SDL_RenderCopyEx(GameManager::renderer, texture, NULL, &destRect, 0, NULL, SDL_FLIP_NONE);
+        }
+
+        void reset() override
+        {
+            health = fullHealth;
         }
 };
 

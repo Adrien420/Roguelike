@@ -217,4 +217,11 @@ class KeyboardController : public Component
 				}
 			}
 		}
+
+		void reset() override
+		{
+			transform->direction.x = 0;
+			transform->direction.y = 0;
+			sprite->Play("Idle Down");
+		}
 };

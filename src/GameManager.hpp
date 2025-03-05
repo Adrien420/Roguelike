@@ -27,6 +27,7 @@ class GameManager
         void handleEvents();
         void update();
         void render();
+        void reset();
         void clean();
 
         void pause(bool isPausing_);

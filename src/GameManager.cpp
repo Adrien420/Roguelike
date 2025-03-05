@@ -121,6 +121,11 @@ void GameManager::render()
 	SDL_RenderPresent(renderer);
 }
 
+void GameManager::reset()
+{
+	entitiesManager.reset();
+}
+
 void GameManager::clean()
 {
 	if (renderer) {

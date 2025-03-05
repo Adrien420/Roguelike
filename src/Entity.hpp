@@ -41,6 +41,7 @@ public:
 	virtual void init() {}
 	virtual void update() {}
 	virtual void draw() {}
+    virtual void reset() {}
 	virtual ~Component() {}
 };
 
@@ -101,6 +102,11 @@ class Entity
             for (auto& c : components) c->draw();
         }
 
+         void reset() 
+        {
+            for (auto& c : components) c->reset();
+        }
+
         bool isActive() const { return active; }
 
         void destroy() { active = false; }
@@ -132,6 +138,11 @@ class EntitiesManager
         {
             for (auto& e : entities) e->draw();
         } 
+
+        void reset()
+        {
+            for (auto& e : entities) e->reset();
+        }
 
         /*void refresh()
         {

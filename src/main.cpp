@@ -16,7 +16,10 @@ int main(int argc, char *argv[])
         game_manager.handleEvents();
 
         if(game_manager.chosingCards)
+        {
             game_manager.cardsManager.choseCard();
+            game_manager.reset();
+        }
 
         if(game_manager.isPausing || game_manager.chosingCards)
             continue;
