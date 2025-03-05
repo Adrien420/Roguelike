@@ -15,7 +15,10 @@ int main(int argc, char *argv[])
     {   
         game_manager.handleEvents();
 
-        if(game_manager.isPausing)
+        if(game_manager.chosingCards)
+            game_manager.cardsManager.choseCard();
+
+        if(game_manager.isPausing || game_manager.chosingCards)
             continue;
 
         frameStart = SDL_GetTicks();

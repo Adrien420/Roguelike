@@ -33,8 +33,7 @@ class GameManager
 
         static SDL_Renderer *renderer;
         static SDL_Event event;
-        static bool isRunning;
-        static bool isPausing;
+        static bool isRunning, isPausing, chosingCards;
         static AssetManager* assets;
         static EntitiesManager entitiesManager;
         static CardsManager cardsManager;

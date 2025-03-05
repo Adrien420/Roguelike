@@ -5,6 +5,7 @@ SDL_Renderer* GameManager::renderer = nullptr;
 SDL_Event GameManager::event;
 bool GameManager::isRunning = false;
 bool GameManager::isPausing = false;
+bool GameManager::chosingCards = false;
 AssetManager* GameManager::assets = new AssetManager();
 EntitiesManager GameManager::entitiesManager;
 CardsManager GameManager::cardsManager;
@@ -81,9 +82,7 @@ void GameManager::handleEvents()
 				pause(!isPausing);
 				break;
 			case SDLK_o:
-				if(!isPausing)
-					pause(true);
-				cardsManager.endRound();
+				chosingCards = !chosingCards;
 				break;
 			default:
 				break;
