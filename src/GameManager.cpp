@@ -55,7 +55,7 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
 	player = new Entity(TransformComponent(0,0,64,64,2), StatisticsComponent(500, 100, 0.07, 100), SpriteComponent("orc", true), ColliderComponent("player1", 0, 0, 64, 64), KeyboardController("player1"), HealthComponent(100));
-	player2 = new Entity(TransformComponent(100,100,64,64,2), StatisticsComponent(500, 100, 0.07, 100), SpriteComponent("orc", true), ColliderComponent("player2", 100, 100, 64, 64), KeyboardController("player2"), HealthComponent(100));
+	player2 = new Entity(TransformComponent(100,100,64,64,2), StatisticsComponent(500, 100, 0.07, 100), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent(100));
 	entitiesManager.addEntity(player);
 	entitiesManager.addEntity(player2);
 

@@ -13,17 +13,15 @@ public:
     SDL_Rect collider{};
     std::string tag;
     TransformComponent* transform = nullptr;
+    int offsetX, offsetY; // Décalage du collider par rapport à l'entité
+    int offsetW, offsetH; // Taille du collider
     
 #ifdef DEBUG
     #define DEBUG_COLOR 255, 0, 0, 255 // Rouge
 #endif
 
-	// Constructeur EXPLICITE pour empêcher les conversions implicites
-    explicit ColliderComponent(std::string t) 
-        : tag(std::move(t)), collider{0, 0, 0, 0} {}	// std::move pour éviter des copies inutiles
-
     ColliderComponent(std::string t, int x, int y, int w, int h)
-        : tag(std::move(t)), collider{x, y, w, h} {}
+        : tag(std::move(t)), offsetX(x), offsetY(y),  offsetW(w), offsetH(h) {}    // std::move pour éviter des copies inutiles
 
     void init() override
     {
@@ -33,16 +31,17 @@ public:
         }
 
         transform = &entity->getComponent<TransformComponent>();
+
     }
 
     void update() override
     {
         if (tag != "terrain")
         {
-            collider.x = static_cast<int>(transform->position.x);
-            collider.y = static_cast<int>(transform->position.y);
-            collider.w = transform->width * transform->scale;
-            collider.h = transform->height * transform->scale;
+            collider.x = static_cast<int>(transform->position.x) + offsetX * transform->scale;
+            collider.y = static_cast<int>(transform->position.y) + offsetY * transform->scale;
+            collider.w = offsetW * transform->scale;
+            collider.h = offsetH * transform->scale;
         }
     }
 
