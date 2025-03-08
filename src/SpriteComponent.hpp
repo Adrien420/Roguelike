@@ -1,10 +1,12 @@
 #ifndef SPRITECOMPONENT_HPP
-#define SPRITECOMPONENT_JPP
+#define SPRITECOMPONENT_HPP
 
 #include "SDL2/SDL.h"
-#include "GameManager.hpp"
 #include "StatisticsComponent.hpp"
+#include "GameManager.hpp"
 #include <map>
+
+class StatisticsComponent; 
 
 class SpriteComponent : public Component
 {

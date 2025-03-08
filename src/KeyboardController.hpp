@@ -124,7 +124,7 @@ class KeyboardController : public Component
 			attackStart = SDL_GetTicks();
 			if(stats->hasProjectiles && (!projectileSent))
 			{
-				projectile = new Entity(TransformComponent(projectilePosition.x, projectilePosition.y,64,64,0.75), StatisticsComponent(800, 100, 0.12, 100), ProjectileComponent(projectileDirection));
+				projectile = new Entity(TransformComponent(projectilePosition.x, projectilePosition.y,64,64,0.75), StatisticsComponent(800, 100, 0.12, 100, 0), ProjectileComponent(projectileDirection));
 				entitiesManager.addEntity(projectile);
 				projectileSent = true;
 			}

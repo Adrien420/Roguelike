@@ -38,6 +38,8 @@ class GameManager
         static AssetManager* assets;
         static EntitiesManager entitiesManager;
         static CardsManager cardsManager;
+        static Entity* player1;
+        static Entity* player2;
 
         ~GameManager();
 };
