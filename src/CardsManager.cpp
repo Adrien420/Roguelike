@@ -1,27 +1,61 @@
+#include <map>
 #include "CardsManager.hpp"
 #include "StatisticsComponent.hpp"
 #include "Bonus.hpp"
 #define PI 3.14
 
+std::vector<Bonus> bonusBase;
+std::map<std::string,std::vector<std::vector<Bonus>>> bonusPlayer;
+
+void CardsManager::initBonus()
+{
+    // Bonus améliorant les statistiques
+    Bonus bonusSpeed = Bonus("Augmenter la vitesse de déplacement (+20%)", -1, []() { upgradeStat("speed", 0.2f)();} );
+    bonusBase.emplace_back(bonusSpeed);
+    Bonus bonusAttackSpeed = Bonus("Augmenter la vitesse d'attaque (+20%)", -1, []() { upgradeStat("attackDuration", -0.2f)();} );
+    bonusBase.emplace_back(bonusAttackSpeed);
+
+    // Bonus de projectiles
+    Bonus bonusProjectiles = Bonus("Tirer des projectiles", 1, []() { changeStat("hasProjectiles", true)();} );
+    bonusBase.emplace_back(bonusProjectiles);
+
+    bonusPlayer["player1"].emplace_back(bonusBase);
+    bonusPlayer["player2"].emplace_back(bonusBase);
+}
+
+void CardsManager::initBonusPlayer(std::string playerId)
+{
+    int bonusTypeIndex, bonusIndex;
+    //Choix aléatoire de nbChoices bonus à proposer au player
+    for(int i=0; i<nbChoices[playerId]; i++)
+    {
+        //Choix aléatoire des indexes d'un bonus parmis ceux disponibles pour le player
+        bonusTypeIndex = rand() % bonusPlayer[playerId].size();
+        bonusIndex = rand() % bonusPlayer[playerId][bonusTypeIndex].size();
+        std::array<int, 2> bonusIndexes = {bonusTypeIndex, bonusIndex};
+        selectedBonusIndexes[playerId].emplace_back(bonusIndexes);
+    }
+    currentBonusIndexes[playerId] = selectedBonusIndexes[playerId][0];
+}
 
 void CardsManager::init()
 {
-    Bonus bonus = Bonus("label", 2, []() { upgradeStat("speed", 0.1f)();} );
-    bonus.player = GameManager::player1;
-    bonus.applyBonus();
-    Bonus bonus2 = Bonus("label2", 2, []() { changeStat("hasProjectiles", true)();} );
-    bonus2.player = GameManager::player2;
-    bonus2.applyBonus();
-    std::cout << std::get<float>(GameManager::player1->getComponent<StatisticsComponent>().stats["speed"]) << std::endl;
-
+    nbChoices["player1"] = std::get<int>(GameManager::player1->getComponent<StatisticsComponent>().stats["nbCardsChoice"]);
+    nbChoices["player2"] = std::get<int>(GameManager::player2->getComponent<StatisticsComponent>().stats["nbCardsChoice"]);
+    
+    if(!bonusInitialized)
+    {
+        initBonus();
+        bonusInitialized = true;
+    }
+    initBonusPlayer("player1");
+    initBonusPlayer("player2");
+    
     texture = GameManager::assets->GetTexture("border");
     textureSelect = GameManager::assets->GetTexture("selection");
     SDL_QueryTexture(texture, NULL, NULL, &imgWidth, &imgHeight);
     destRect.w = destRectSelect.w = destRectSelect2.w = imgWidth/2.5;
     destRect.h = destRectSelect.h = destRectSelect2.h = imgHeight/2.5;
-
-    nbChoices["player1"] = std::get<int>(GameManager::player1->getComponent<StatisticsComponent>().stats["nbCardsChoice"]);
-    nbChoices["player2"] = std::get<int>(GameManager::player2->getComponent<StatisticsComponent>().stats["nbCardsChoice"]);
 
     startX["player1"] = computeStartX("player1");
     startX["player2"] = computeStartX("player2");
@@ -139,6 +173,12 @@ void CardsManager::changeCard(std::string playerId, SDL_Rect& destRectSelect_, d
 
 void CardsManager::select(std::string playerId)
 {
-    //bonus.applyBonus();
-    initilized = false;
+    Bonus bonus = bonusPlayer[playerId][currentBonusIndexes[playerId][0]][currentBonusIndexes[playerId][1]];
+    std::cout << bonus.label << std::endl;
+    if(playerId == "player1")
+        bonus.player = GameManager::player1;
+    else
+        bonus.player = GameManager::player2;
+    bonus.applyBonus();
+    std::cout << std::get<float>(GameManager::player1->getComponent<StatisticsComponent>().stats["attackDuration"]) << std::endl;
 }

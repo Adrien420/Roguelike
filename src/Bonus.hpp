@@ -9,10 +9,11 @@
 class Bonus
 {
 private:
-    std::string label;
-    int nbUses; // Nombre de fois que le bonus peut être choisi, = -1 si illimité
     std::function<void()> f;
 public:
+    std::string label;
+    int nbUses; // Nombre de fois que le bonus peut être choisi, = -1 si illimité
+
     template <typename Functor>
     Bonus(std::string label_, int nbUses_, Functor f_) : label(label_), nbUses(nbUses_), f(f_) {};
 
@@ -40,7 +41,9 @@ class upgradeStat
 
         void operator()()
         {
-            std::get<float>(Bonus::player->getComponent<StatisticsComponent>().stats[stat]) += std::get<float>(value);
+            float currentStat = std::get<float>(Bonus::player->getComponent<StatisticsComponent>().stats[stat]);
+            float newStat = currentStat + currentStat * std::get<float>(value);
+            std::get<float>(Bonus::player->getComponent<StatisticsComponent>().stats[stat]) = newStat;
         }
 
         ~upgradeStat() {}

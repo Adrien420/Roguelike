@@ -231,6 +231,6 @@ class KeyboardController : public Component
 		{
 			transform->direction.x = 0;
 			transform->direction.y = 0;
-			sprite->Play("Idle Down");
+			attackDuration = sprite->animations["Attack Down"]["frameTime"] * sprite->animations["Attack Down"]["frames"];
 		}
 };

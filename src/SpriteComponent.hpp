@@ -99,6 +99,14 @@ public:
 		SDL_RenderCopyEx(GameManager::renderer, texture, &srcRect, &destRect, 0, NULL, SDL_FLIP_NONE);
 	}
 
+	void reset() override
+	{
+		if(animated)
+		{
+			initAnimations();
+		}
+	}
+
 	void Play(const std::string animName)
 	{
 		frames = animations[animName]["frames"];
