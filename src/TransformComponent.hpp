@@ -1,4 +1,5 @@
 #include "Entity.hpp"
+#include "StatisticsComponent.hpp"
 
 class Vector2D 
 {
@@ -12,33 +13,46 @@ public:
 
 class TransformComponent : public Component
 {
-public:
-	Vector2D position;
-    Vector2D direction; 
+	private:
+		StatisticsComponent *stats;
 
-	int height = 64;
-	int width = 64;
-	float scale = 1.0;
+	public:
+		Vector2D position;
+		Vector2D direction; 
 
-	float speed = 0.07;
+		int height = 64;
+		int width = 64;
+		float scale = 1.0;
 
-	bool blocked = false;
+		float speed = 0.07;
 
-	TransformComponent(){}
+		bool blocked = false;
 
-	TransformComponent(float x, float y, int h, int w, float sc)
-	{
-		position.x = x;
-		position.y = y;
-		height = h;
-		width = w;
-		scale = sc;
-	}
+		TransformComponent(){}
 
-	void update() override
-	{
-		position.x = position.x + direction.x*speed;
-		position.y = position.y + direction.y*speed;
-	}
+		TransformComponent(float x, float y, int h, int w, float sc)
+		{
+			position.x = x;
+			position.y = y;
+			height = h;
+			width = w;
+			scale = sc;
+		}
 
+		void init() override
+		{
+			stats = &entity->getComponent<StatisticsComponent>();
+			speed = std::get<float>(stats->stats["speed"]);
+		}
+
+		void update() override
+		{
+			position.x = position.x + direction.x*speed;
+			position.y = position.y + direction.y*speed;
+		}
+
+		void reset() override
+		{
+			speed = std::get<float>(stats->stats["speed"]);
+		}
 };

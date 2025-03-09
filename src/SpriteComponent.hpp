@@ -54,7 +54,7 @@ public:
 	{
 		setAnimation("Idle", 0, 4, 400);
 		setAnimation("Walk", 4, 8, 800);
-		setAnimation("Attack", 8, 8, stats->attackDuration);
+		setAnimation("Attack", 8, 8, std::get<float>(stats->stats["attackDuration"]));
 
 		Play("Idle Down");
 	}

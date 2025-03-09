@@ -1,17 +1,23 @@
 #include "CardsManager.hpp"
 #include "StatisticsComponent.hpp"
+#include "Bonus.hpp"
 #define PI 3.14
+
 
 void CardsManager::init()
 {
+    Bonus bonus = Bonus("label", 2, []() { upgradeStat("speed", 0.1f)(GameManager::player1);} );
+    bonus.applyBonus();
+    std::cout << std::get<float>(GameManager::player1->getComponent<StatisticsComponent>().stats["speed"]) << std::endl;
+
     texture = GameManager::assets->GetTexture("border");
     textureSelect = GameManager::assets->GetTexture("selection");
     SDL_QueryTexture(texture, NULL, NULL, &imgWidth, &imgHeight);
     destRect.w = destRectSelect.w = destRectSelect2.w = imgWidth/2.5;
     destRect.h = destRectSelect.h = destRectSelect2.h = imgHeight/2.5;
 
-    nbChoices["player1"] = GameManager::player1->getComponent<StatisticsComponent>().nbCardsChoice;
-    nbChoices["player2"] = GameManager::player2->getComponent<StatisticsComponent>().nbCardsChoice;
+    nbChoices["player1"] = std::get<int>(GameManager::player1->getComponent<StatisticsComponent>().stats["nbCardsChoice"]);
+    nbChoices["player2"] = std::get<int>(GameManager::player2->getComponent<StatisticsComponent>().stats["nbCardsChoice"]);
 
     startX["player1"] = computeStartX("player1");
     startX["player2"] = computeStartX("player2");
@@ -129,5 +135,6 @@ void CardsManager::changeCard(std::string playerId, SDL_Rect& destRectSelect_, d
 
 void CardsManager::select(std::string playerId)
 {
-
+    //bonus.applyBonus();
+    initilized = false;
 }

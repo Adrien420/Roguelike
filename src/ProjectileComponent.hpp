@@ -14,6 +14,7 @@ class ProjectileComponent : public Component
         SDL_Texture *texture = GameManager::assets->GetTexture("projectile");
         SDL_Rect destRect;
         int imgWidth, imgHeight;
+        float speed;
     
     public:
         ProjectileComponent(Vector2D direction_)
@@ -25,6 +26,7 @@ class ProjectileComponent : public Component
         {
             transform = &entity->getComponent<TransformComponent>();
             stats = &entity->getComponent<StatisticsComponent>();
+            speed = std::get<float>(stats->stats["speed"]);
 
             // Récupération des dimensions de l'image utilisée pour le projectile
             SDL_QueryTexture(texture, NULL, NULL, &imgWidth, &imgHeight);
@@ -32,8 +34,8 @@ class ProjectileComponent : public Component
 
         void update()
         {
-            transform->position.x += direction.x * stats->speed;
-            transform->position.y += direction.y * stats->speed;
+            transform->position.x += direction.x * speed;
+            transform->position.y += direction.y * speed;
 
             destRect.x = transform->position.x;
             destRect.y = transform->position.y;
