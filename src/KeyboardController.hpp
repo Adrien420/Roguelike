@@ -16,6 +16,9 @@ class KeyboardController : public Component
 		int attackDuration;
 		Uint32 attackStart;
 		bool isAttacking = false;
+		// isSpamming : Empêche de pouvoir attaquer en continu en maintenant la touche d'attaque 
+		// => Permet d'éviter de devoir utiliser des threads
+		bool isSpamming = false; 
 		bool projectileSent = false;
 		// Commentaire temporaire : 
 		// Si d est pressé (direction.x = 1), puis q est pressé (direction.x = -1) et relâché (direction = 0)
@@ -177,8 +180,11 @@ class KeyboardController : public Component
 							applyDirection("Down");
 						break;
 					case SDLK_SPACE: case SDLK_m:
-						if(playerKeys[playerId]["Attack"] == key)
+						if(playerKeys[playerId]["Attack"] == key && (!isSpamming))
+						{
+							isSpamming = true;
 							attack();
+						}
 						break;
 					default:
 						break;
@@ -209,9 +215,12 @@ class KeyboardController : public Component
 						if(playerKeys[playerId]["Down"] == key)
 							changeDirection("Down", true);
 						break;
-
+					case SDLK_SPACE: case SDLK_m:
+						isSpamming = false;
+						break;
 					case SDLK_ESCAPE:
 						GameManager::isRunning = false;
+						break;
 					default:
 						break;
 				}

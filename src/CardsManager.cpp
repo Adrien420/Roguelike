@@ -6,8 +6,12 @@
 
 void CardsManager::init()
 {
-    Bonus bonus = Bonus("label", 2, []() { upgradeStat("speed", 0.1f)(GameManager::player1);} );
+    Bonus bonus = Bonus("label", 2, []() { upgradeStat("speed", 0.1f)();} );
+    bonus.player = GameManager::player1;
     bonus.applyBonus();
+    Bonus bonus2 = Bonus("label2", 2, []() { changeStat("hasProjectiles", true)();} );
+    bonus2.player = GameManager::player2;
+    bonus2.applyBonus();
     std::cout << std::get<float>(GameManager::player1->getComponent<StatisticsComponent>().stats["speed"]) << std::endl;
 
     texture = GameManager::assets->GetTexture("border");

@@ -23,6 +23,8 @@ public:
             nbUses--;
     }
 
+    static Entity* player;
+
     ~Bonus() {}
 };
 
@@ -36,9 +38,9 @@ class upgradeStat
     public:
         upgradeStat(std::string stat_, StatType value_) : stat(stat_), value(value_) {}
 
-        void operator()(Entity* player)
+        void operator()()
         {
-            std::get<float>(player->getComponent<StatisticsComponent>().stats[stat]) += std::get<float>(value);
+            std::get<float>(Bonus::player->getComponent<StatisticsComponent>().stats[stat]) += std::get<float>(value);
         }
 
         ~upgradeStat() {}
@@ -53,9 +55,9 @@ class changeStat
     public:
         changeStat(std::string stat_, StatType value_) : stat(stat_), value(value_) {}
 
-        void operator()(Entity* player)
+        void operator()()
         {
-            player->getComponent<StatisticsComponent>().stats[stat] = value;
+            Bonus::player->getComponent<StatisticsComponent>().stats[stat] = value;
         }
 
         ~changeStat() {}
