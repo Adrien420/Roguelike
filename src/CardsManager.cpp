@@ -11,15 +11,15 @@ std::map<std::string,std::vector<std::vector<Bonus>>> bonusPlayer;
 void CardsManager::initBonus()
 {
     // Bonus améliorant les statistiques
-    Bonus bonusSpeed = Bonus("Up mvt speed(+20%)", -1, []() { upgradeStat("speed", 0.2f)();} );
+    Bonus bonusSpeed = Bonus("Up MVT speed (+20%)", -1, []() { upgradeStatPercent("speed", 0.2f)();} );
     bonusBase.emplace_back(bonusSpeed);
-    Bonus bonusAttackSpeed = Bonus("Up atk speed (+20%)", -1, []() { upgradeStat("attackDuration", -0.2f)();} );
+    Bonus bonusAttackSpeed = Bonus("Up ATK speed (+20%)", -1, []() { upgradeStatPercent("attackDuration", -0.2f)();} );
     bonusBase.emplace_back(bonusAttackSpeed);
-    Bonus bonusHealth = Bonus("Up health (+20%)", -1, []() { upgradeStat("health", 0.2f)();} );
+    Bonus bonusHealth = Bonus("Up health (+20%)", -1, []() { upgradeStatPercent("health", 0.2f)();} );
     bonusBase.emplace_back(bonusHealth);
-    Bonus bonusDamages = Bonus("Up damages (+20%)", -1, []() { upgradeStat("damages", 0.2f)();} );
+    Bonus bonusDamages = Bonus("Up damages (+20%)", -1, []() { upgradeStatPercent("damages", 0.2f)();} );
     bonusBase.emplace_back(bonusDamages);
-    Bonus bonusNbChoices= Bonus("Up nb choices (+1)", 2, []() { upgradeStat("nbCardsChoice", 1.0f)();} );
+    Bonus bonusNbChoices= Bonus("Up NB choices (+1)", 2, []() { upgradeStat("nbCardsChoice", 1)();} );
     bonusBase.emplace_back(bonusNbChoices);
 
     // Bonus de projectiles
@@ -56,7 +56,7 @@ void CardsManager::initBonusPlayer(std::string playerId)
         Bonus bonus = bonusPlayer[playerId][bonusIndexes[0]][bonusIndexes[1]];
         std::string label = bonus.label;
         SDL_Rect txtDestRect;
-        SDL_Texture* txtTexture = GameManager::assets->AddTxt(label, &txtDestRect, 0.4);
+        SDL_Texture* txtTexture = GameManager::assets->AddTxt(label, &txtDestRect, 1);
         txtTextures[playerId].emplace_back(txtTexture);
         txtDestRects[playerId].emplace_back(txtDestRect);
     }
@@ -76,6 +76,9 @@ void CardsManager::init()
     srand(time(NULL));
     initBonusPlayer("player1");
     initBonusPlayer("player2");
+
+    indexSelection["player1"] = indexSelection["player2"] = 0;
+    hasChosen["player1"] = hasChosen["player2"] = false;
     
     texture = GameManager::assets->GetTexture("border");
     textureSelect = GameManager::assets->GetTexture("selection");
@@ -139,6 +142,12 @@ void CardsManager::choseCard()
     }
     SDL_RenderClear(GameManager::renderer);
 
+    if(hasChosen["player1"] && hasChosen["player2"])
+    {
+        initilized = false;
+        GameManager::startNewRound();
+    }
+
     displayPlayerCards("player1");
     displayPlayerCards("player2");
 
@@ -178,6 +187,17 @@ void CardsManager::choseCard()
 
 void CardsManager::changeCard(std::string playerId, SDL_Rect& destRectSelect_, double& angleSelect_, int side)
 {
+    //Changement de bonus sélectionné
+    if((destRectSelect_.x == startX[playerId]) && (side == -1))
+        indexSelection[playerId] = nbChoices[playerId]-1;
+    else if((destRectSelect_.x == startX[playerId] + (nbChoices[playerId]-1) * (destRect.w + margin[playerId])) && (side == 1))
+        indexSelection[playerId] = 0;
+    else
+        indexSelection[playerId] += side;
+    
+    currentBonusIndexes[playerId][0] = selectedBonusIndexes[playerId][indexSelection[playerId]][0];
+    currentBonusIndexes[playerId][1] = selectedBonusIndexes[playerId][indexSelection[playerId]][1];
+    
     //Orientation
     if((destRectSelect_.x == startX[playerId]) && (side == -1))
         angleSelect_ = 15;
@@ -205,6 +225,8 @@ void CardsManager::changeCard(std::string playerId, SDL_Rect& destRectSelect_, d
 
 void CardsManager::select(std::string playerId)
 {
+    if(hasChosen[playerId])
+        return;
     Bonus bonus = bonusPlayer[playerId][currentBonusIndexes[playerId][0]][currentBonusIndexes[playerId][1]];
     std::cout << bonus.label << std::endl;
     if(playerId == "player1")
@@ -212,5 +234,5 @@ void CardsManager::select(std::string playerId)
     else
         bonus.player = GameManager::player2;
     bonus.applyBonus();
-    std::cout << std::get<float>(GameManager::player1->getComponent<StatisticsComponent>().stats["attackDuration"]) << std::endl;
+    hasChosen[playerId] = true;
 }
