@@ -1,4 +1,5 @@
 #include <map>
+#include <set>
 #include "CardsManager.hpp"
 #include "StatisticsComponent.hpp"
 #include "Bonus.hpp"
@@ -14,6 +15,12 @@ void CardsManager::initBonus()
     bonusBase.emplace_back(bonusSpeed);
     Bonus bonusAttackSpeed = Bonus("Up atk speed (+20%)", -1, []() { upgradeStat("attackDuration", -0.2f)();} );
     bonusBase.emplace_back(bonusAttackSpeed);
+    Bonus bonusHealth = Bonus("Up health (+20%)", -1, []() { upgradeStat("health", 0.2f)();} );
+    bonusBase.emplace_back(bonusHealth);
+    Bonus bonusDamages = Bonus("Up damages (+20%)", -1, []() { upgradeStat("damages", 0.2f)();} );
+    bonusBase.emplace_back(bonusDamages);
+    Bonus bonusNbChoices= Bonus("Up nb choices (+1)", 2, []() { upgradeStat("nbCardsChoice", 1.0f)();} );
+    bonusBase.emplace_back(bonusNbChoices);
 
     // Bonus de projectiles
     Bonus bonusProjectiles = Bonus("Tirer des projectiles", 1, []() { changeStat("hasProjectiles", true)();} );
@@ -26,7 +33,7 @@ void CardsManager::initBonus()
 void CardsManager::initBonusPlayer(std::string playerId)
 {
     int bonusTypeIndex, bonusIndex;
-    srand(time(NULL));
+    std::set<std::array<int, 2>> bonusesChosen;
     //Choix aléatoire de nbChoices bonus à proposer au player
     for(int i=0; i<nbChoices[playerId]; i++)
     {
@@ -34,7 +41,16 @@ void CardsManager::initBonusPlayer(std::string playerId)
         bonusTypeIndex = rand() % bonusPlayer[playerId].size();
         bonusIndex = rand() % bonusPlayer[playerId][bonusTypeIndex].size();
         std::array<int, 2> bonusIndexes = {bonusTypeIndex, bonusIndex};
+        //Vérification que le bonus n'a pas déjà été proposé
+        std::set<std::array<int, 2>>::iterator it = bonusesChosen.find(bonusIndexes);
+        while(it != bonusesChosen.end())
+        {
+            bonusIndex = rand() % bonusPlayer[playerId][bonusTypeIndex].size();
+            bonusIndexes = {bonusTypeIndex, bonusIndex};
+            it = bonusesChosen.find(bonusIndexes);
+        }
         selectedBonusIndexes[playerId].emplace_back(bonusIndexes);
+        bonusesChosen.insert(bonusIndexes);
 
         //Création de la texture pour le label
         Bonus bonus = bonusPlayer[playerId][bonusIndexes[0]][bonusIndexes[1]];
@@ -57,6 +73,7 @@ void CardsManager::init()
         initBonus();
         bonusInitialized = true;
     }
+    srand(time(NULL));
     initBonusPlayer("player1");
     initBonusPlayer("player2");
     
