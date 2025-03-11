@@ -9,6 +9,7 @@ class HealthComponent : public Component
 {
     private:
         TransformComponent * transform;
+        StatisticsComponent *stats;
         SDL_Texture *texture = GameManager::assets->GetTexture("health");
         SDL_Rect healthFill, destRect;
         int imgWidth, imgHeight;
@@ -17,14 +18,13 @@ class HealthComponent : public Component
     public:
         float health;
 
-        HealthComponent(float health_)
-        {
-            health = fullHealth = health_;
-        }
+        HealthComponent() {}
 
         void init() override
         {
             transform = &entity->getComponent<TransformComponent>();
+            stats = &entity->getComponent<StatisticsComponent>();
+            health = fullHealth = std::get<float>(stats->stats["health"]);
 
             // Récupération des dimensions de l'image utilisée pour la barre de vie
             SDL_QueryTexture(texture, NULL, NULL, &imgWidth, &imgHeight);
@@ -38,7 +38,9 @@ class HealthComponent : public Component
         void update() override
         {
             if(health > 0)
-                updateHealth(-0.005);
+                updateHealth(-0.01);
+            else
+                GameManager::endOfRound();
 
             healthPercent = health / fullHealth;
 
@@ -63,7 +65,7 @@ class HealthComponent : public Component
 
         void reset() override
         {
-            health = fullHealth;
+            health = fullHealth = std::get<float>(stats->stats["health"]);
         }
 };
 

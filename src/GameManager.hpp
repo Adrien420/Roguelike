@@ -41,6 +41,9 @@ class GameManager
         static Entity* player1;
         static Entity* player2;
 
+        static void endOfRound();
+        static void startNewRound();
+
         ~GameManager();
 };
 

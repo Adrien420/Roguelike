@@ -38,3 +38,17 @@ TTF_Font* AssetManager::GetFont(std::string id)
     }
     return fonts[id];
 }
+
+SDL_Texture* AssetManager::AddTxt(std::string txt, SDL_Rect* destRect, float scale)
+{
+    TTF_Font* font = GameManager::assets->GetFont("cardsFont");
+    SDL_Color color = {255, 255, 255, 255};
+    SDL_Surface* surface = TTF_RenderText_Solid(font, txt.c_str(), color);
+    destRect->w = surface->w * scale;
+    destRect->h = surface->h * scale;
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(GameManager::renderer, surface);
+    SDL_FreeSurface(surface);
+
+    return texture;
+}
