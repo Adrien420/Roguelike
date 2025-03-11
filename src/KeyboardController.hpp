@@ -3,7 +3,6 @@
 #include "GameManager.hpp"
 #include "Entity.hpp"
 #include "Components.hpp"
-#include "ProjectileComponent.hpp"
 #include <map>
 
 class KeyboardController : public Component
@@ -127,7 +126,7 @@ class KeyboardController : public Component
 			attackStart = SDL_GetTicks();
 			if(std::get<bool>(stats->stats["hasProjectiles"]) && (!projectileSent))
 			{
-				projectile = new Entity(StatisticsComponent(800, 100, 0.12, 100, 0),TransformComponent(projectilePosition.x, projectilePosition.y,64,64,0.75), ProjectileComponent(projectileDirection));
+				projectile = new Entity(StatisticsComponent(800, 100, 0.12, 100, 0),TransformComponent(projectilePosition.x, projectilePosition.y,64,64,0.75), ProjectileComponent(projectileDirection), ColliderComponent("projectile",0,0,64,64));
 				entitiesManager.addEntity(projectile);
 				projectileSent = true;
 			}

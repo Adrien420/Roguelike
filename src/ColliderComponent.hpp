@@ -15,10 +15,6 @@ public:
     TransformComponent* transform = nullptr;
     int offsetX, offsetY; // Décalage du collider par rapport à l'entité
     int offsetW, offsetH; // Taille du collider
-    
-#ifdef DEBUG
-    #define DEBUG_COLOR 255, 0, 0, 255 // Rouge
-#endif
 
     ColliderComponent(std::string t, int x, int y, int w, int h)
         : tag(std::move(t)), offsetX(x), offsetY(y),  offsetW(w), offsetH(h) {}    // std::move pour éviter des copies inutiles
@@ -48,8 +44,9 @@ public:
     void draw() override
     {
 #ifdef DEBUG
-        SDL_SetRenderDrawColor(GameManager::renderer, DEBUG_COLOR);
+        SDL_SetRenderDrawColor(GameManager::renderer, 255, 0, 0, 255);  // Mettre le collider en rouge
         SDL_RenderDrawRect(GameManager::renderer, &collider);
+        SDL_SetRenderDrawColor(GameManager::renderer, 255, 255, 255, 255);  // Réinitialiser la couleur du rendu au blanc 
 #endif
     }
 
