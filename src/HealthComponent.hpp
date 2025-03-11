@@ -60,7 +60,7 @@ class HealthComponent : public Component
             SDL_SetRenderDrawColor(GameManager::renderer, 255, 0, 0, 255); // Rouge
             SDL_RenderFillRect(GameManager::renderer, &healthFill);
             SDL_RenderCopyEx(GameManager::renderer, texture, NULL, &destRect, 0, NULL, SDL_FLIP_NONE);
-            SDL_SetRenderDrawColor(GameManager::renderer, 255, 255, 0, 255); // Réinitialser au blanc
+            SDL_SetRenderDrawColor(GameManager::renderer, 255, 255, 255, 255); // Réinitialser au blanc
         }
 
         void reset() override
