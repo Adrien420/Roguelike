@@ -14,6 +14,8 @@ class CardsManager
         std::map<std::string, std::vector<std::array<int, 2>>> selectedBonusIndexes;
         std::map<std::string, std::array<int, 2>> currentBonusIndexes;
         SDL_Texture *texture, *textureSelect;
+        std::map<std::string, std::vector<SDL_Texture*>> txtTextures;
+        std::map<std::string, std::vector<SDL_Rect>> txtDestRects;
         SDL_Rect destRect, destRectSelect, destRectSelect2;
         double angle, startAngle, angleSelect, angleSelect2;
         bool hasChosen = false, initilized = false, bonusInitialized = false;

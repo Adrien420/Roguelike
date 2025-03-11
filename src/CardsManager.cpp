@@ -10,9 +10,9 @@ std::map<std::string,std::vector<std::vector<Bonus>>> bonusPlayer;
 void CardsManager::initBonus()
 {
     // Bonus améliorant les statistiques
-    Bonus bonusSpeed = Bonus("Augmenter la vitesse de déplacement (+20%)", -1, []() { upgradeStat("speed", 0.2f)();} );
+    Bonus bonusSpeed = Bonus("Up mvt speed(+20%)", -1, []() { upgradeStat("speed", 0.2f)();} );
     bonusBase.emplace_back(bonusSpeed);
-    Bonus bonusAttackSpeed = Bonus("Augmenter la vitesse d'attaque (+20%)", -1, []() { upgradeStat("attackDuration", -0.2f)();} );
+    Bonus bonusAttackSpeed = Bonus("Up atk speed (+20%)", -1, []() { upgradeStat("attackDuration", -0.2f)();} );
     bonusBase.emplace_back(bonusAttackSpeed);
 
     // Bonus de projectiles
@@ -26,6 +26,7 @@ void CardsManager::initBonus()
 void CardsManager::initBonusPlayer(std::string playerId)
 {
     int bonusTypeIndex, bonusIndex;
+    srand(time(NULL));
     //Choix aléatoire de nbChoices bonus à proposer au player
     for(int i=0; i<nbChoices[playerId]; i++)
     {
@@ -34,6 +35,14 @@ void CardsManager::initBonusPlayer(std::string playerId)
         bonusIndex = rand() % bonusPlayer[playerId][bonusTypeIndex].size();
         std::array<int, 2> bonusIndexes = {bonusTypeIndex, bonusIndex};
         selectedBonusIndexes[playerId].emplace_back(bonusIndexes);
+
+        //Création de la texture pour le label
+        Bonus bonus = bonusPlayer[playerId][bonusIndexes[0]][bonusIndexes[1]];
+        std::string label = bonus.label;
+        SDL_Rect txtDestRect;
+        SDL_Texture* txtTexture = GameManager::assets->AddTxt(label, &txtDestRect, 0.4);
+        txtTextures[playerId].emplace_back(txtTexture);
+        txtDestRects[playerId].emplace_back(txtDestRect);
     }
     currentBonusIndexes[playerId] = selectedBonusIndexes[playerId][0];
 }
@@ -54,7 +63,7 @@ void CardsManager::init()
     texture = GameManager::assets->GetTexture("border");
     textureSelect = GameManager::assets->GetTexture("selection");
     SDL_QueryTexture(texture, NULL, NULL, &imgWidth, &imgHeight);
-    destRect.w = destRectSelect.w = destRectSelect2.w = imgWidth/2.5;
+    destRect.w = destRectSelect.w = destRectSelect2.w = imgWidth/1.9;
     destRect.h = destRectSelect.h = destRectSelect2.h = imgHeight/2.5;
 
     startX["player1"] = computeStartX("player1");
@@ -72,7 +81,7 @@ void CardsManager::init()
 
 int CardsManager::computeStartX(std::string playerId)
 {
-    margin[playerId] = 350 / nbChoices[playerId];
+    margin[playerId] = 300 / nbChoices[playerId];
     int totalWidth = nbChoices[playerId] * destRect.w + (nbChoices[playerId] - 1) * margin[playerId]; // Largeur totale (cartes + espaces)
     return (1280 - totalWidth) / 2;
 }
@@ -93,8 +102,14 @@ void CardsManager::displayPlayerCards(std::string playerId)
 		destRect.x = startX[playerId] + i * (destRect.w + margin[playerId]);
 		destRect.y = offsetY[playerId] + destRect.w/2 * sin(abs(angle * PI / 180));
 		if((i == 0 || i == nbChoices[playerId]-1) && nbChoices[playerId] > 3)
-			destRect.y += destRect.w * sin(abs(30/(nbChoices[playerId]-1) * PI / 180));
+			destRect.y += destRect.h * sin(abs(30/(nbChoices[playerId]-1) * PI / 180));
 		SDL_RenderCopyEx(GameManager::renderer, texture, NULL, &destRect, angle, NULL, SDL_FLIP_NONE);
+
+        //Label
+        SDL_Rect txtRect = txtDestRects[playerId][i];
+        txtRect.x = destRect.x + destRect.w/2 - txtRect.w/2;
+        txtRect.y = destRect.y + destRect.h/2 - txtRect.h/2;
+        SDL_RenderCopyEx(GameManager::renderer, txtTextures[playerId][i], NULL, &txtRect, angle, NULL, SDL_FLIP_NONE);
 	}
 }
 
