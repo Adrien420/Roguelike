@@ -39,6 +39,11 @@ public:
             collider.w = offsetW * transform->scale;
             collider.h = offsetH * transform->scale;
         }
+
+        // if (tag == "projectile")
+        // {
+        //     printf("%d %d %d %d\n", collider.x, collider.y, collider.w, collider.h);
+        // }
     }
 
     void draw() override

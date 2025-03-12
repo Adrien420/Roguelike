@@ -126,12 +126,10 @@ class EntitiesManager
 
         void update()
         {
-            int i = 0;
-            for (size_t j = 0; j < entities.size(); ++j) {
-                if (entities[j]) {  // Vérifie si l'entité est valide
-                    entities[j]->update();
-                }
+            for (auto& e : entities) {
+                e->update();
             }
+            refresh(); // Supprime les entités inactives après l'update
         }
 
         void draw()
@@ -144,15 +142,18 @@ class EntitiesManager
             for (auto& e : entities) e->reset();
         }
 
-        /*void refresh()
+        void refresh()
         {
-            entities.erase(std::remove_if(std::begin(entities), std::end(entities),
-                [](const std::unique_ptr<Entity> &mEntity)
-            {
-                return !mEntity->isActive();
-            }),
-                std::end(entities));
-        }*/
+            entities.erase(std::remove_if(entities.begin(), entities.end(),
+                [](Entity* e) { 
+                    if (!e->isActive()) {
+                        delete e; // Libère la mémoire
+                        return true; // Supprime l'élément du vecteur
+                    }
+                    return false;
+                }), 
+                entities.end());
+        }
 
         void addEntity(Entity* entity)
         {

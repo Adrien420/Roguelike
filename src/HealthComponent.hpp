@@ -40,7 +40,7 @@ class HealthComponent : public Component
             if(health > 0)
                 updateHealth(-0.01);
             else
-                GameManager::endOfRound();
+                // GameManager::endOfRound();
 
             healthPercent = health / fullHealth;
 
