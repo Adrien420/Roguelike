@@ -25,5 +25,5 @@ class AssetManager
         void AddFont(std::string id, std::string path, int fontSize);
         TTF_Font* GetFont(std::string id);
 
-        SDL_Texture* AddTxt(std::string txt, SDL_Rect* destRect, float scale);
+        SDL_Texture* AddTxt(std::string txt, TTF_Font* font, SDL_Color color, SDL_Rect* destRect, float scale);
 };

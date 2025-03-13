@@ -127,6 +127,7 @@ class KeyboardController : public Component
 			if(std::get<bool>(stats->stats["hasProjectiles"]) && (!projectileSent))
 			{
 				projectile = new Entity(StatisticsComponent(800, 100, 0.12, 100, 0),TransformComponent(projectilePosition.x, projectilePosition.y,64,64,0.75), ProjectileComponent(projectileDirection), ColliderComponent("projectile",0,0,64,64));
+				projectile->label = "projectile";
 				entitiesManager.addEntity(projectile);
 				projectileSent = true;
 			}
@@ -237,5 +238,8 @@ class KeyboardController : public Component
 			transform->direction.x = 0;
 			transform->direction.y = 0;
 			attackDuration = sprite->animations["Attack Down"]["frameTime"] * sprite->animations["Attack Down"]["frames"];
+			for (auto& pair : isBeingPressed) {
+				pair.second = false;
+			}
 		}
 };

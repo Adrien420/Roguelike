@@ -55,7 +55,7 @@ class Entity
         ComponentBitSet componentBitset;
 
     public:
-        // 🌟 Constructeur simplifié : ajoute plusieurs composants directement
+        std::string label = "";
         template <typename... TArgs>
         Entity(TArgs&&... args) {
             (addComponent<TArgs>(std::forward<TArgs>(args)), ...);
@@ -65,7 +65,6 @@ class Entity
             components.clear();
         }
 
-        // 🌟 Version originale de `addComponent`
         template <typename T, typename... TArgs>
         T& addComponent(TArgs&&... mArgs) {
             // Création dynamique du composant avec les arguments passés
@@ -114,9 +113,9 @@ class Entity
 
 class EntitiesManager
 {
-    private:
-        std::vector<Entity*> entities;
     public:
+        std::vector<Entity*> entities;
+
         ~EntitiesManager() {
             for (Entity* e : entities) {
                 delete e;  // Libère la mémoire allouée dynamiquement

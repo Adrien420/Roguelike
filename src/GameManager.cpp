@@ -4,6 +4,7 @@
 SDL_Renderer* GameManager::renderer = nullptr;
 SDL_Event GameManager::event;
 bool GameManager::isRunning = false;
+bool GameManager::inHomeMenu = true;
 bool GameManager::isPausing = false;
 bool GameManager::chosingCards = false;
 AssetManager* GameManager::assets = new AssetManager();
@@ -45,11 +46,17 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 		isRunning = false;
 	}
 
+	// Home Menu
+	destRectButtonPlayer = {1280/2-buttonPlayerWidth/2, 720/2-buttonPlayerHeight/2, buttonPlayerWidth, buttonPlayerHeight};
+
+	assets->AddTexture("menu", "../assets/menu.png");
+	assets->AddTexture("button", "../assets/button.png");
 	assets->AddTexture("orc", "../assets/orc.png");
 	assets->AddTexture("health", "../assets/health.png");
 	assets->AddTexture("projectile", "../assets/projectile.png");
 	assets->AddTexture("border", "../assets/card_border.jpeg");
 	assets->AddTexture("selection", "../assets/selection.jpeg");
+
 	assets->AddFont("mainFont","../assets/04B_30__.TTF", 24);
 	assets->AddFont("cardsFont","../assets/SF.ttf", 20);
 
@@ -68,7 +75,6 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 GameManager::~GameManager()
 {}
 
-
 void GameManager::handleEvents()
 {
 	
@@ -84,6 +90,16 @@ void GameManager::handleEvents()
 				break;
 			default:
 				break;
+		}
+		break;
+	case SDL_MOUSEBUTTONDOWN:
+		int mouseX, mouseY;
+        SDL_GetMouseState(&mouseX, &mouseY);
+		if(inHomeMenu)
+		{
+			if(mouseX >= destRectButtonPlayer.x && mouseX <= destRectButtonPlayer.x + destRectButtonPlayer.w
+				&& mouseY >= destRectButtonPlayer.y && mouseY <= destRectButtonPlayer.y + destRectButtonPlayer.h)
+				initGame();
 		}
 		break;
 	case SDL_QUIT :
@@ -120,6 +136,17 @@ void GameManager::render()
 
 void GameManager::reset()
 {
+	entitiesManager.entities.erase(
+		std::remove_if(entitiesManager.entities.begin(), entitiesManager.entities.end(),
+			[](Entity* e) {
+				if (e->label == "projectile") {
+					delete e; // Libération mémoire
+					return true; // Supprime de la liste
+				}
+				return false;
+			}),
+		entitiesManager.entities.end()
+	);
 	entitiesManager.reset();
 }
 
@@ -139,6 +166,32 @@ void GameManager::clean()
     SDL_Quit();
 }
 
+void GameManager::homeMenu()
+{
+	SDL_RenderClear(renderer);
+
+	SDL_Texture* menu = GameManager::assets->GetTexture("menu");
+    SDL_Rect destRectMenu = {0, 0, 1280, 720};
+	SDL_RenderCopyEx(GameManager::renderer, menu, NULL, &destRectMenu, 0, NULL, SDL_FLIP_NONE);
+
+	SDL_Texture* buttonPlayer = GameManager::assets->GetTexture("button");
+	SDL_RenderCopyEx(GameManager::renderer, buttonPlayer, NULL, &destRectButtonPlayer, 0, NULL, SDL_FLIP_NONE);
+	SDL_Rect txtDestRectPvp;
+	TTF_Font* font = GameManager::assets->GetFont("mainFont");
+	SDL_Color color = {0, 0, 0, 255};
+	SDL_Texture* txtTexture = GameManager::assets->AddTxt("PvP", font, color, &txtDestRectPvp, 1);
+	txtDestRectPvp.x = 1280/2 - txtDestRectPvp.w/2;
+	txtDestRectPvp.y = 720/2 - txtDestRectPvp.h/2;
+	SDL_RenderCopyEx(GameManager::renderer, txtTexture, NULL, &txtDestRectPvp, 0, NULL, SDL_FLIP_NONE);
+
+	SDL_RenderPresent(renderer);
+}
+
+void GameManager::initGame()
+{
+	inHomeMenu = false;
+}
+
 void GameManager::pause(bool isPausing_)
 {
 	isPausing = isPausing_;
@@ -151,5 +204,6 @@ void GameManager::endOfRound()
 
 void GameManager::startNewRound()
 {
+	GameManager::reset();
 	chosingCards = false;
 }

@@ -56,7 +56,9 @@ void CardsManager::initBonusPlayer(std::string playerId)
         Bonus bonus = bonusPlayer[playerId][bonusIndexes[0]][bonusIndexes[1]];
         std::string label = bonus.label;
         SDL_Rect txtDestRect;
-        SDL_Texture* txtTexture = GameManager::assets->AddTxt(label, &txtDestRect, 1);
+        TTF_Font* font = GameManager::assets->GetFont("cardsFont");
+        SDL_Color color = {255, 255, 255, 255};
+        SDL_Texture* txtTexture = GameManager::assets->AddTxt(label, font, color, &txtDestRect, 1);
         txtTextures[playerId].emplace_back(txtTexture);
         txtDestRects[playerId].emplace_back(txtDestRect);
     }

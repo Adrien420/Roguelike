@@ -17,9 +17,10 @@ class CardsManager;
 class GameManager
 {
     private:
-        int cnt = 0;
+        int buttonPlayerWidth = 320, buttonPlayerHeight = 89;
 	    SDL_Window *window;
         Map map;
+        SDL_Rect destRectButtonPlayer;
 
     public:
         GameManager(const char* title, int width, int height, bool fullscreen);
@@ -27,14 +28,16 @@ class GameManager
         void handleEvents();
         void update();
         void render();
-        void reset();
+        static void reset();
         void clean();
 
+        void homeMenu();
+        void initGame();
         void pause(bool isPausing_);
 
         static SDL_Renderer *renderer;
         static SDL_Event event;
-        static bool isRunning, isPausing, chosingCards;
+        static bool isRunning, inHomeMenu, isPausing, chosingCards;
         static AssetManager* assets;
         static EntitiesManager entitiesManager;
         static CardsManager cardsManager;
