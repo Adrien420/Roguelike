@@ -7,6 +7,7 @@ bool GameManager::isRunning = false;
 bool GameManager::inHomeMenu = true;
 bool GameManager::isPausing = false;
 bool GameManager::chosingCards = false;
+bool GameManager::inDeathAnimation = false;
 AssetManager* GameManager::assets = new AssetManager();
 EntitiesManager GameManager::entitiesManager;
 CardsManager GameManager::cardsManager;
@@ -138,6 +139,7 @@ void GameManager::render()
 
 void GameManager::reset()
 {
+	GameManager::inDeathAnimation = false;
 	entitiesManager.entities.erase(
 		std::remove_if(entitiesManager.entities.begin(), entitiesManager.entities.end(),
 			[](Entity* e) {
@@ -207,6 +209,14 @@ void GameManager::endOfRound(std::string playerId)
 	if(GameManager::nbWinsPlayer[playerId] >= GameManager::nbwinRounds)
 	{
 		std::cout << playerId << " a remporté la partie !" << std::endl;
+		// Réinitialisation complète du jeu
+		GameManager::nbWinsPlayer["player1"] = 0;
+		GameManager::nbWinsPlayer["player2"] = 0;
+		GameManager::reset();
+		delete player1;
+		delete player2;
+		player1 = new Entity(StatisticsComponent(500, 100, 0.07, 150, 5), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 17, 0, 30, 50), KeyboardController("player1"), HealthComponent("player1"));
+		player2 = new Entity(StatisticsComponent(500, 100, 0.07, 100, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent("player2"));
 		inHomeMenu = true;
 		return;
 	}

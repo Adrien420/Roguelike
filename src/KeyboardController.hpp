@@ -135,6 +135,14 @@ class KeyboardController : public Component
 
 		void update() override
 		{
+			if(GameManager::inDeathAnimation)
+			{
+				for (auto& pair : isBeingPressed) {
+					pair.second = false;
+				}
+				return;
+			}
+			
 			if(isAttacking && (SDL_GetTicks() - attackStart > attackDuration))
 			{
 				isAttacking = false;

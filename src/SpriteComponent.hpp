@@ -23,9 +23,9 @@ private:
 	std::string currentAnimation = "";
 
 public:
-
 	int animIndex = 0;
 	std::map<const std::string, std::map<const char*, int>> animations;
+	int deathAnimDuration = 2000;
 
 	SpriteComponent() = default;
 
@@ -44,6 +44,11 @@ public:
 
 	void setAnimation(std::string type, int index, int nbFrames, float animDuration)
 	{
+		if(type == "Death")
+		{
+			animations[type] = {{"index",index}, {"frames",nbFrames}, {"frameTime", animDuration/nbFrames}};
+			return;
+		}
 		animations[type + " Down"] = {{"index",index}, {"frames",nbFrames}, {"frameTime", animDuration/nbFrames}};
 		animations[type + " Up"] = {{"index",index+1}, {"frames",nbFrames}, {"frameTime", animDuration/nbFrames}};
 		animations[type + " Left"] = {{"index",index+2}, {"frames",nbFrames}, {"frameTime", animDuration/nbFrames}};
@@ -55,6 +60,7 @@ public:
 		setAnimation("Idle", 0, 4, 400);
 		setAnimation("Walk", 4, 8, 800);
 		setAnimation("Attack", 8, 8, std::get<float>(stats->stats["attackDuration"]));
+		setAnimation("Death", 12, 8, deathAnimDuration);
 
 		Play("Idle Down");
 	}
@@ -76,6 +82,9 @@ public:
 
 	void update() override
 	{
+		if(GameManager::inDeathAnimation && animIndex != 12)
+			return;
+		
 		if (animated)
 		{
 			// Grâce à animStartTime, on s'assure que la nouvelle animation seléctionnée démarre bien à la première frame
