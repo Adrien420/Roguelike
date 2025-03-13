@@ -125,8 +125,11 @@ class EntitiesManager
 
         void update()
         {
-            for (auto& e : entities) {
-                e->update();
+            int i = 0;
+            for (size_t j = 0; j < entities.size(); ++j) {
+                if (entities[j]) {  // Vérifie si l'entité est valide
+                    entities[j]->update();
+                }
             }
             refresh(); // Supprime les entités inactives après l'update
         }

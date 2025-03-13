@@ -11,6 +11,7 @@ class HealthComponent : public Component
         TransformComponent * transform;
         StatisticsComponent *stats;
         SDL_Texture *texture = GameManager::assets->GetTexture("health");
+        std::string playerId;
         SDL_Rect healthFill, destRect;
         int imgWidth, imgHeight;
         float fullHealth, healthPercent;
@@ -18,7 +19,7 @@ class HealthComponent : public Component
     public:
         float health;
 
-        HealthComponent() {}
+        HealthComponent(std::string playerId_) : playerId(playerId_) {}
 
         void init() override
         {
@@ -40,7 +41,12 @@ class HealthComponent : public Component
             if(health > 0)
                 updateHealth(-0.01);
             else
-                // GameManager::endOfRound();
+            {
+                if(playerId == "player1")
+                    GameManager::endOfRound("player2");
+                else
+                    GameManager::endOfRound("player1");
+            }
 
             healthPercent = health / fullHealth;
 

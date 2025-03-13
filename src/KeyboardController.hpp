@@ -140,10 +140,10 @@ class KeyboardController : public Component
 				isAttacking = false;
 				projectileSent = false;
 
-				if (projectile) {
+				/*if (projectile) {
 					projectile->destroy(); // Marque le projectile pour suppression
 					projectile = nullptr;  // Évite d'accéder à un pointeur invalide
-				}
+				}*/
 				
 				int directionIndex = sprite->animIndex%4;
 				switch(directionIndex)

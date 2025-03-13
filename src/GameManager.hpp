@@ -43,8 +43,10 @@ class GameManager
         static CardsManager cardsManager;
         static Entity* player1;
         static Entity* player2;
+        static int nbwinRounds;
+        static std::map<std::string, int> nbWinsPlayer;
 
-        static void endOfRound();
+        static void endOfRound(std::string playerId);
         static void startNewRound();
 
         ~GameManager();

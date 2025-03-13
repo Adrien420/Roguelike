@@ -12,6 +12,8 @@ EntitiesManager GameManager::entitiesManager;
 CardsManager GameManager::cardsManager;
 Entity *GameManager::player1, *GameManager::player2; 
 Entity *UI;
+int GameManager::nbwinRounds = 2;
+std::map<std::string, int> GameManager::nbWinsPlayer = {{"player1", 0}, {"player2", 0}};
 
 GameManager::GameManager(const char* title, int width, int height, bool fullscreen)
 {
@@ -61,8 +63,8 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	assets->AddFont("cardsFont","../assets/SF.ttf", 20);
 
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
-	player1 = new Entity(StatisticsComponent(500, 100, 0.07, 100, 5), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 17, 0, 30, 50), KeyboardController("player1"), HealthComponent());
-	player2 = new Entity(StatisticsComponent(500, 100, 0.07, 100, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent());
+	player1 = new Entity(StatisticsComponent(500, 100, 0.07, 150, 5), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 17, 0, 30, 50), KeyboardController("player1"), HealthComponent("player1"));
+	player2 = new Entity(StatisticsComponent(500, 100, 0.07, 100, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent("player2"));
 	entitiesManager.addEntity(player1);
 	entitiesManager.addEntity(player2);
 
@@ -197,8 +199,17 @@ void GameManager::pause(bool isPausing_)
 	isPausing = isPausing_;
 }
 
-void GameManager::endOfRound()
+void GameManager::endOfRound(std::string playerId)
 {
+	GameManager::nbWinsPlayer[playerId]++;
+	std::cout << playerId << " a remporté la manche : " 
+	<< GameManager::nbWinsPlayer[playerId] << " / " << GameManager::nbwinRounds << " !" << std::endl;
+	if(GameManager::nbWinsPlayer[playerId] >= GameManager::nbwinRounds)
+	{
+		std::cout << playerId << " a remporté la partie !" << std::endl;
+		inHomeMenu = true;
+		return;
+	}
 	chosingCards = true;
 }
 
