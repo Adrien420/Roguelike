@@ -8,6 +8,7 @@ bool GameManager::inHomeMenu = true;
 bool GameManager::isPausing = false;
 bool GameManager::chosingCards = false;
 bool GameManager::inDeathAnimation = false;
+bool GameManager::isVsIA = false;
 AssetManager* GameManager::assets = new AssetManager();
 EntitiesManager GameManager::entitiesManager;
 CardsManager GameManager::cardsManager;
@@ -50,7 +51,8 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	}
 
 	// Home Menu
-	destRectButtonPlayer = {1280/2-buttonPlayerWidth/2, 720/2-buttonPlayerHeight/2, buttonPlayerWidth, buttonPlayerHeight};
+	destRectButtonPlayer = {1280/2-buttonPlayerWidth/2, 720/3-buttonPlayerHeight/2, buttonPlayerWidth, buttonPlayerHeight};
+	destRectButtonIA = {1280/2-buttonPlayerWidth/2, 2*720/3-buttonPlayerHeight/2, buttonPlayerWidth, buttonPlayerHeight};
 
 	assets->AddTexture("menu", "../assets/menu.png");
 	assets->AddTexture("button", "../assets/button.png");
@@ -63,9 +65,7 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	assets->AddFont("mainFont","../assets/04B_30__.TTF", 24);
 	assets->AddFont("cardsFont","../assets/SF.ttf", 20);
 
-	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
-	player1 = new Entity(StatisticsComponent(500, 100, 0.07, 150, 5), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 17, 0, 30, 50), KeyboardController("player1"), HealthComponent("player1"));
-	player2 = new Entity(StatisticsComponent(500, 100, 0.07, 100, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent("player2"));
+	createPlayers();
 	entitiesManager.addEntity(player1);
 	entitiesManager.addEntity(player2);
 
@@ -102,7 +102,17 @@ void GameManager::handleEvents()
 		{
 			if(mouseX >= destRectButtonPlayer.x && mouseX <= destRectButtonPlayer.x + destRectButtonPlayer.w
 				&& mouseY >= destRectButtonPlayer.y && mouseY <= destRectButtonPlayer.y + destRectButtonPlayer.h)
+			{
+				isVsIA = false;
 				initGame();
+			}
+			if(mouseX >= destRectButtonIA.x && mouseX <= destRectButtonIA.x + destRectButtonIA.w
+				&& mouseY >= destRectButtonIA.y && mouseY <= destRectButtonIA.y + destRectButtonIA.h)
+			{
+				isVsIA = true;
+				initGame();
+			}
+				
 		}
 		break;
 	case SDL_QUIT :
@@ -170,6 +180,16 @@ void GameManager::clean()
     SDL_Quit();
 }
 
+void GameManager::createPlayers()
+{
+	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
+	player1 = new Entity(StatisticsComponent(500, 100, 0.07, 150, 5), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 17, 0, 30, 50), KeyboardController("player1"), HealthComponent("player1"));
+	if(!isVsIA)
+		player2 = new Entity(StatisticsComponent(500, 100, 0.07, 100, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent("player2"));
+	else
+		player2 = new Entity(StatisticsComponent(500, 100, 0.07, 100, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), IAControllerComponent("player2", player1), HealthComponent("player2"));
+}
+
 void GameManager::homeMenu()
 {
 	SDL_RenderClear(renderer);
@@ -180,19 +200,28 @@ void GameManager::homeMenu()
 
 	SDL_Texture* buttonPlayer = GameManager::assets->GetTexture("button");
 	SDL_RenderCopyEx(GameManager::renderer, buttonPlayer, NULL, &destRectButtonPlayer, 0, NULL, SDL_FLIP_NONE);
-	SDL_Rect txtDestRectPvp;
+	SDL_RenderCopyEx(GameManager::renderer, buttonPlayer, NULL, &destRectButtonIA, 0, NULL, SDL_FLIP_NONE);
+
+	SDL_Rect txtDestRectPlayer, txtDestRectIA;
 	TTF_Font* font = GameManager::assets->GetFont("mainFont");
 	SDL_Color color = {0, 0, 0, 255};
-	SDL_Texture* txtTexture = GameManager::assets->AddTxt("PvP", font, color, &txtDestRectPvp, 1);
-	txtDestRectPvp.x = 1280/2 - txtDestRectPvp.w/2;
-	txtDestRectPvp.y = 720/2 - txtDestRectPvp.h/2;
-	SDL_RenderCopyEx(GameManager::renderer, txtTexture, NULL, &txtDestRectPvp, 0, NULL, SDL_FLIP_NONE);
+	SDL_Texture* txtTexturePLayer = GameManager::assets->AddTxt("Player vs Player", font, color, &txtDestRectPlayer, 1);
+	txtDestRectPlayer.x = 1280/2 - txtDestRectPlayer.w/2;
+	txtDestRectPlayer.y = 720/3 - txtDestRectPlayer.h/2;
+	SDL_RenderCopyEx(GameManager::renderer, txtTexturePLayer, NULL, &txtDestRectPlayer, 0, NULL, SDL_FLIP_NONE);
+	SDL_Texture* txtTextureIA = GameManager::assets->AddTxt("Player vs IA", font, color, &txtDestRectIA, 1);
+	txtDestRectIA.x = 1280/2 - txtDestRectIA.w/2;
+	txtDestRectIA.y = 2*720/3 - txtDestRectIA.h/2;
+	SDL_RenderCopyEx(GameManager::renderer, txtTextureIA, NULL, &txtDestRectIA, 0, NULL, SDL_FLIP_NONE);
 
 	SDL_RenderPresent(renderer);
 }
 
 void GameManager::initGame()
 {
+	delete player1;
+	delete player2;
+	createPlayers();
 	inHomeMenu = false;
 }
 
@@ -213,10 +242,6 @@ void GameManager::endOfRound(std::string playerId)
 		GameManager::nbWinsPlayer["player1"] = 0;
 		GameManager::nbWinsPlayer["player2"] = 0;
 		GameManager::reset();
-		delete player1;
-		delete player2;
-		player1 = new Entity(StatisticsComponent(500, 100, 0.07, 150, 5), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 17, 0, 30, 50), KeyboardController("player1"), HealthComponent("player1"));
-		player2 = new Entity(StatisticsComponent(500, 100, 0.07, 100, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent("player2"));
 		inHomeMenu = true;
 		return;
 	}

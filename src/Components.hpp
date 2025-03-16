@@ -10,6 +10,7 @@
 #include "ProjectileComponent.hpp"
 #include "UILabelComponent.hpp"
 #include "KeyboardController.hpp"
+#include "IAControllerComponent.hpp"
 // #include "TileComponent.h"
 
 #endif

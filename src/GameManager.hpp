@@ -17,10 +17,10 @@ class CardsManager;
 class GameManager
 {
     private:
-        int buttonPlayerWidth = 320, buttonPlayerHeight = 89;
+        int buttonPlayerWidth = 400, buttonPlayerHeight = 111; //Ratio de 3.6
 	    SDL_Window *window;
         Map map;
-        SDL_Rect destRectButtonPlayer;
+        SDL_Rect destRectButtonPlayer, destRectButtonIA;
 
     public:
         GameManager(const char* title, int width, int height, bool fullscreen);
@@ -31,13 +31,14 @@ class GameManager
         static void reset();
         void clean();
 
+        static void createPlayers();
         void homeMenu();
         void initGame();
         void pause(bool isPausing_);
 
         static SDL_Renderer *renderer;
         static SDL_Event event;
-        static bool isRunning, inHomeMenu, isPausing, chosingCards, inDeathAnimation;
+        static bool isRunning, inHomeMenu, isPausing, chosingCards, inDeathAnimation, isVsIA;
         static AssetManager* assets;
         static EntitiesManager entitiesManager;
         static CardsManager cardsManager;

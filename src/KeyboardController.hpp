@@ -7,7 +7,7 @@
 
 class KeyboardController : public Component
 {
-	private:
+	protected:
 		EntitiesManager& entitiesManager = GameManager::entitiesManager;
 		StatisticsComponent *stats;
 		std::string playerId;
@@ -133,14 +133,14 @@ class KeyboardController : public Component
 			}
 		}
 
-		void update() override
+		bool checkPlayerState()
 		{
 			if(GameManager::inDeathAnimation)
 			{
 				for (auto& pair : isBeingPressed) {
 					pair.second = false;
 				}
-				return;
+				return true;
 			}
 			
 			if(isAttacking && (SDL_GetTicks() - attackStart > attackDuration))
@@ -172,6 +172,15 @@ class KeyboardController : public Component
 						break;
 				}
 			}
+			return false;
+		}
+
+		void update() override
+		{
+			bool earlyReturn = checkPlayerState();
+			if(earlyReturn)
+				return;
+
 			if (GameManager::event.type == SDL_KEYDOWN)
 			{
 				SDL_Keycode key = GameManager::event.key.keysym.sym;
