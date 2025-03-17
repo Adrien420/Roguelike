@@ -7,9 +7,15 @@
 
 std::vector<Bonus> bonusBase;
 std::map<std::string,std::vector<std::vector<Bonus>>> bonusPlayer;
+bool CardsManager::bonusInitialized = false;
 
 void CardsManager::initBonus()
 {
+    // Suppression des anciens bonus initialisés et modifiés précédemment
+    bonusBase.clear();
+    bonusPlayer["player1"].clear();
+    bonusPlayer["player2"].clear();
+    
     // Bonus améliorant les statistiques
     Bonus bonusSpeed = Bonus("Up MVT speed (+20%)", -1, []() { upgradeStatPercent("speed", 0.2f)();} );
     bonusBase.emplace_back(bonusSpeed);
@@ -32,6 +38,11 @@ void CardsManager::initBonus()
 
 void CardsManager::initBonusPlayer(std::string playerId)
 {
+    // Suppression des anciens bonus choisis (+ labels)
+    selectedBonusIndexes[playerId].clear();
+    txtTextures[playerId].clear();
+    txtDestRects[playerId].clear();
+
     int bonusTypeIndex, bonusIndex;
     std::set<std::array<int, 2>> bonusesChosen;
     //Choix aléatoire de nbChoices bonus à proposer au player
@@ -41,14 +52,19 @@ void CardsManager::initBonusPlayer(std::string playerId)
         bonusTypeIndex = rand() % bonusPlayer[playerId].size();
         bonusIndex = rand() % bonusPlayer[playerId][bonusTypeIndex].size();
         std::array<int, 2> bonusIndexes = {bonusTypeIndex, bonusIndex};
+
         //Vérification que le bonus n'a pas déjà été proposé
         std::set<std::array<int, 2>>::iterator it = bonusesChosen.find(bonusIndexes);
-        while(it != bonusesChosen.end())
+        int limitDuration = 100; //Evite une boucle infinie
+        Uint32 startTimer = SDL_GetTicks();
+        while(it != bonusesChosen.end() && SDL_GetTicks()-startTimer < limitDuration)
         {
             bonusIndex = rand() % bonusPlayer[playerId][bonusTypeIndex].size();
             bonusIndexes = {bonusTypeIndex, bonusIndex};
             it = bonusesChosen.find(bonusIndexes);
         }
+
+        // Mémorisation du bonus choisi
         selectedBonusIndexes[playerId].emplace_back(bonusIndexes);
         bonusesChosen.insert(bonusIndexes);
 
@@ -229,12 +245,14 @@ void CardsManager::select(std::string playerId)
 {
     if(hasChosen[playerId])
         return;
-    Bonus bonus = bonusPlayer[playerId][currentBonusIndexes[playerId][0]][currentBonusIndexes[playerId][1]];
-    std::cout << bonus.label << std::endl;
+    std::vector<Bonus>& bonusVect = bonusPlayer[playerId][currentBonusIndexes[playerId][0]];
+    Bonus& bonus = bonusVect[currentBonusIndexes[playerId][1]];
     if(playerId == "player1")
         bonus.player = GameManager::player1;
     else
         bonus.player = GameManager::player2;
     bonus.applyBonus();
+    if(bonus.nbUses == 0) // Suppression du bonus si épuisé
+        bonusVect.erase(bonusVect.begin() + currentBonusIndexes[playerId][1]);
     hasChosen[playerId] = true;
 }

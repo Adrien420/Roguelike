@@ -159,7 +159,6 @@ class EntitiesManager
 
         void addEntity(Entity* entity)
         {
-            // std::move() transfère la propriété du pointeur unique dans le vecteur
             entities.emplace_back(entity);
         }
 };

@@ -14,7 +14,7 @@ EntitiesManager GameManager::entitiesManager;
 CardsManager GameManager::cardsManager;
 Entity *GameManager::player1, *GameManager::player2; 
 Entity *UI;
-int GameManager::nbwinRounds = 2;
+int GameManager::nbwinRounds = 4;
 std::map<std::string, int> GameManager::nbWinsPlayer = {{"player1", 0}, {"player2", 0}};
 
 GameManager::GameManager(const char* title, int width, int height, bool fullscreen)
@@ -64,10 +64,6 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 
 	assets->AddFont("mainFont","../assets/04B_30__.TTF", 24);
 	assets->AddFont("cardsFont","../assets/SF.ttf", 20);
-
-	createPlayers();
-	entitiesManager.addEntity(player1);
-	entitiesManager.addEntity(player2);
 
 	// Ajout d'un texte au jeu
 	UI = new Entity(UILabelComponent("mainFont", "Hello", {255, 0, 0, 255}));
@@ -181,13 +177,28 @@ void GameManager::clean()
 }
 
 void GameManager::createPlayers()
-{
+{		
+	entitiesManager.entities.erase(
+		std::remove_if(entitiesManager.entities.begin(), entitiesManager.entities.end(),
+			[](Entity* e) {
+				if (e->label == "player") {
+					delete e; // Libération mémoire
+					return true; // Supprime de la liste
+				}
+				return false;
+			}),
+		entitiesManager.entities.end()
+	);
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
-	player1 = new Entity(StatisticsComponent(500, 100, 0.07, 150, 5), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 17, 0, 30, 50), KeyboardController("player1"), HealthComponent("player1"));
+	player1 = new Entity(StatisticsComponent(500, 100, 0.07, 150, 3), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 17, 0, 30, 50), KeyboardController("player1"), HealthComponent("player1"));
 	if(!isVsIA)
 		player2 = new Entity(StatisticsComponent(500, 100, 0.07, 100, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent("player2"));
 	else
 		player2 = new Entity(StatisticsComponent(500, 100, 0.07, 100, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), IAControllerComponent("player2", player1), HealthComponent("player2"));
+	player1->label = "player";
+	player2->label = "player";
+	entitiesManager.addEntity(player1);
+	entitiesManager.addEntity(player2);
 }
 
 void GameManager::homeMenu()
@@ -219,8 +230,6 @@ void GameManager::homeMenu()
 
 void GameManager::initGame()
 {
-	delete player1;
-	delete player2;
 	createPlayers();
 	inHomeMenu = false;
 }
@@ -239,6 +248,7 @@ void GameManager::endOfRound(std::string playerId)
 	{
 		std::cout << playerId << " a remporté la partie !" << std::endl;
 		// Réinitialisation complète du jeu
+		cardsManager.bonusInitialized = false;
 		GameManager::nbWinsPlayer["player1"] = 0;
 		GameManager::nbWinsPlayer["player2"] = 0;
 		GameManager::reset();
