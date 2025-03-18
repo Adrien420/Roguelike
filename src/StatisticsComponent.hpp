@@ -26,8 +26,8 @@ class StatisticsComponent : public Component
         {
             stats["attackDuration"] = attackDuration_;
             stats["damages"] = damages_;
-            stats["health"] = health_;
             stats["speed"] = speed_;
+            stats["health"] = health_;
             stats["nbCardsChoice"] = nbCardsChoice_;
         }
 

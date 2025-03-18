@@ -118,15 +118,45 @@ void GameManager::update()
 	entitiesManager.refresh();
 	entitiesManager.update();
 
-	// Test de collision entre player1 et player2
-	if (player1->getComponent<ColliderComponent>().checkCollision(player2->getComponent<ColliderComponent>()))
-	{
-		UI->getComponent<UILabelComponent>().setText("Collision");
+	bool isCollision = false;
+
+	// Récupération des composants collider des joueurs
+	auto& player1Collider = player1->getComponent<ColliderComponent>();
+	auto& player2Collider = player2->getComponent<ColliderComponent>();
+
+	// Vérifier la collision entre les deux joueurs
+	if (player1Collider.checkCollision(player2Collider)) {
+		isCollision = true;
 	}
-	else
-	{
+
+	// Parcourir toutes les entités pour vérifier les collisions avec "sword" et "projectile"
+	for (Entity* entity : entitiesManager.entities) {
+		if (entity->hasComponent<ColliderComponent>()) {
+			auto& entityCollider = entity->getComponent<ColliderComponent>();
+
+			// Vérifier les collisions avec player1
+			if (entityCollider.tag == "sword" || entityCollider.tag == "projectile"){
+				if (entityCollider.id != "player1" && entityCollider.checkCollision(player1Collider)) {
+					isCollision = true;
+					float damage = std::get<float>(player2->getComponent<StatisticsComponent>().stats["damages"]);
+					player1->getComponent<HealthComponent>().updateHealth(-damage);
+				}
+				if (entityCollider.id != "player2" && entityCollider.checkCollision(player2Collider)) {
+					isCollision = true;
+					float damage = std::get<float>(player1->getComponent<StatisticsComponent>().stats["damages"]);
+					player2->getComponent<HealthComponent>().updateHealth(-damage);
+				}
+			}
+		}
+	}
+
+	// Mise à jour de l'UI
+	if (isCollision) {
+		UI->getComponent<UILabelComponent>().setText("Collision");
+	} else {
 		UI->getComponent<UILabelComponent>().setText("Not Collision");
 	}
+
 
 	// Récupérer la taille de la fenêtre
     int windowWidth, windowHeight;
@@ -135,7 +165,7 @@ void GameManager::update()
 	// Supprime les projectiles hors écran
     for (Entity* e : entitiesManager.entities) 
     {
-        if (e->label == "projectile") 
+        if (e->label == "projectile")
         {
             auto& transform = e->getComponent<TransformComponent>();
 
@@ -154,7 +184,7 @@ void GameManager::update()
 void GameManager::render() {
     SDL_RenderClear(renderer);
     
-    // 🔹 Affichage de la map
+    // Affichage de la map
     map.DrawMap(renderer);
     
     entitiesManager.draw();
@@ -203,11 +233,11 @@ void GameManager::createPlayers()
 	entitiesManager.refresh();
 	
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
-	player1 = new Entity(StatisticsComponent(500, 100, 0.07, 150, 3), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 17, 0, 30, 50), KeyboardController("player1"), HealthComponent("player1"));
+	player1 = new Entity(StatisticsComponent(500, 100, 0.07, 500, 3), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 0, 0, 64, 64), KeyboardController("player1"), HealthComponent("player1"));
 	if(!isVsIA)
-		player2 = new Entity(StatisticsComponent(500, 100, 0.07, 100, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent("player2"));
+		player2 = new Entity(StatisticsComponent(500, 100, 0.07, 500, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent("player2"));
 	else
-		player2 = new Entity(StatisticsComponent(500, 100, 0.07, 100, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), IAControllerComponent("player2", player1), HealthComponent("player2"));
+		player2 = new Entity(StatisticsComponent(500, 100, 0.07, 500, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), IAControllerComponent("player2", player1), HealthComponent("player2"));
 	player1->label = "player";
 	player2->label = "player";
 	entitiesManager.addEntity(player1);

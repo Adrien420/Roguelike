@@ -11,6 +11,7 @@ class ColliderComponent : public Component
 public:
     SDL_Rect collider{};
     std::string tag;
+    std::string id;
     TransformComponent* transform = nullptr;
     int offsetX, offsetY; // Décalage du collider par rapport à l'entité
     int offsetW, offsetH; // Taille du collider
@@ -39,10 +40,10 @@ public:
             collider.h = offsetH * transform->scale;
         }
 
-        // if (tag == "projectile")
-        // {
-        //     printf("%d %d %d %d\n", collider.x, collider.y, collider.w, collider.h);
-        // }
+        if (tag == "None")
+        {
+            printf("%d %d %d %d\n", collider.x, collider.y, collider.w, collider.h);
+        }
     }
 
     void draw() override
