@@ -17,7 +17,7 @@ class CardsManager
         SDL_Rect destRect, destRectSelect, destRectSelect2;
         double angle, startAngle, angleSelect, angleSelect2;
         bool hasChosen = false, initilized = false, bonusInitialized = false;
-        std::map<const std::string, std::map<const std::string, const SDL_KeyCode>> playerKeys = {{"player1", {{"Left",SDLK_q}, {"Right",SDLK_d}, {"Select",SDLK_SPACE}}},
+        std::map<const std::string, std::map<const std::string, const SDL_Keycode>> playerKeys = {{"player1", {{"Left",SDLK_q}, {"Right",SDLK_d}, {"Select",SDLK_SPACE}}},
 		{"player2", {{"Left",SDLK_LEFT}, {"Right",SDLK_RIGHT}, {"Select",SDLK_m}}}};
 
     public:

@@ -1,27 +1,99 @@
 #include "Map.hpp"
+#include <fstream>
 #include <iostream>
+#include <sstream>  // Pour la mise en forme des noms de fichiers
+#include <iomanip>  // Ajouter cette bibliothèque
 
-Map::Map() 
-{
-    // Initialisations spécifiques (si besoin)
+Map::Map(std::string path, SDL_Renderer* renderer) : renderer(renderer) {
+    LoadTextures();
+    LoadMap(path);
 }
 
-Map::~Map() 
-{
-    // Libérer les ressources allouées (textures, etc.)
+Map::~Map() {
+    for (SDL_Texture* tex : tileTextures) {
+        if (tex) {
+            SDL_DestroyTexture(tex);
+        }
+    }
 }
 
-bool Map::init(SDL_Window* window) 
-{
-    // Pour l'instant, nous ne faisons pas grand-chose ici.
-    // Plus tard, vous pourrez charger des textures ou lire une map depuis un fichier.
-    return true;
+void Map::LoadTextures() {
+    tileTextures.resize(132, nullptr);  // 132 textures (de 0 à 131)
+
+    for (int i = 0; i <= 131; i++) {
+        // Génération du nom du fichier avec un formatage à 4 chiffres
+        std::ostringstream oss;
+        oss << "../assets/Tiles/tile_" << std::setw(4) << std::setfill('0') << i << ".png";
+        std::string fileName = oss.str();
+
+        // Chargement de la texture
+        tileTextures[i] = TextureManager::LoadTexture(fileName, renderer);
+
+        if (!tileTextures[i]) {
+            std::cerr << "Erreur chargement texture : " << fileName << std::endl;
+        } else {
+            std::cout << "Texture chargée : " << fileName << std::endl;
+        }
+    }
 }
 
-void Map::render(SDL_Renderer* renderer) 
-{
-    // Exemple simple : dessiner un rectangle rouge représentant un objet de décor
-    SDL_Rect rect = { 50, 50, 200, 150 };
-    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // Couleur rouge
-    SDL_RenderFillRect(renderer, &rect);
+void Map::LoadMap(std::string path) {
+    std::ifstream mapFile(path);
+    
+    if (!mapFile.is_open()) {
+        std::cerr << "Erreur : Impossible de charger " << path << std::endl;
+        perror("Détails de l'erreur");
+        return;
+    }
+
+    int value;
+    std::vector<int> row;
+    int y = 0;
+
+    while (mapFile) {
+        row.clear();
+        for (int x = 0; x < 25; x++) {
+            if (mapFile >> value) {
+                row.push_back(value);
+
+                // 🔹 Ajout d’un collider pour certaines tuiles bloquantes (ex: arbres, murs)
+                if (value == 130 || value == 131) {  // Choisis les tuiles à bloquer
+                    colliders.emplace_back("terrain", x * tileSize, y * tileSize, tileSize, tileSize);
+                }
+            }
+        }
+        if (!row.empty()) {
+            mapData.push_back(row);
+        }
+        y++;
+    }
+    mapFile.close();
+}
+
+
+void Map::DrawMap(SDL_Renderer* renderer) {
+    SDL_Rect src, dest;
+    src.w = src.h = tileSize;
+    dest.w = dest.h = tileSize;
+
+    for (size_t y = 0; y < mapData.size(); y++) {
+        for (size_t x = 0; x < mapData[y].size(); x++) {
+            int tileType = mapData[y][x];
+
+            if (tileType >= 0 && tileType < tileTextures.size() && tileTextures[tileType]) {
+                src.x = src.y = 0;
+                dest.x = x * tileSize;
+                dest.y = y * tileSize;
+
+                SDL_RenderCopy(renderer, tileTextures[tileType], &src, &dest);
+            } else {
+                std::cerr << "Erreur : Tuile invalide à (" << x << ", " << y << ") : " << tileType << std::endl;
+            }
+        }
+    }
+}
+
+// 🔹 Ajout de la fonction pour récupérer les colliders
+std::vector<ColliderComponent> Map::getColliders() const {
+    return colliders;
 }

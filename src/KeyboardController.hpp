@@ -1,4 +1,6 @@
 #pragma once
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_keycode.h>
 
 #include "GameManager.hpp"
 #include "Entity.hpp"
@@ -12,7 +14,7 @@ class KeyboardController : public Component
 		EntitiesManager& entitiesManager = GameManager::entitiesManager;
 		StatisticsComponent *stats;
 		std::string playerId;
-		SDL_KeyCode upKey;
+		SDL_Keycode upKey;
 		int attackDuration;
 		Uint32 attackStart;
 		bool isAttacking = false;
@@ -26,7 +28,7 @@ class KeyboardController : public Component
 		// Donc l'idée de ce dictionnaire est de vérifier si la touche pour la direction opposée a bien été relâchée avant de remettre la direction à 0
 		std::map<const std::string, bool> isBeingPressed = {{"Up",false}, {"Down",false}, {"Left",false}, {"Right",false}};
 		std::map<const std::string, int> velocity = {{"Up",-1}, {"Down",1}, {"Left",-1}, {"Right",1}};
-		std::map<const std::string, std::map<const std::string, const SDL_KeyCode>> playerKeys = {{"player1", {{"Up",SDLK_z}, {"Down",SDLK_s}, {"Left",SDLK_q}, {"Right",SDLK_d}, {"Attack",SDLK_SPACE}}},
+		std::map<const std::string, std::map<const std::string, const SDL_Keycode>> playerKeys = {{"player1", {{"Up",SDLK_z}, {"Down",SDLK_s}, {"Left",SDLK_q}, {"Right",SDLK_d}, {"Attack",SDLK_SPACE}}},
 		{"player2", {{"Up",SDLK_UP}, {"Down",SDLK_DOWN}, {"Left",SDLK_LEFT}, {"Right",SDLK_RIGHT}, {"Attack",SDLK_m}}}};
 
 	public:
