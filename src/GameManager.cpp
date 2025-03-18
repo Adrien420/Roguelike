@@ -118,6 +118,19 @@ void GameManager::update()
 	entitiesManager.refresh();
 	entitiesManager.update();
 
+	// Vérifier les collisions entre les joueurs et les obstacles de la map
+    for (const auto& collider : map.getColliders()) {
+        if (player1->getComponent<ColliderComponent>().checkCollision(collider)) {
+            std::cout << "Collision avec un obstacle de la map !" << std::endl;
+
+            // Annule le déplacement si le joueur entre en collision avec un obstacle
+            player1->getComponent<TransformComponent>().position.x -= 
+                player1->getComponent<TransformComponent>().direction.x * player1->getComponent<TransformComponent>().speed;
+            player1->getComponent<TransformComponent>().position.y -= 
+                player1->getComponent<TransformComponent>().direction.y * player1->getComponent<TransformComponent>().speed;
+        }
+    }
+
 	// Test de collision entre player1 et player2
 	if (player1->getComponent<ColliderComponent>().checkCollision(player2->getComponent<ColliderComponent>()))
 	{
