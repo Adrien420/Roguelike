@@ -12,7 +12,7 @@ bool GameManager::isVsIA = false;
 AssetManager* GameManager::assets = new AssetManager();
 EntitiesManager GameManager::entitiesManager;
 CardsManager GameManager::cardsManager;
-Entity *GameManager::player1, *GameManager::player2; 
+Entity *GameManager::player1, *GameManager::player2;
 Entity *UI;
 int GameManager::nbwinRounds = 4;
 std::map<std::string, int> GameManager::nbWinsPlayer = {{"player1", 0}, {"player2", 0}};
@@ -20,11 +20,11 @@ std::map<std::string, int> GameManager::nbWinsPlayer = {{"player1", 0}, {"player
 GameManager::GameManager(const char* title, int width, int height, bool fullscreen)
 {
     int flags = 0;
-	
-	if (fullscreen)
-	{
-		flags = SDL_WINDOW_FULLSCREEN;
-	}
+
+    if (fullscreen)
+    {
+        flags = SDL_WINDOW_FULLSCREEN;
+    }
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
@@ -35,10 +35,10 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);	// Blanc
 		}
 
-		isRunning = true;
-	}
+        isRunning = true;
+    }
 
-	if (TTF_Init() == -1) {
+    if (TTF_Init() == -1) {
         std::cerr << "Erreur SDL_ttf : " << TTF_GetError() << std::endl;
         isRunning = false;
     }
@@ -65,10 +65,10 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	assets->AddFont("mainFont","../assets/04B_30__.TTF", 24);
 	assets->AddFont("cardsFont","../assets/SF.ttf", 20);
 
-	// Ajout d'un texte au jeu
-	UI = new Entity(UILabelComponent("mainFont", "Hello", {255, 0, 0, 255}));
-	UI->getComponent<UILabelComponent>().setPosition(500, 500);
-	entitiesManager.addEntity(UI);
+    // Ajout d'un texte au jeu
+    UI = new Entity(UILabelComponent("mainFont", "Hello", {255, 0, 0, 255}));
+    UI->getComponent<UILabelComponent>().setPosition(500, 500);
+    entitiesManager.addEntity(UI);
 }
 
 GameManager::~GameManager()
@@ -76,8 +76,7 @@ GameManager::~GameManager()
 
 void GameManager::handleEvents()
 {
-	
-	SDL_PollEvent(&event);
+    SDL_PollEvent(&event);
 
 	switch (event.type)
 	{
@@ -157,12 +156,14 @@ void GameManager::update()
 	entitiesManager.refresh();
 }
 
-void GameManager::render()
-{
-	SDL_RenderClear(renderer);
-	map.render(renderer);
-	entitiesManager.draw();
-	SDL_RenderPresent(renderer);
+void GameManager::render() {
+    SDL_RenderClear(renderer);
+    
+    // 🔹 Affichage de la map
+    map->DrawMap(renderer);
+    
+    entitiesManager.draw();
+    SDL_RenderPresent(renderer);
 }
 
 void GameManager::reset()
@@ -181,17 +182,17 @@ void GameManager::reset()
 
 void GameManager::clean()
 {
-	if (renderer) {
+    if (renderer) {
         SDL_DestroyRenderer(renderer);
-        renderer = nullptr;  // Évite l'accès à des pointeurs sauvages
+        renderer = nullptr;
     }
 
     if (window) {
         SDL_DestroyWindow(window);
-        window = nullptr;  // Évite l'accès à des pointeurs sauvages
+        window = nullptr;
     }
 
-	TTF_Quit();
+    TTF_Quit();
     SDL_Quit();
 }
 
@@ -253,7 +254,7 @@ void GameManager::initGame()
 
 void GameManager::pause(bool isPausing_)
 {
-	isPausing = isPausing_;
+    isPausing = isPausing_;
 }
 
 void GameManager::endOfRound(std::string playerId)

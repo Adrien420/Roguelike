@@ -2,11 +2,11 @@
 #define GAMEMANAGER_HPP
 
 #include <SDL2/SDL.h>
-#include "SDL2/SDL_image.h"
+#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include <vector>
-#include "Map.hpp"
+#include "Map.hpp"  // 🔹 Ajout de l'inclusion correcte
 #include "AssetManager.hpp"
 #include "Entity.hpp"
 #include "CardsManager.hpp"
@@ -24,6 +24,7 @@ class GameManager
 
     public:
         GameManager(const char* title, int width, int height, bool fullscreen);
+        ~GameManager();
 
         void handleEvents();
         void update();
@@ -53,4 +54,4 @@ class GameManager
         ~GameManager();
 };
 
-#endif
+#endif // GAMEMANAGER_HPP
