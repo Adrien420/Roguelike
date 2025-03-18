@@ -8,23 +8,28 @@
 class HealthComponent : public Component
 {
     private:
-        TransformComponent * transform;
+        TransformComponent *transform;
+        StatisticsComponent *stats;
+        SpriteComponent *sprite;
         SDL_Texture *texture = GameManager::assets->GetTexture("health");
+        std::string playerId;
         SDL_Rect healthFill, destRect;
         int imgWidth, imgHeight;
         float fullHealth, healthPercent;
+        Uint32 deathStart;
+        bool isDead = false;
     
     public:
         float health;
 
-        HealthComponent(float health_)
-        {
-            health = fullHealth = health_;
-        }
+        HealthComponent(std::string playerId_) : playerId(playerId_) {}
 
         void init() override
         {
             transform = &entity->getComponent<TransformComponent>();
+            stats = &entity->getComponent<StatisticsComponent>();
+            sprite = &entity->getComponent<SpriteComponent>();
+            health = fullHealth = std::get<float>(stats->stats["health"]);
 
             // Récupération des dimensions de l'image utilisée pour la barre de vie
             SDL_QueryTexture(texture, NULL, NULL, &imgWidth, &imgHeight);
@@ -37,8 +42,25 @@ class HealthComponent : public Component
 
         void update() override
         {
+            if(isDead && (SDL_GetTicks() - deathStart > sprite->deathAnimDuration))
+            {
+                if(playerId == "player1")
+                    GameManager::endOfRound("player2");
+                else
+                    GameManager::endOfRound("player1");
+            }
+            else if(GameManager::inDeathAnimation)
+                return;
+            
             if(health > 0)
-                updateHealth(-0.005);
+                updateHealth(-0.05);
+            else
+            {
+                isDead = true;
+                deathStart = SDL_GetTicks();
+                sprite->Play("Death");
+                GameManager::inDeathAnimation = true;
+            }
 
             healthPercent = health / fullHealth;
 
@@ -55,15 +77,16 @@ class HealthComponent : public Component
 
         void draw() override
         {
-            SDL_SetRenderDrawColor(GameManager::renderer, 255, 0, 0, 255);
+            SDL_SetRenderDrawColor(GameManager::renderer, 255, 0, 0, 255); // Rouge
             SDL_RenderFillRect(GameManager::renderer, &healthFill);
-            SDL_SetRenderDrawColor(GameManager::renderer, 255, 255, 0, 255);
             SDL_RenderCopyEx(GameManager::renderer, texture, NULL, &destRect, 0, NULL, SDL_FLIP_NONE);
+            SDL_SetRenderDrawColor(GameManager::renderer, 255, 255, 255, 255); // Réinitialser au blanc
         }
 
         void reset() override
         {
-            health = fullHealth;
+            health = fullHealth = std::get<float>(stats->stats["health"]);
+            isDead = false;
         }
 };
 

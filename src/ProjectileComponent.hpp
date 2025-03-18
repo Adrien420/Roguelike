@@ -22,7 +22,7 @@ class ProjectileComponent : public Component
             direction = direction_;
         }
 
-        void init()
+        void init() override
         {
             transform = &entity->getComponent<TransformComponent>();
             stats = &entity->getComponent<StatisticsComponent>();
@@ -32,7 +32,7 @@ class ProjectileComponent : public Component
             SDL_QueryTexture(texture, NULL, NULL, &imgWidth, &imgHeight);
         }
 
-        void update()
+        void update() override
         {
             transform->position.x += direction.x * speed;
             transform->position.y += direction.y * speed;
@@ -43,7 +43,7 @@ class ProjectileComponent : public Component
             destRect.h = imgHeight * transform->scale;
         }
 
-        void draw()
+        void draw() override
         {
             SDL_RenderCopyEx(GameManager::renderer, texture, NULL, &destRect, 0, NULL, SDL_FLIP_NONE);
         }

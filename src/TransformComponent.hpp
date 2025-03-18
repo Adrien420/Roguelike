@@ -47,6 +47,9 @@ class TransformComponent : public Component
 
 		void update() override
 		{
+			if(GameManager::inDeathAnimation)
+				return;
+				
 			position.x = position.x + direction.x*speed;
 			position.y = position.y + direction.y*speed;
 		}

@@ -17,9 +17,10 @@ class CardsManager;
 class GameManager
 {
     private:
-        int cnt = 0;
+        int buttonPlayerWidth = 400, buttonPlayerHeight = 111; //Ratio de 3.6
 	    SDL_Window *window;
-        Map* map;  // 🔹 Utilisation d'un pointeur
+        Map map;
+        SDL_Rect destRectButtonPlayer, destRectButtonIA;
 
     public:
         GameManager(const char* title, int width, int height, bool fullscreen);
@@ -28,18 +29,29 @@ class GameManager
         void handleEvents();
         void update();
         void render();
-        void reset();
+        static void reset();
         void clean();
+
+        static void createPlayers();
+        void homeMenu();
+        void initGame();
         void pause(bool isPausing_);
 
         static SDL_Renderer *renderer;
         static SDL_Event event;
-        static bool isRunning, isPausing, chosingCards;
+        static bool isRunning, inHomeMenu, isPausing, chosingCards, inDeathAnimation, isVsIA;
         static AssetManager* assets;
         static EntitiesManager entitiesManager;
         static CardsManager cardsManager;
         static Entity* player1;
         static Entity* player2;
+        static int nbwinRounds;
+        static std::map<std::string, int> nbWinsPlayer;
+
+        static void endOfRound(std::string playerId);
+        static void startNewRound();
+
+        ~GameManager();
 };
 
 #endif // GAMEMANAGER_HPP

@@ -5,12 +5,11 @@
 #include "GameManager.hpp"
 #include "Entity.hpp"
 #include "Components.hpp"
-#include "ProjectileComponent.hpp"
 #include <map>
 
 class KeyboardController : public Component
 {
-	private:
+	protected:
 		EntitiesManager& entitiesManager = GameManager::entitiesManager;
 		StatisticsComponent *stats;
 		std::string playerId;
@@ -129,18 +128,33 @@ class KeyboardController : public Component
 			attackStart = SDL_GetTicks();
 			if(std::get<bool>(stats->stats["hasProjectiles"]) && (!projectileSent))
 			{
-				projectile = new Entity(StatisticsComponent(800, 100, 0.12, 100, 0),TransformComponent(projectilePosition.x, projectilePosition.y,64,64,0.75), ProjectileComponent(projectileDirection));
+				projectile = new Entity(StatisticsComponent(800, 100, 0.12, 100, 0),TransformComponent(projectilePosition.x, projectilePosition.y,64,64,0.75), ProjectileComponent(projectileDirection), ColliderComponent("projectile",0,0,64,64));
+				projectile->label = "projectile";
 				entitiesManager.addEntity(projectile);
 				projectileSent = true;
 			}
 		}
 
-		void update() override
+		bool checkPlayerState()
 		{
+			if(GameManager::inDeathAnimation)
+			{
+				for (auto& pair : isBeingPressed) {
+					pair.second = false;
+				}
+				return true;
+			}
+			
 			if(isAttacking && (SDL_GetTicks() - attackStart > attackDuration))
 			{
 				isAttacking = false;
 				projectileSent = false;
+
+				/*if (projectile) {
+					projectile->destroy(); // Marque le projectile pour suppression
+					projectile = nullptr;  // Évite d'accéder à un pointeur invalide
+				}*/
+				
 				int directionIndex = sprite->animIndex%4;
 				switch(directionIndex)
 				{
@@ -160,6 +174,15 @@ class KeyboardController : public Component
 						break;
 				}
 			}
+			return false;
+		}
+
+		void update() override
+		{
+			bool earlyReturn = checkPlayerState();
+			if(earlyReturn)
+				return;
+
 			if (GameManager::event.type == SDL_KEYDOWN)
 			{
 				SDL_Keycode key = GameManager::event.key.keysym.sym;
@@ -234,5 +257,8 @@ class KeyboardController : public Component
 			transform->direction.x = 0;
 			transform->direction.y = 0;
 			attackDuration = sprite->animations["Attack Down"]["frameTime"] * sprite->animations["Attack Down"]["frames"];
+			for (auto& pair : isBeingPressed) {
+				pair.second = false;
+			}
 		}
 };

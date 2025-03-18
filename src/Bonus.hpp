@@ -41,12 +41,29 @@ class upgradeStat
 
         void operator()()
         {
+            std::get<int>(Bonus::player->getComponent<StatisticsComponent>().stats[stat]) += std::get<int>(value);
+        }
+
+        ~upgradeStat() {}
+};
+
+class upgradeStatPercent
+{
+    private:
+        std::string stat;
+        using StatType = std::variant<int, float, bool>;
+        StatType value;
+    public:
+        upgradeStatPercent(std::string stat_, StatType value_) : stat(stat_), value(value_) {}
+
+        void operator()()
+        {
             float currentStat = std::get<float>(Bonus::player->getComponent<StatisticsComponent>().stats[stat]);
             float newStat = currentStat + currentStat * std::get<float>(value);
             std::get<float>(Bonus::player->getComponent<StatisticsComponent>().stats[stat]) = newStat;
         }
 
-        ~upgradeStat() {}
+        ~upgradeStatPercent() {}
 };
 
 class changeStat

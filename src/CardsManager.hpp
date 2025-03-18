@@ -10,14 +10,19 @@ class CardsManager
 {
     private:
         int imgWidth, imgHeight;
-        std::map<std::string, int> nbChoices, startX, margin, offsetY, indexBonusType, indexBonus;
+        std::map<std::string, int> nbChoices, startX, margin, offsetY, indexSelection;
         std::map<std::string, std::vector<std::array<int, 2>>> selectedBonusIndexes;
         std::map<std::string, std::array<int, 2>> currentBonusIndexes;
+
         SDL_Texture *texture, *textureSelect;
+        std::map<std::string, std::vector<SDL_Texture*>> txtTextures;
+        std::map<std::string, std::vector<SDL_Rect>> txtDestRects;
         SDL_Rect destRect, destRectSelect, destRectSelect2;
         double angle, startAngle, angleSelect, angleSelect2;
-        bool hasChosen = false, initilized = false, bonusInitialized = false;
-        std::map<const std::string, std::map<const std::string, const SDL_Keycode>> playerKeys = {{"player1", {{"Left",SDLK_q}, {"Right",SDLK_d}, {"Select",SDLK_SPACE}}},
+
+        std::map<std::string, bool> hasChosen;
+        bool initilized = false;
+        std::map<const std::string, std::map<const std::string, const SDL_KeyCode>> playerKeys = {{"player1", {{"Left",SDLK_q}, {"Right",SDLK_d}, {"Select",SDLK_SPACE}}},
 		{"player2", {{"Left",SDLK_LEFT}, {"Right",SDLK_RIGHT}, {"Select",SDLK_m}}}};
 
     public:
@@ -30,6 +35,8 @@ class CardsManager
         void choseCard();
         void changeCard(std::string playerId, SDL_Rect& destRectSelect_, double& angleSelect_, int side); //side == -1 si left, 1 si right
         void select(std::string playerId);
+
+        static bool bonusInitialized;
     };
 
 
