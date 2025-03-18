@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include "Components.hpp"
-#include "TextureManager.hpp"
 
 /*
 Utiliser -DDEBUG dans les options du compilateur pour activer le mode debug
@@ -59,6 +58,17 @@ public:
     {
         const auto& recA = collider;
         const auto& recB = other.collider;
+
+        return recA.x + recA.w >= recB.x &&
+               recB.x + recB.w >= recA.x &&
+               recA.y + recA.h >= recB.y &&
+               recB.y + recB.h >= recA.y;
+    }
+
+    bool checkCollision(const SDL_Rect& other) const
+    {
+        const auto& recA = collider;
+        const auto& recB = other;
 
         return recA.x + recA.w >= recB.x &&
                recB.x + recB.w >= recA.x &&

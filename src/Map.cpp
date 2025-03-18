@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>  // Pour la mise en forme des noms de fichiers
 #include <iomanip>  // Ajouter cette bibliothèque
+#include "GameManager.hpp"
 
 Map::Map(std::string path, SDL_Renderer* renderer) : renderer(renderer) {
     LoadTextures();
@@ -27,7 +28,7 @@ void Map::LoadTextures() {
         std::string fileName = oss.str();
 
         // Chargement de la texture
-        tileTextures[i] = TextureManager::LoadTexture(fileName, renderer);
+        tileTextures[i] = GameManager::assets->LoadTexture(fileName.c_str());
 
         if (!tileTextures[i]) {
             std::cerr << "Erreur chargement texture : " << fileName << std::endl;
@@ -58,7 +59,8 @@ void Map::LoadMap(std::string path) {
 
                 // 🔹 Ajout d’un collider pour certaines tuiles bloquantes (ex: arbres, murs)
                 if (value == 130 || value == 131) {  // Choisis les tuiles à bloquer
-                    colliders.emplace_back("terrain", x * tileSize, y * tileSize, tileSize, tileSize);
+                    SDL_Rect collider = {x * tileSize, y * tileSize, tileSize, tileSize};
+                    colliders.emplace_back(collider);
                 }
             }
         }
@@ -94,6 +96,6 @@ void Map::DrawMap(SDL_Renderer* renderer) {
 }
 
 // 🔹 Ajout de la fonction pour récupérer les colliders
-std::vector<ColliderComponent> Map::getColliders() const {
+std::vector<SDL_Rect> Map::getColliders() const {
     return colliders;
 }

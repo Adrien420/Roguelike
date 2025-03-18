@@ -6,7 +6,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include <vector>
-#include "Map.hpp"  // 🔹 Ajout de l'inclusion correcte
+#include "Map.hpp"
 #include "AssetManager.hpp"
 #include "Entity.hpp"
 #include "CardsManager.hpp"
@@ -24,7 +24,6 @@ class GameManager
 
     public:
         GameManager(const char* title, int width, int height, bool fullscreen);
-        ~GameManager();
 
         void handleEvents();
         void update();

@@ -43,12 +43,7 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
         isRunning = false;
     }
 
-
-	if (!map.init(window))
-	{
-		std::cerr << "Erreur lors de l'initialisation de la map." << std::endl;
-		isRunning = false;
-	}
+	map = Map("../assets/map.txt", GameManager::renderer);
 
 	// Home Menu
 	destRectButtonPlayer = {1280/2-buttonPlayerWidth/2, 720/3-buttonPlayerHeight/2, buttonPlayerWidth, buttonPlayerHeight};
@@ -160,7 +155,7 @@ void GameManager::render() {
     SDL_RenderClear(renderer);
     
     // 🔹 Affichage de la map
-    map->DrawMap(renderer);
+    map.DrawMap(renderer);
     
     entitiesManager.draw();
     SDL_RenderPresent(renderer);
