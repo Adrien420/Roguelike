@@ -53,7 +53,7 @@ class HealthComponent : public Component
                 return;
             
             if(health > 0)
-                updateHealth(-0.05);
+                updateHealth(0);
             else
             {
                 isDead = true;

@@ -121,7 +121,7 @@ void GameManager::handleEvents()
 
 void GameManager::update()
 {	
-	//entitiesManager.refresh();
+	entitiesManager.refresh();
 	entitiesManager.update();
 
 	// Test de collision entre player1 et player2
@@ -133,6 +133,28 @@ void GameManager::update()
 	{
 		UI->getComponent<UILabelComponent>().setText("Not Collision");
 	}
+
+	// Récupérer la taille de la fenêtre
+    int windowWidth, windowHeight;
+    SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+
+	// Supprime les projectiles hors écran
+    for (Entity* e : entitiesManager.entities) 
+    {
+        if (e->label == "projectile") 
+        {
+            auto& transform = e->getComponent<TransformComponent>();
+
+            // Vérifier si le projectile est hors des limites de l'écran
+            if (transform.position.x < 0 || transform.position.x > windowWidth ||
+                transform.position.y < 0 || transform.position.y > windowHeight) 
+            {
+                e->destroy(); // Marque pour suppression
+				e = nullptr;  // Évite d'accéder à un pointeur invalide
+            }
+        }
+    }
+	entitiesManager.refresh();
 }
 
 void GameManager::render()
@@ -146,17 +168,14 @@ void GameManager::render()
 void GameManager::reset()
 {
 	GameManager::inDeathAnimation = false;
-	entitiesManager.entities.erase(
-		std::remove_if(entitiesManager.entities.begin(), entitiesManager.entities.end(),
-			[](Entity* e) {
-				if (e->label == "projectile") {
-					delete e; // Libération mémoire
-					return true; // Supprime de la liste
-				}
-				return false;
-			}),
-		entitiesManager.entities.end()
-	);
+	// Supprime les entités "projectile" et "sword"
+	for (Entity* e : entitiesManager.entities) {
+		if (e->label == "projectile" || e->label == "sword") {
+			e->destroy();
+			e = nullptr;
+		}
+	}
+	entitiesManager.refresh();
 	entitiesManager.reset();
 }
 
@@ -177,18 +196,16 @@ void GameManager::clean()
 }
 
 void GameManager::createPlayers()
-{		
-	entitiesManager.entities.erase(
-		std::remove_if(entitiesManager.entities.begin(), entitiesManager.entities.end(),
-			[](Entity* e) {
-				if (e->label == "player") {
-					delete e; // Libération mémoire
-					return true; // Supprime de la liste
-				}
-				return false;
-			}),
-		entitiesManager.entities.end()
-	);
+{
+	// Supprime les entités "player" déjà créées
+	for (Entity* e : entitiesManager.entities) {
+		if (e->label == "player") {
+			e->destroy();
+			e = nullptr;
+		}
+	}
+	entitiesManager.refresh();
+	
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
 	player1 = new Entity(StatisticsComponent(500, 100, 0.07, 150, 3), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 17, 0, 30, 50), KeyboardController("player1"), HealthComponent("player1"));
 	if(!isVsIA)

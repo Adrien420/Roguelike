@@ -31,7 +31,7 @@ class KeyboardController : public Component
 	public:
 		TransformComponent *transform;
 		SpriteComponent *sprite;
-		Entity *projectile;
+		Entity *projectile, *sword;
 
 		KeyboardController(std::string playerId_) : playerId(playerId_) {}
 
@@ -92,41 +92,44 @@ class KeyboardController : public Component
 			if(isAttacking)
 				return;
 			applyDirection("None");
-			Vector2D projectileDirection = Vector2D();
-			Vector2D projectilePosition = Vector2D(transform->position.x, transform->position.y);
+			Vector2D attackDirection = Vector2D();
+			Vector2D attackPosition = Vector2D(transform->position.x, transform->position.y);
 			int directionIndex = sprite->animIndex%4;
 			switch(directionIndex)
 			{
 				case 0:
 					sprite->Play("Attack Down");
-					projectileDirection.y = 1;
-					projectilePosition.x += transform->width/2;
-					projectilePosition.y += transform->height;
+					attackDirection.y = 1;
+					attackPosition.x += transform->width/2;
+					attackPosition.y += transform->height;
 					break;
 				case 1:
 					sprite->Play("Attack Up");
-					projectileDirection.y = -1;
-					projectilePosition.x += transform->width/2;
+					attackDirection.y = -1;
+					attackPosition.x += transform->width/2;
 					break;
 				case 2:
 					sprite->Play("Attack Left");
-					projectileDirection.x = -1;
-					projectilePosition.y += transform->height/2;
+					attackDirection.x = -1;
+					attackPosition.y += transform->height/2;
 					break;
 				case 3:
 					sprite->Play("Attack Right");
-					projectileDirection.x = 1;
-					projectilePosition.x += transform->width;
-					projectilePosition.y += transform->height/2;
+					attackDirection.x = 1;
+					attackPosition.x += transform->width;
+					attackPosition.y += transform->height/2;
 					break;
 				default:
 					break;
 			}
 			isAttacking = true;
 			attackStart = SDL_GetTicks();
+			sword = new Entity(StatisticsComponent(0, 0, 0, 0, 0), TransformComponent(attackPosition.x, attackPosition.y,64,64,0.75), ColliderComponent("sword",0,0,100,100));
+			sword->label = "sword";
+			entitiesManager.addEntity(sword);
 			if(std::get<bool>(stats->stats["hasProjectiles"]) && (!projectileSent))
 			{
-				projectile = new Entity(StatisticsComponent(800, 100, 0.12, 100, 0),TransformComponent(projectilePosition.x, projectilePosition.y,64,64,0.75), ProjectileComponent(projectileDirection), ColliderComponent("projectile",0,0,64,64));
+				projectile = new Entity(StatisticsComponent(0, 0, 0.12, 0, 0), TransformComponent(attackPosition.x, attackPosition.y,64,64,0.75), ProjectileComponent(attackDirection), ColliderComponent("projectile",0,0,64,64));
 				projectile->label = "projectile";
 				entitiesManager.addEntity(projectile);
 				projectileSent = true;
@@ -148,10 +151,10 @@ class KeyboardController : public Component
 				isAttacking = false;
 				projectileSent = false;
 
-				/*if (projectile) {
-					projectile->destroy(); // Marque le projectile pour suppression
-					projectile = nullptr;  // Évite d'accéder à un pointeur invalide
-				}*/
+				if (sword) {
+					sword->destroy();
+					sword = nullptr;
+				}
 				
 				int directionIndex = sprite->animIndex%4;
 				switch(directionIndex)
