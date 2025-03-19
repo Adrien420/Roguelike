@@ -12,15 +12,15 @@ Map::Map(std::string path)
 }
 
 Map::~Map() {
-    for (SDL_Texture* tex : tileTextures) {
+    /*for (SDL_Texture* tex : tileTextures) {
         if (tex) {
             SDL_DestroyTexture(tex);
         }
-    }
+    }*/
 }
 
 void Map::LoadTextures() {
-    tileTextures.resize(132, nullptr);  // 132 textures (de 0 à 131)
+    //tileTextures.resize(132, nullptr);  // 132 textures (de 0 à 131)
 
     for (int i = 0; i <= 131; i++) {
         // Génération du nom du fichier avec un formatage à 4 chiffres
@@ -29,13 +29,13 @@ void Map::LoadTextures() {
         std::string fileName = oss.str();
 
         // Chargement de la texture
-        tileTextures[i] = GameManager::assets->LoadTexture(fileName.c_str());
+        GameManager::assets->AddTexture(fileName, fileName.c_str());
 
-        if (!tileTextures[i]) {
+        /*if (!tileTextures[i]) {
             std::cerr << "Erreur chargement texture : " << fileName << std::endl;
         } else {
             std::cout << "Texture chargée : " << fileName << std::endl;
-        }
+        }*/
     }
 }
 
@@ -83,11 +83,14 @@ void Map::DrawMap(SDL_Renderer* renderer) {
         for (size_t x = 0; x < mapData[y].size(); x++) {
             int tileType = mapData[y][x];
 
-            if (tileType >= 0 && tileType < tileTextures.size() && tileTextures[tileType]) {
+            if (tileType >= 0 && tileType <= 131) {
                 src.x = src.y = 0;
                 dest.x = x * tileSize;
                 dest.y = y * tileSize;
-                SDL_RenderCopy(GameManager::renderer, tileTextures[tileType], NULL, &dest);
+                std::ostringstream oss;
+                oss << "../assets/Tiles/tile_" << std::setw(4) << std::setfill('0') << tileType << ".png";
+                std::string fileName = oss.str();
+                SDL_RenderCopyEx(GameManager::renderer, GameManager::assets->GetTexture(fileName), NULL, &dest, 0, NULL, SDL_FLIP_NONE);
             } else {
                 std::cerr << "Erreur : Tuile invalide à (" << x << ", " << y << ") : " << tileType << std::endl;
             }
