@@ -1,8 +1,8 @@
 #include "AssetManager.hpp"
 
-SDL_Texture* AssetManager::LoadTexture(const char* texture)
+SDL_Texture* AssetManager::LoadTexture(const char* fileName)
 {
-	SDL_Surface* tempSurface = IMG_Load(texture);
+	SDL_Surface* tempSurface = IMG_Load(fileName);
 	SDL_Texture* tex = SDL_CreateTextureFromSurface(GameManager::renderer, tempSurface);
 	SDL_FreeSurface(tempSurface);
 	

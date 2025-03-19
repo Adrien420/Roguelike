@@ -8,7 +8,7 @@
 class Map {
 public:
     Map(){};
-    Map(std::string path, SDL_Renderer* renderer);
+    Map(std::string path);
     ~Map();
 
     void LoadMap(std::string path);

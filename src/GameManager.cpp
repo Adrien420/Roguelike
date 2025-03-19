@@ -43,7 +43,7 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
         isRunning = false;
     }
 
-	map = Map("../assets/map.txt", GameManager::renderer);
+	map = Map("../assets/map.txt");
 
 	// Home Menu
 	destRectButtonPlayer = {1280/2-buttonPlayerWidth/2, 720/3-buttonPlayerHeight/2, buttonPlayerWidth, buttonPlayerHeight};

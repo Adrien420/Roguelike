@@ -2,10 +2,11 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>  // Pour la mise en forme des noms de fichiers
-#include <iomanip>  // Ajouter cette bibliothèque
+#include <iomanip>
 #include "GameManager.hpp"
 
-Map::Map(std::string path, SDL_Renderer* renderer) : renderer(renderer) {
+Map::Map(std::string path)
+{
     LoadTextures();
     LoadMap(path);
 }
@@ -53,7 +54,7 @@ void Map::LoadMap(std::string path) {
 
     while (mapFile) {
         row.clear();
-        for (int x = 0; x < 25; x++) {
+        for (int x = 0; x < 1280/tileSize; x++) {
             if (mapFile >> value) {
                 row.push_back(value);
 
@@ -86,8 +87,7 @@ void Map::DrawMap(SDL_Renderer* renderer) {
                 src.x = src.y = 0;
                 dest.x = x * tileSize;
                 dest.y = y * tileSize;
-
-                SDL_RenderCopy(renderer, tileTextures[tileType], &src, &dest);
+                SDL_RenderCopy(GameManager::renderer, tileTextures[tileType], NULL, &dest);
             } else {
                 std::cerr << "Erreur : Tuile invalide à (" << x << ", " << y << ") : " << tileType << std::endl;
             }
