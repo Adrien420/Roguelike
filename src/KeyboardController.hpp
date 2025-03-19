@@ -132,7 +132,7 @@ class KeyboardController : public Component
 			entitiesManager.addEntity(sword);
 			if(std::get<bool>(stats->stats["hasProjectiles"]) && (!projectileSent))
 			{
-				projectile = new Entity(StatisticsComponent(0, 0, 0.12, 0, 0), TransformComponent(attackPosition.x, attackPosition.y,64,64,0.75), ProjectileComponent(attackDirection), ColliderComponent("projectile",0,0,64,64));
+				projectile = new Entity(StatisticsComponent(0, 0, 0.3, 0, 0), TransformComponent(attackPosition.x, attackPosition.y,64,64,0.75), ProjectileComponent(attackDirection), ColliderComponent("projectile",0,0,64,64));
 				projectile->label = "projectile";
 				projectile->getComponent<ColliderComponent>().id = playerId;
 				entitiesManager.addEntity(projectile);

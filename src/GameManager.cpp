@@ -246,11 +246,11 @@ void GameManager::createPlayers()
 	entitiesManager.refresh();
 	
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
-	player1 = new Entity(StatisticsComponent(500, 100, 0.07, 500, 3), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 0, 0, 64, 64), KeyboardController("player1"), HealthComponent("player1"));
+	player1 = new Entity(StatisticsComponent(500, 100, 0.2, 500, 3), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 0, 0, 64, 64), KeyboardController("player1"), HealthComponent("player1"));
 	if(!isVsIA)
-		player2 = new Entity(StatisticsComponent(500, 100, 0.07, 500, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent("player2"));
+		player2 = new Entity(StatisticsComponent(500, 100, 0.2, 500, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent("player2"));
 	else
-		player2 = new Entity(StatisticsComponent(500, 100, 0.07, 500, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), IAControllerComponent("player2", player1), HealthComponent("player2"));
+		player2 = new Entity(StatisticsComponent(500, 100, 0.2, 500, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), IAControllerComponent("player2", player1), HealthComponent("player2"));
 	player1->label = "player";
 	player2->label = "player";
 	entitiesManager.addEntity(player1);

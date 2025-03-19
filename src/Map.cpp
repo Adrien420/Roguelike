@@ -12,11 +12,11 @@ Map::Map(std::string path)
 }
 
 Map::~Map() {
-    /*for (SDL_Texture* tex : tileTextures) {
+    for (SDL_Texture* tex : tileTextures) {
         if (tex) {
             SDL_DestroyTexture(tex);
         }
-    }*/
+    }
 }
 
 void Map::LoadTextures() {
@@ -29,7 +29,7 @@ void Map::LoadTextures() {
         std::string fileName = oss.str();
 
         // Chargement de la texture
-        GameManager::assets->AddTexture(fileName, fileName.c_str());
+        GameManager::assets->AddTexture(std::to_string(i), fileName.c_str());
 
         /*if (!tileTextures[i]) {
             std::cerr << "Erreur chargement texture : " << fileName << std::endl;
@@ -87,10 +87,7 @@ void Map::DrawMap(SDL_Renderer* renderer) {
                 src.x = src.y = 0;
                 dest.x = x * tileSize;
                 dest.y = y * tileSize;
-                std::ostringstream oss;
-                oss << "../assets/Tiles/tile_" << std::setw(4) << std::setfill('0') << tileType << ".png";
-                std::string fileName = oss.str();
-                SDL_RenderCopyEx(GameManager::renderer, GameManager::assets->GetTexture(fileName), NULL, &dest, 0, NULL, SDL_FLIP_NONE);
+                SDL_RenderCopyEx(GameManager::renderer, GameManager::assets->GetTexture(std::to_string(tileType)), NULL, &dest, 0, NULL, SDL_FLIP_NONE);
             } else {
                 std::cerr << "Erreur : Tuile invalide à (" << x << ", " << y << ") : " << tileType << std::endl;
             }
