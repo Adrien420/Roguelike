@@ -109,8 +109,8 @@ class KeyboardController : public Component
 					attackPosition.x += collider->w/2;
 					attackPosition.y += collider->h;
 					p_offsetX = -32;
-					s_offsetX = -150;
-					s_offsetW = 200;
+					s_offsetX = -96;
+					s_offsetW = 128;
 					break;
 				case 1:
 					sprite->Play("Attack Up");
@@ -118,9 +118,9 @@ class KeyboardController : public Component
 					attackPosition.x += collider->w/2;
 					p_offsetX = -32;
 					p_offsetY = 64;
-					s_offsetX = -150;
-					s_offsetY = -100;
-					s_offsetW = 200;
+					s_offsetX = -96;
+					s_offsetY = -64;
+					s_offsetW = 128;
 					break;
 				case 2:
 					sprite->Play("Attack Left");
@@ -128,9 +128,9 @@ class KeyboardController : public Component
 					attackPosition.y += collider->h/2;
 					p_offsetX = -64;
 					p_offsetY = -32;
-					s_offsetX = -100;
-					s_offsetY = -150;
-					s_offsetH = 200; 
+					s_offsetX = -64;
+					s_offsetY = -96;
+					s_offsetH = 128; 
 					break;
 				case 3:
 					sprite->Play("Attack Right");
@@ -138,18 +138,17 @@ class KeyboardController : public Component
 					attackPosition.x += collider->w;
 					attackPosition.y += collider->h/2;
 					p_offsetY = -32;
-					s_offsetY = -150;
-					s_offsetH = 200;
+					s_offsetY = -96;
+					s_offsetH = 128;
 					break;
 				default:
 					break;
 			}
 			p_offsetX *= 0.75; p_offsetY *= 0.75;
-			s_offsetX *= 0.75; s_offsetY *= 0.75; s_offsetW *= 0.75; s_offsetH *= 0.75;
 			isAttacking = true;
 			attackStart = SDL_GetTicks();
-			// printf("%d %d\n", p_offsetX, p_offsetY);
-			sword = new Entity(StatisticsComponent(0, 0, 0, 0, 0), TransformComponent(attackPosition.x, attackPosition.y,0,0,0.75), ColliderComponent("sword",s_offsetX,s_offsetY,s_offsetW,s_offsetH));
+			printf("%d %d %d %d\n", s_offsetX, s_offsetY, s_offsetW, s_offsetH);
+			sword = new Entity(StatisticsComponent(0, 0, 0, 0, 0), TransformComponent(attackPosition.x, attackPosition.y,0,0,0.75), ColliderComponent("sword",s_offsetX,s_offsetY,64+s_offsetW,64+s_offsetH));
 			sword->label = "sword";
 			sword->getComponent<ColliderComponent>().id = playerId;
 			entitiesManager.addEntity(sword);
