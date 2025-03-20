@@ -160,6 +160,10 @@ void CardsManager::choseCard()
     }
     SDL_RenderClear(GameManager::renderer);
 
+    SDL_Texture* menuCards = GameManager::assets->GetTexture("menuCards");
+    SDL_Rect destRectMenu = {0, 0, 1280, 736};
+	SDL_RenderCopyEx(GameManager::renderer, menuCards, NULL, &destRectMenu, 0, NULL, SDL_FLIP_NONE);
+
     if(hasChosen["player1"] && hasChosen["player2"])
     {
         initilized = false;

@@ -38,6 +38,8 @@ class HealthComponent : public Component
         void updateHealth(float amount)
         {
             health += amount;
+            if(health < 0)
+                health = 0;
         }
 
         void update() override

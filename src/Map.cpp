@@ -2,10 +2,11 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>  // Pour la mise en forme des noms de fichiers
-#include <iomanip>  // Ajouter cette bibliothèque
+#include <iomanip>
 #include "GameManager.hpp"
 
-Map::Map(std::string path, SDL_Renderer* renderer) : renderer(renderer) {
+Map::Map(std::string path)
+{
     LoadTextures();
     LoadMap(path);
 }
@@ -19,7 +20,7 @@ Map::~Map() {
 }
 
 void Map::LoadTextures() {
-    tileTextures.resize(132, nullptr);  // 132 textures (de 0 à 131)
+    //tileTextures.resize(132, nullptr);  // 132 textures (de 0 à 131)
 
     for (int i = 0; i <= 131; i++) {
         // Génération du nom du fichier avec un formatage à 4 chiffres
@@ -28,13 +29,13 @@ void Map::LoadTextures() {
         std::string fileName = oss.str();
 
         // Chargement de la texture
-        tileTextures[i] = GameManager::assets->LoadTexture(fileName.c_str());
+        GameManager::assets->AddTexture(std::to_string(i), fileName.c_str());
 
-        if (!tileTextures[i]) {
+        /*if (!tileTextures[i]) {
             std::cerr << "Erreur chargement texture : " << fileName << std::endl;
         } else {
             std::cout << "Texture chargée : " << fileName << std::endl;
-        }
+        }*/
     }
 }
 
@@ -53,7 +54,7 @@ void Map::LoadMap(std::string path) {
 
     while (mapFile) {
         row.clear();
-        for (int x = 0; x < 25; x++) {
+        for (int x = 0; x < 1280/tileSize; x++) {
             if (mapFile >> value) {
                 row.push_back(value);
 
@@ -82,12 +83,11 @@ void Map::DrawMap(SDL_Renderer* renderer) {
         for (size_t x = 0; x < mapData[y].size(); x++) {
             int tileType = mapData[y][x];
 
-            if (tileType >= 0 && tileType < tileTextures.size() && tileTextures[tileType]) {
+            if (tileType >= 0 && tileType <= 131) {
                 src.x = src.y = 0;
                 dest.x = x * tileSize;
                 dest.y = y * tileSize;
-
-                SDL_RenderCopy(renderer, tileTextures[tileType], &src, &dest);
+                SDL_RenderCopyEx(GameManager::renderer, GameManager::assets->GetTexture(std::to_string(tileType)), NULL, &dest, 0, NULL, SDL_FLIP_NONE);
             } else {
                 std::cerr << "Erreur : Tuile invalide à (" << x << ", " << y << ") : " << tileType << std::endl;
             }
