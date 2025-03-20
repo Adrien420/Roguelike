@@ -141,4 +141,10 @@ class IAControllerComponent : public KeyboardController
                     break;
             }
         }
+
+        void reset() override
+        {
+            KeyboardController::reset();
+            currentDirectionLabel = "Down";
+        }
 };
