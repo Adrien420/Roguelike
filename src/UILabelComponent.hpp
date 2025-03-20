@@ -34,6 +34,8 @@ public:
 
     void setText(const std::string& newText)
     {
+        if (text == newText) return;  // Évite une recréation inutile
+        
         if (!font) {
             std::cerr << "Impossible de mettre à jour le texte, police non chargée !" << std::endl;
             return;
@@ -69,6 +71,7 @@ public:
         SDL_FreeSurface(surface);
     }
     
+    const std::string& getText() const { return text; }
 
     void setPosition(int x, int y) {
         destRect.x = x;
@@ -76,6 +79,10 @@ public:
     }
 
     void draw() override {
+        if (!texture) {
+            std::cerr << "Warning: UILabelComponent attempted to render a null texture!" << std::endl;
+            return;
+        }
         SDL_RenderCopy(GameManager::renderer, texture, nullptr, &destRect);
     }
 };

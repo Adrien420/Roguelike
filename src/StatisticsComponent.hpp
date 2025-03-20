@@ -17,7 +17,7 @@ class StatisticsComponent : public Component
             {"speed", StatType(0.07f)}, 
             {"health", StatType(100.0f)}, 
             {"nbCardsChoice", StatType(3)}, 
-            {"hasProjectiles", StatType(true)}
+            {"hasProjectiles", StatType(false)}
         };
 
         StatisticsComponent(){}

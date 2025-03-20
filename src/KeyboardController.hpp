@@ -32,6 +32,7 @@ class KeyboardController : public Component
 
 	public:
 		TransformComponent *transform;
+		SDL_Rect *collider;
 		SpriteComponent *sprite;
 		Entity *projectile, *sword;
 
@@ -40,6 +41,7 @@ class KeyboardController : public Component
 		void init() override
 		{
 			transform = &entity->getComponent<TransformComponent>();
+			collider = &entity->getComponent<ColliderComponent>().collider;
 			stats = &entity->getComponent<StatisticsComponent>();
 			sprite = &entity->getComponent<SpriteComponent>();
 			attackDuration = sprite->animations["Attack Down"]["frameTime"] * sprite->animations["Attack Down"]["frames"];
@@ -95,44 +97,65 @@ class KeyboardController : public Component
 				return;
 			applyDirection("None");
 			Vector2D attackDirection = Vector2D();
-			Vector2D attackPosition = Vector2D(transform->position.x, transform->position.y);
+			Vector2D attackPosition = Vector2D(collider->x, collider->y);
+			int p_offsetX = 0, p_offsetY = 0;
+			int s_offsetX = 0, s_offsetY = 0, s_offsetW = 0, s_offsetH = 0;
 			int directionIndex = sprite->animIndex%4;
 			switch(directionIndex)
 			{
 				case 0:
 					sprite->Play("Attack Down");
 					attackDirection.y = 1;
-					attackPosition.x += transform->width/2;
-					attackPosition.y += transform->height;
+					attackPosition.x += collider->w/2;
+					attackPosition.y += collider->h;
+					p_offsetX = -32;
+					s_offsetX = -150;
+					s_offsetW = 200;
 					break;
 				case 1:
 					sprite->Play("Attack Up");
 					attackDirection.y = -1;
-					attackPosition.x += transform->width/2;
+					attackPosition.x += collider->w/2;
+					p_offsetX = -32;
+					p_offsetY = 64;
+					s_offsetX = -150;
+					s_offsetY = -100;
+					s_offsetW = 200;
 					break;
 				case 2:
 					sprite->Play("Attack Left");
 					attackDirection.x = -1;
-					attackPosition.y += transform->height/2;
+					attackPosition.y += collider->h/2;
+					p_offsetX = -64;
+					p_offsetY = -32;
+					s_offsetX = -100;
+					s_offsetY = -150;
+					s_offsetH = 200; 
 					break;
 				case 3:
 					sprite->Play("Attack Right");
 					attackDirection.x = 1;
-					attackPosition.x += transform->width;
-					attackPosition.y += transform->height/2;
+					attackPosition.x += collider->w;
+					attackPosition.y += collider->h/2;
+					p_offsetY = -32;
+					s_offsetY = -150;
+					s_offsetH = 200;
 					break;
 				default:
 					break;
 			}
+			p_offsetX *= 0.75; p_offsetY *= 0.75;
+			s_offsetX *= 0.75; s_offsetY *= 0.75; s_offsetW *= 0.75; s_offsetH *= 0.75;
 			isAttacking = true;
 			attackStart = SDL_GetTicks();
-			sword = new Entity(StatisticsComponent(0, 0, 0, 0, 0), TransformComponent(attackPosition.x, attackPosition.y,64,64,0.75), ColliderComponent("sword",0,0,64,64));
+			// printf("%d %d\n", p_offsetX, p_offsetY);
+			sword = new Entity(StatisticsComponent(0, 0, 0, 0, 0), TransformComponent(attackPosition.x, attackPosition.y,0,0,0.75), ColliderComponent("sword",s_offsetX,s_offsetY,s_offsetW,s_offsetH));
 			sword->label = "sword";
 			sword->getComponent<ColliderComponent>().id = playerId;
 			entitiesManager.addEntity(sword);
 			if(std::get<bool>(stats->stats["hasProjectiles"]) && (!projectileSent))
 			{
-				projectile = new Entity(StatisticsComponent(0, 0, 0.12, 0, 0), TransformComponent(attackPosition.x, attackPosition.y,64,64,0.75), ProjectileComponent(attackDirection), ColliderComponent("projectile",0,0,64,64));
+				projectile = new Entity(StatisticsComponent(0, 0, 0.12, 0, 0), TransformComponent(attackPosition.x + p_offsetX, attackPosition.y + p_offsetY,64,64,0.75), ProjectileComponent(attackDirection), ColliderComponent("projectile",0,0,64,64));
 				projectile->label = "projectile";
 				projectile->getComponent<ColliderComponent>().id = playerId;
 				entitiesManager.addEntity(projectile);

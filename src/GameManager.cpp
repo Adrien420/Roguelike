@@ -153,21 +153,24 @@ void GameManager::update()
 					isCollision = true;
 					float damage = std::get<float>(player2->getComponent<StatisticsComponent>().stats["damages"]);
 					player1->getComponent<HealthComponent>().updateHealth(-damage);
+					entity->destroy();
+					entity = nullptr;
 				}
 				if (entityCollider.id != "player2" && entityCollider.checkCollision(player2Collider)) {
 					isCollision = true;
 					float damage = std::get<float>(player1->getComponent<StatisticsComponent>().stats["damages"]);
 					player2->getComponent<HealthComponent>().updateHealth(-damage);
+					entity->destroy();
+					entity = nullptr;
 				}
 			}
 		}
 	}
 
 	// Mise à jour de l'UI
-	if (isCollision) {
-		UI->getComponent<UILabelComponent>().setText("Collision");
-	} else {
-		UI->getComponent<UILabelComponent>().setText("Not Collision");
+	std::string newText = isCollision ? "Collision" : "Not Collision";
+	if (UI->getComponent<UILabelComponent>().getText() != newText) {
+		UI->getComponent<UILabelComponent>().setText(newText);
 	}
 
 
@@ -246,7 +249,7 @@ void GameManager::createPlayers()
 	entitiesManager.refresh();
 	
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
-	player1 = new Entity(StatisticsComponent(500, 100, 0.07, 500, 3), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 0, 0, 64, 64), KeyboardController("player1"), HealthComponent("player1"));
+	player1 = new Entity(StatisticsComponent(500, 100, 0.07, 500, 3), TransformComponent(0,0,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 17, 0, 30, 50), KeyboardController("player1"), HealthComponent("player1"));
 	if(!isVsIA)
 		player2 = new Entity(StatisticsComponent(500, 100, 0.07, 500, 3), TransformComponent(100,100,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent("player2"));
 	else
