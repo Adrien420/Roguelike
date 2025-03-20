@@ -118,7 +118,8 @@ class EntitiesManager
 
         ~EntitiesManager() {
             for (Entity* e : entities) {
-                delete e;  // Libère la mémoire allouée dynamiquement
+                if(e)
+                    delete e;  // Libère la mémoire allouée dynamiquement
             }
             entities.clear();  // Vide le vecteur après avoir libéré la mémoire
         }
@@ -150,6 +151,7 @@ class EntitiesManager
                 [](Entity* e) { 
                     if (!e->isActive()) {
                         delete e; // Libère la mémoire
+                        e = nullptr;
                         return true; // Supprime l'élément du vecteur
                     }
                     return false;
