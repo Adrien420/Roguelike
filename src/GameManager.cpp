@@ -46,8 +46,8 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	map = Map("../assets/map.txt");
 
 	// Home Menu
-	destRectButtonPlayer = {1280/2-buttonPlayerWidth/2, 720/3-buttonPlayerHeight/2, buttonPlayerWidth, buttonPlayerHeight};
-	destRectButtonIA = {1280/2-buttonPlayerWidth/2, 2*720/3-buttonPlayerHeight/2, buttonPlayerWidth, buttonPlayerHeight};
+	destRectButtonPlayer = {1280/2-buttonPlayerWidth/2, 736/3-buttonPlayerHeight/2, buttonPlayerWidth, buttonPlayerHeight};
+	destRectButtonIA = {1280/2-buttonPlayerWidth/2, 2*736/3-buttonPlayerHeight/2, buttonPlayerWidth, buttonPlayerHeight};
 
 	assets->AddTexture("menu", "../assets/menu.png");
 	assets->AddTexture("button", "../assets/button.png");
@@ -56,6 +56,7 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	assets->AddTexture("projectile", "../assets/projectile.png");
 	assets->AddTexture("border", "../assets/card_border.jpeg");
 	assets->AddTexture("selection", "../assets/selection.jpeg");
+	assets->AddTexture("menuCards", "../assets/cardsSelectBackground.png");
 
 	assets->AddFont("mainFont","../assets/04B_30__.TTF", 24);
 	assets->AddFont("cardsFont","../assets/SF.ttf", 20);
@@ -262,7 +263,7 @@ void GameManager::homeMenu()
 	SDL_RenderClear(renderer);
 
 	SDL_Texture* menu = GameManager::assets->GetTexture("menu");
-    SDL_Rect destRectMenu = {0, 0, 1280, 720};
+    SDL_Rect destRectMenu = {0, 0, 1280, 736};
 	SDL_RenderCopyEx(GameManager::renderer, menu, NULL, &destRectMenu, 0, NULL, SDL_FLIP_NONE);
 
 	SDL_Texture* buttonPlayer = GameManager::assets->GetTexture("button");
@@ -274,11 +275,11 @@ void GameManager::homeMenu()
 	SDL_Color color = {0, 0, 0, 255};
 	SDL_Texture* txtTexturePLayer = GameManager::assets->AddTxt("Player vs Player", font, color, &txtDestRectPlayer, 1);
 	txtDestRectPlayer.x = 1280/2 - txtDestRectPlayer.w/2;
-	txtDestRectPlayer.y = 720/3 - txtDestRectPlayer.h/2;
+	txtDestRectPlayer.y = 736/3 - txtDestRectPlayer.h/2;
 	SDL_RenderCopyEx(GameManager::renderer, txtTexturePLayer, NULL, &txtDestRectPlayer, 0, NULL, SDL_FLIP_NONE);
 	SDL_Texture* txtTextureIA = GameManager::assets->AddTxt("Player vs IA", font, color, &txtDestRectIA, 1);
 	txtDestRectIA.x = 1280/2 - txtDestRectIA.w/2;
-	txtDestRectIA.y = 2*720/3 - txtDestRectIA.h/2;
+	txtDestRectIA.y = 2*736/3 - txtDestRectIA.h/2;
 	SDL_RenderCopyEx(GameManager::renderer, txtTextureIA, NULL, &txtDestRectIA, 0, NULL, SDL_FLIP_NONE);
 
 	SDL_RenderPresent(renderer);
