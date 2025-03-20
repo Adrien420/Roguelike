@@ -215,7 +215,6 @@ void GameManager::reset()
 	for (Entity* e : entitiesManager.entities) {
 		if (e->label == "projectile" || e->label == "sword") {
 			e->destroy();
-			e = nullptr;
 		}
 	}
 	entitiesManager.refresh();

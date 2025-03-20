@@ -199,11 +199,6 @@ class KeyboardController : public Component
 			{
 				isAttacking = false;
 				projectileSent = false;
-
-				if (sword) {
-					sword->destroy();
-					sword = nullptr;
-				}
 				
 				int directionIndex = sprite->animIndex%4;
 				switch(directionIndex)
