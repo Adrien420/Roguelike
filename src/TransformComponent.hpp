@@ -23,6 +23,7 @@ class TransformComponent : public Component
 {
 	private:
 		StatisticsComponent *stats;
+		bool useCustomSpeed = false; // Permet de savoir si on utilise le speed des stats
 
 	public:
 		Vector2D position;
@@ -36,36 +37,44 @@ class TransformComponent : public Component
 
 		bool blocked = false;
 
-		TransformComponent(){}
+		TransformComponent() {}
 
+		// Constructeur qui utilise les stats pour la vitesse
 		TransformComponent(float x, float y, int h, int w, float sc)
-		{
-			position.x = x;
-			position.y = y;
-			height = h;
-			width = w;
-			scale = sc;
-		}
+			: position(x, y), height(h), width(w), scale(sc) {}
+
+		// Nouveau constructeur qui permet de définir une vitesse spécifique
+		TransformComponent(float x, float y, int h, int w, float sc, float customSpeed)
+			: position(x, y), height(h), width(w), scale(sc), speed(customSpeed), useCustomSpeed(true) {}
 
 		void init() override
 		{
-			stats = &entity->getComponent<StatisticsComponent>();
-			speed = std::get<float>(stats->stats["speed"]);
+			// Associe le speed aux stats uniquement si on n'a pas défini une vitesse custom
+			if (!useCustomSpeed) 
+			{
+				stats = &entity->getComponent<StatisticsComponent>();
+				speed = std::get<float>(stats->stats["speed"]);
+			}
 		}
 
 		void update() override
 		{
-			if(GameManager::inDeathAnimation)
+			if (GameManager::inDeathAnimation)
 				return;
-				
-			position.x = position.x + direction.x*speed;
-			position.y = position.y + direction.y*speed;
+
+			position.x += direction.x * speed;
+			position.y += direction.y * speed;
 		}
 
 		void reset() override
 		{
-			speed = std::get<float>(stats->stats["speed"]);
-			//position.x = ;
-			position.y = 336;
+			if (!useCustomSpeed) 
+			{
+				speed = std::get<float>(stats->stats["speed"]);
+			}
+			std::string playerId = entity->playerId;
+			if (playerId == "player1"){position.x = 0;}
+			if (playerId == "player2"){position.x = 1280 - 100;}
+			position.y = 368;
 		}
 };

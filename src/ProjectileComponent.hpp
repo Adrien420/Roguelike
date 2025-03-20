@@ -26,7 +26,7 @@ class ProjectileComponent : public Component
         {
             transform = &entity->getComponent<TransformComponent>();
             stats = &entity->getComponent<StatisticsComponent>();
-            speed = std::get<float>(stats->stats["speed"]);
+            speed = transform->speed;
 
             // Récupération des dimensions de l'image utilisée pour le projectile
             SDL_QueryTexture(texture, NULL, NULL, &imgWidth, &imgHeight);

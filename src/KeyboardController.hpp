@@ -104,7 +104,7 @@ class KeyboardController : public Component
 
 			switch (directionIndex)
 			{
-				case 0: // Bas
+				case 0:
 					sprite->Play("Attack Down");
 					attackDirection.y = 1;
 					attackPosition.x += collider->w / 2;
@@ -113,7 +113,7 @@ class KeyboardController : public Component
 					s_offsetX = -96;
 					s_offsetW = 128;
 					break;
-				case 1: // Haut
+				case 1:
 					sprite->Play("Attack Up");
 					attackDirection.y = -1;
 					attackPosition.x += collider->w / 2;
@@ -123,7 +123,7 @@ class KeyboardController : public Component
 					s_offsetY = -64;
 					s_offsetW = 128;
 					break;
-				case 2: // Gauche
+				case 2:
 					sprite->Play("Attack Left");
 					attackDirection.x = -1;
 					attackPosition.y += collider->h / 2;
@@ -133,7 +133,7 @@ class KeyboardController : public Component
 					s_offsetY = -96;
 					s_offsetH = 128;
 					break;
-				case 3: // Droite
+				case 3:
 					sprite->Play("Attack Right");
 					attackDirection.x = 1;
 					attackPosition.x += collider->w;
@@ -153,9 +153,9 @@ class KeyboardController : public Component
 			attackStart = SDL_GetTicks();
 
 			// Création de l'épée
-			sword = new Entity(StatisticsComponent(0, 0, 0, 0, 0), TransformComponent(attackPosition.x, attackPosition.y, 0, 0, 0.75), ColliderComponent("sword", s_offsetX, s_offsetY, 64 + s_offsetW, 64 + s_offsetH));
+			sword = new Entity(TransformComponent(attackPosition.x, attackPosition.y, 0, 0, 0.75, 0), ColliderComponent("sword", s_offsetX, s_offsetY, 64 + s_offsetW, 64 + s_offsetH));
 			sword->label = "sword";
-			sword->playerID = playerId == "player1" ? 1 : 2;
+			sword->playerId = playerId;
 			entitiesManager.addEntity(sword);
 
 			// Gestion des projectiles
@@ -171,14 +171,13 @@ class KeyboardController : public Component
 					Vector2D projDirection = attackDirection.rotate(angleOffset); // Rotation du vecteur directionnel
 
 					Entity* projectile = new Entity(
-						StatisticsComponent(0, 0, 0.3, 0, 0),
-						TransformComponent(attackPosition.x + p_offsetX, attackPosition.y + p_offsetY, 64, 64, 0.75),
+						TransformComponent(attackPosition.x + p_offsetX, attackPosition.y + p_offsetY, 64, 64, 0.75, 0.3),
 						ProjectileComponent(projDirection),
 						ColliderComponent("projectile", 0, 0, 64, 64)
 					);
 
 					projectile->label = "projectile";
-					projectile->playerID = playerId == "player1" ? 1 : 2;
+					projectile->playerId = playerId;
 					entitiesManager.addEntity(projectile);
 				}
 

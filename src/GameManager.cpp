@@ -14,7 +14,7 @@ EntitiesManager GameManager::entitiesManager;
 CardsManager GameManager::cardsManager;
 Entity *GameManager::player1, *GameManager::player2;
 Entity *UI;
-int GameManager::nbwinRounds = 4;
+int GameManager::nbwinRounds = 99;
 std::map<std::string, int> GameManager::nbWinsPlayer = {{"player1", 0}, {"player2", 0}};
 
 GameManager::GameManager(const char* title, int width, int height, bool fullscreen)
@@ -150,13 +150,13 @@ void GameManager::update()
 
 			// Vérifier les collisions avec player1
 			if (entityCollider.tag == "sword" || entityCollider.tag == "projectile"){
-				if (entity->playerID != 1 && entityCollider.checkCollision(player1Collider)) {
+				if (entity->playerId != "player1" && entityCollider.checkCollision(player1Collider)) {
 					isCollision = true;
 					float damage = std::get<float>(player2->getComponent<StatisticsComponent>().stats["damages"]);
 					player1->getComponent<HealthComponent>().updateHealth(-damage);
 					entity->destroy();
 				}
-				if (entity->playerID != 2 && entityCollider.checkCollision(player2Collider)) {
+				if (entity->playerId != "player2" && entityCollider.checkCollision(player2Collider)) {
 					isCollision = true;
 					float damage = std::get<float>(player1->getComponent<StatisticsComponent>().stats["damages"]);
 					player2->getComponent<HealthComponent>().updateHealth(-damage);
@@ -197,12 +197,12 @@ void GameManager::update()
         {
             bool isAttackingPlayer1 = std::get<bool>(player1->getComponent<StatisticsComponent>().stats["isAttacking"]);
 			bool isAttackingPlayer2 = std::get<bool>(player2->getComponent<StatisticsComponent>().stats["isAttacking"]);
-			int swordID = e->playerID;
-			if(!isAttackingPlayer1 && swordID == 1)
+			std::string swordID = e->playerId;
+			if(!isAttackingPlayer1 && swordID == "player1")
 			{
 				e->destroy();
 			}
-			if(!isAttackingPlayer2 && swordID == 2)
+			if(!isAttackingPlayer2 && swordID == "player2")
 			{
 				e->destroy();
 			}
@@ -268,6 +268,8 @@ void GameManager::createPlayers()
 		player2 = new Entity(StatisticsComponent(500, 100, 0.1, 500, 3), TransformComponent(916,336,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), IAControllerComponent("player2", player1), HealthComponent("player2"));
 	player1->label = "player";
 	player2->label = "player";
+	player1->playerId = "player1";
+	player2->playerId = "player2";
 	entitiesManager.addEntity(player1);
 	entitiesManager.addEntity(player2);
 }
