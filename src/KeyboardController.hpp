@@ -100,43 +100,44 @@ class KeyboardController : public Component
 			Vector2D attackPosition = Vector2D(collider->x, collider->y);
 			int p_offsetX = 0, p_offsetY = 0;
 			int s_offsetX = 0, s_offsetY = 0, s_offsetW = 0, s_offsetH = 0;
-			int directionIndex = sprite->animIndex%4;
-			switch(directionIndex)
+			int directionIndex = sprite->animIndex % 4;
+
+			switch (directionIndex)
 			{
-				case 0:
+				case 0: // Bas
 					sprite->Play("Attack Down");
 					attackDirection.y = 1;
-					attackPosition.x += collider->w/2;
+					attackPosition.x += collider->w / 2;
 					attackPosition.y += collider->h;
 					p_offsetX = -32;
 					s_offsetX = -96;
 					s_offsetW = 128;
 					break;
-				case 1:
+				case 1: // Haut
 					sprite->Play("Attack Up");
 					attackDirection.y = -1;
-					attackPosition.x += collider->w/2;
+					attackPosition.x += collider->w / 2;
 					p_offsetX = -32;
 					p_offsetY = 64;
 					s_offsetX = -96;
 					s_offsetY = -64;
 					s_offsetW = 128;
 					break;
-				case 2:
+				case 2: // Gauche
 					sprite->Play("Attack Left");
 					attackDirection.x = -1;
-					attackPosition.y += collider->h/2;
+					attackPosition.y += collider->h / 2;
 					p_offsetX = -64;
 					p_offsetY = -32;
 					s_offsetX = -64;
 					s_offsetY = -96;
-					s_offsetH = 128; 
+					s_offsetH = 128;
 					break;
-				case 3:
+				case 3: // Droite
 					sprite->Play("Attack Right");
 					attackDirection.x = 1;
 					attackPosition.x += collider->w;
-					attackPosition.y += collider->h/2;
+					attackPosition.y += collider->h / 2;
 					p_offsetY = -32;
 					s_offsetY = -96;
 					s_offsetH = 128;
@@ -144,20 +145,42 @@ class KeyboardController : public Component
 				default:
 					break;
 			}
-			p_offsetX *= 0.75; p_offsetY *= 0.75;
+
+			p_offsetX *= 0.75;
+			p_offsetY *= 0.75;
 			isAttacking = true;
 			attackStart = SDL_GetTicks();
-			printf("%d %d %d %d\n", s_offsetX, s_offsetY, s_offsetW, s_offsetH);
-			sword = new Entity(StatisticsComponent(0, 0, 0, 0, 0), TransformComponent(attackPosition.x, attackPosition.y,0,0,0.75), ColliderComponent("sword",s_offsetX,s_offsetY,64+s_offsetW,64+s_offsetH));
+
+			// Création de l'épée
+			sword = new Entity(StatisticsComponent(0, 0, 0, 0, 0), TransformComponent(attackPosition.x, attackPosition.y, 0, 0, 0.75), ColliderComponent("sword", s_offsetX, s_offsetY, 64 + s_offsetW, 64 + s_offsetH));
 			sword->label = "sword";
 			sword->getComponent<ColliderComponent>().id = playerId;
 			entitiesManager.addEntity(sword);
-			if(std::get<bool>(stats->stats["hasProjectiles"]) && (!projectileSent))
+
+			// Gestion des projectiles
+			if (std::get<bool>(stats->stats["hasProjectiles"]) && !projectileSent)
 			{
-				projectile = new Entity(StatisticsComponent(0, 0, 0.3, 0, 0), TransformComponent(attackPosition.x + p_offsetX, attackPosition.y + p_offsetY,64,64,0.75), ProjectileComponent(attackDirection), ColliderComponent("projectile",0,0,64,64));
-				projectile->label = "projectile";
-				projectile->getComponent<ColliderComponent>().id = playerId;
-				entitiesManager.addEntity(projectile);
+				int nbProjectiles = std::get<int>(stats->stats["nbProjectiles"]); // Récupérer le nombre de projectiles
+				float angleStep = (nbProjectiles > 1) ? 30.0f / (nbProjectiles - 1) : 0; // Angle d'écart entre les projectiles
+				float baseAngle = (nbProjectiles > 1) ? -15.0f : 0; // Centrer les projectiles
+
+				for (int i = 0; i < nbProjectiles; i++)
+				{
+					float angleOffset = baseAngle + i * angleStep; // Décalage en angle
+					Vector2D projDirection = attackDirection.rotate(angleOffset); // Rotation du vecteur directionnel
+
+					Entity* projectile = new Entity(
+						StatisticsComponent(0, 0, 0.3, 0, 0),
+						TransformComponent(attackPosition.x + p_offsetX, attackPosition.y + p_offsetY, 64, 64, 0.75),
+						ProjectileComponent(projDirection),
+						ColliderComponent("projectile", 0, 0, 64, 64)
+					);
+
+					projectile->label = "projectile";
+					projectile->getComponent<ColliderComponent>().id = playerId;
+					entitiesManager.addEntity(projectile);
+				}
+
 				projectileSent = true;
 			}
 		}

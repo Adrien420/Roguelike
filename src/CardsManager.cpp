@@ -31,6 +31,8 @@ void CardsManager::initBonus()
     // Bonus de projectiles
     Bonus bonusProjectiles = Bonus("Tirer des projectiles", 1, []() { changeStat("hasProjectiles", true)();} );
     bonusBase.emplace_back(bonusProjectiles);
+    Bonus bonusNbProjectiles= Bonus("Up NB projectiles (+1)", 4, []() { upgradeStat("nbProjectiles", 1)();} );
+    bonusBase.emplace_back(bonusNbProjectiles);
 
     bonusPlayer["player1"].emplace_back(bonusBase);
     bonusPlayer["player2"].emplace_back(bonusBase);

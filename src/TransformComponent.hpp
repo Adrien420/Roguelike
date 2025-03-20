@@ -9,6 +9,14 @@ public:
 
     Vector2D() = default;
     Vector2D(float x_, float y_) : x(x_), y(y_) {}
+
+	Vector2D rotate(float angleDegrees) const 
+	{
+		float angleRadians = angleDegrees * M_PI / 180.0f; // Conversion en radians
+		float cosA = cos(angleRadians);
+		float sinA = sin(angleRadians);
+		return Vector2D(x * cosA - y * sinA, x * sinA + y * cosA);
+	}
 };
 
 class TransformComponent : public Component
