@@ -11,7 +11,6 @@ class ColliderComponent : public Component
 public:
     SDL_Rect collider{};
     std::string tag;
-    std::string id;
     TransformComponent* transform = nullptr;
     int offsetX, offsetY; // Décalage du collider par rapport à l'entité
     int offsetW, offsetH; // Taille du collider

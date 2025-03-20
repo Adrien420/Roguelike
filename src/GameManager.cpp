@@ -150,19 +150,17 @@ void GameManager::update()
 
 			// Vérifier les collisions avec player1
 			if (entityCollider.tag == "sword" || entityCollider.tag == "projectile"){
-				if (entityCollider.id != "player1" && entityCollider.checkCollision(player1Collider)) {
+				if (entity->playerID != 1 && entityCollider.checkCollision(player1Collider)) {
 					isCollision = true;
 					float damage = std::get<float>(player2->getComponent<StatisticsComponent>().stats["damages"]);
 					player1->getComponent<HealthComponent>().updateHealth(-damage);
 					entity->destroy();
-					entity = nullptr;
 				}
-				if (entityCollider.id != "player2" && entityCollider.checkCollision(player2Collider)) {
+				if (entity->playerID != 2 && entityCollider.checkCollision(player2Collider)) {
 					isCollision = true;
 					float damage = std::get<float>(player1->getComponent<StatisticsComponent>().stats["damages"]);
 					player2->getComponent<HealthComponent>().updateHealth(-damage);
 					entity->destroy();
-					entity = nullptr;
 				}
 			}
 		}
@@ -179,9 +177,10 @@ void GameManager::update()
     int windowWidth, windowHeight;
     SDL_GetWindowSize(window, &windowWidth, &windowHeight);
 
-	// Supprime les projectiles hors écran
+	// Supprimer les entités non désirables
     for (Entity* e : entitiesManager.entities) 
     {
+		// Supprime les projectiles hors écran
         if (e->label == "projectile")
         {
             auto& transform = e->getComponent<TransformComponent>();
@@ -190,9 +189,23 @@ void GameManager::update()
             if (transform.position.x < 0 || transform.position.x > windowWidth ||
                 transform.position.y < 0 || transform.position.y > windowHeight) 
             {
-                e->destroy(); // Marque pour suppression
-				e = nullptr;  // Évite d'accéder à un pointeur invalide
+                e->destroy();
             }
+        }
+		// Supprime les épées hors attaque
+		if (e->label == "sword")
+        {
+            bool isAttackingPlayer1 = std::get<bool>(player1->getComponent<StatisticsComponent>().stats["isAttacking"]);
+			bool isAttackingPlayer2 = std::get<bool>(player2->getComponent<StatisticsComponent>().stats["isAttacking"]);
+			int swordID = e->playerID;
+			if(!isAttackingPlayer1 && swordID == 1)
+			{
+				e->destroy();
+			}
+			if(!isAttackingPlayer2 && swordID == 2)
+			{
+				e->destroy();
+			}
         }
     }
 	entitiesManager.refresh();
@@ -243,7 +256,6 @@ void GameManager::createPlayers()
 	for (Entity* e : entitiesManager.entities) {
 		if (e->label == "player") {
 			e->destroy();
-			e = nullptr;
 		}
 	}
 	entitiesManager.refresh();

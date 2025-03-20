@@ -18,7 +18,8 @@ class StatisticsComponent : public Component
             {"health", StatType(100.0f)}, 
             {"nbCardsChoice", StatType(3)}, 
             {"hasProjectiles", StatType(false)},
-            {"nbProjectiles", StatType(1)}
+            {"nbProjectiles", StatType(1)},
+            {"isAttacking", StatType(false)}
         };
 
         StatisticsComponent(){}

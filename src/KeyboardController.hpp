@@ -149,12 +149,13 @@ class KeyboardController : public Component
 			p_offsetX *= 0.75;
 			p_offsetY *= 0.75;
 			isAttacking = true;
+			stats->stats["isAttacking"] = isAttacking;
 			attackStart = SDL_GetTicks();
 
 			// Création de l'épée
 			sword = new Entity(StatisticsComponent(0, 0, 0, 0, 0), TransformComponent(attackPosition.x, attackPosition.y, 0, 0, 0.75), ColliderComponent("sword", s_offsetX, s_offsetY, 64 + s_offsetW, 64 + s_offsetH));
 			sword->label = "sword";
-			sword->getComponent<ColliderComponent>().id = playerId;
+			sword->playerID = playerId == "player1" ? 1 : 2;
 			entitiesManager.addEntity(sword);
 
 			// Gestion des projectiles
@@ -177,7 +178,7 @@ class KeyboardController : public Component
 					);
 
 					projectile->label = "projectile";
-					projectile->getComponent<ColliderComponent>().id = playerId;
+					projectile->playerID = playerId == "player1" ? 1 : 2;
 					entitiesManager.addEntity(projectile);
 				}
 
@@ -198,6 +199,7 @@ class KeyboardController : public Component
 			if(isAttacking && (SDL_GetTicks() - attackStart > attackDuration))
 			{
 				isAttacking = false;
+				stats->stats["isAttacking"] = isAttacking;
 				projectileSent = false;
 				
 				int directionIndex = sprite->animIndex%4;

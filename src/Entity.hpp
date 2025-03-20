@@ -56,6 +56,7 @@ class Entity
 
     public:
         std::string label = "";
+        int playerID = 0; // Identification d'une entité générée par le joueur
         template <typename... TArgs>
         Entity(TArgs&&... args) {
             (addComponent<TArgs>(std::forward<TArgs>(args)), ...);
