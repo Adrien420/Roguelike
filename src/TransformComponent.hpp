@@ -57,5 +57,7 @@ class TransformComponent : public Component
 		void reset() override
 		{
 			speed = std::get<float>(stats->stats["speed"]);
+			//position.x = ;
+			position.y = 336;
 		}
 };

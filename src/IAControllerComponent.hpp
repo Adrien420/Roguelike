@@ -9,6 +9,7 @@ class IAControllerComponent : public KeyboardController
         Entity *player1;
         TransformComponent *transformPlayer1;
         int currentDirection = -1;
+        std::string currentDirectionLabel = "Down";
         int timeUntilNextDecision = 200;
         Uint32 decisionStart;
     
@@ -21,6 +22,44 @@ class IAControllerComponent : public KeyboardController
             transformPlayer1 = &player1->getComponent<TransformComponent>();
             srand(time(NULL));
             decisionStart = timeUntilNextDecision;
+        }
+
+        bool isTargetInRange(std::string direction)
+        {
+            bool hasProjectiles = std::get<bool>(stats->stats["hasProjectiles"]);
+            if(direction == "Vertical")
+            {
+                if((abs(transformPlayer1->position.y - transform->position.y) <= 10 || hasProjectiles) && abs(transformPlayer1->position.x - transform->position.x) <= 64)
+                    return true;
+            }
+            else
+            {
+                if((abs(transformPlayer1->position.x - transform->position.x) <= 10 || hasProjectiles) && abs(transformPlayer1->position.y - transform->position.y) <= 64)
+                    return true;
+            }
+            return false;
+        }
+
+        bool attackingDecision()
+        {
+            bool inRange = false;
+            if((currentDirectionLabel == "Up" && (transform->position.y >= transformPlayer1->position.y))
+            || (currentDirectionLabel == "Down" && (transform->position.y <= transformPlayer1->position.y)))
+                inRange = isTargetInRange("Vertical");
+            else if((currentDirectionLabel == "Left" && (transform->position.x >= transformPlayer1->position.x))
+            || (currentDirectionLabel == "Right" && (transform->position.x <= transformPlayer1->position.x)))
+                inRange = isTargetInRange("Horizontal");
+            else
+                return false;
+            if(!inRange)
+                return false;
+
+            // Si le joueur adversaire est à portée d'attaque
+            int randomDecision = rand()%100;
+            if(randomDecision < 70) // 70% de chances d'attaquer
+                return true;
+            else
+                return false;
         }
 
         int targetPlayerDirection()
@@ -60,30 +99,43 @@ class IAControllerComponent : public KeyboardController
                 return;
 
             decisionStart = SDL_GetTicks();
+
+            bool attacking = attackingDecision();
+            if(attacking)
+            {
+                attack();
+                return;
+            }
             
             int randomDecision = rand()%100;
-            if(randomDecision < 75) // Choix d'une direction ciblant le joueur (humain)
+            if(randomDecision < 60) // Choix d'une direction ciblant le joueur (humain)
                 currentDirection = targetPlayerDirection();
-            else // Choix d'une direction aléatoire
+            else if(randomDecision < 90) // Choix d'une direction aléatoire
                 currentDirection = randomDirection();
+            else //Aucun déplacement
+                currentDirection = 4;
 
             switch(currentDirection)
             {
                 case 0:
                     applyDirection("Up");
+                    currentDirectionLabel = "Up";
                     break;
                 case 1:
                     applyDirection("Down");
+                    currentDirectionLabel = "Down";
                     break;
                 case 2:
                     applyDirection("Left");
+                    currentDirectionLabel = "Left";
                     break;
                 case 3:
                     applyDirection("Right");
+                    currentDirectionLabel = "Right";
                     break;
-                case 404:
-                    isSpamming = true;
-                    attack();
+                case 4:
+                    applyDirection("None");
+                    sprite->Play("Idle " + currentDirectionLabel);
                     break;
                 default:
                     break;
