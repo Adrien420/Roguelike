@@ -73,8 +73,10 @@ class TransformComponent : public Component
 				speed = std::get<float>(stats->stats["speed"]);
 			}
 			std::string playerId = entity->playerId;
-			if (playerId == "player1"){position.x = 0;}
-			if (playerId == "player2"){position.x = 1280 - 100;}
+			if (playerId == "player1")
+				position.x = 300;
+			if (playerId == "player2")
+				position.x = 916;
 			position.y = 368;
 		}
 };

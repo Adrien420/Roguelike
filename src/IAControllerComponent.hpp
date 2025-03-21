@@ -29,12 +29,12 @@ class IAControllerComponent : public KeyboardController
             bool hasProjectiles = std::get<bool>(stats->stats["hasProjectiles"]);
             if(direction == "Vertical")
             {
-                if((abs(transformPlayer1->position.y - transform->position.y) <= 10 || hasProjectiles) && abs(transformPlayer1->position.x - transform->position.x) <= 64)
+                if((abs(transformPlayer1->position.y - transform->position.y) <= 64 || hasProjectiles) && abs(transformPlayer1->position.x - transform->position.x) <= 96)
                     return true;
             }
             else
             {
-                if((abs(transformPlayer1->position.x - transform->position.x) <= 10 || hasProjectiles) && abs(transformPlayer1->position.y - transform->position.y) <= 64)
+                if((abs(transformPlayer1->position.x - transform->position.x) <= 64 || hasProjectiles) && abs(transformPlayer1->position.y - transform->position.y) <= 96)
                     return true;
             }
             return false;

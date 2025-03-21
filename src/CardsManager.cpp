@@ -61,6 +61,7 @@ void CardsManager::initBonusPlayer(std::string playerId)
         Uint32 startTimer = SDL_GetTicks();
         while(it != bonusesChosen.end() && SDL_GetTicks()-startTimer < limitDuration)
         {
+            bonusTypeIndex = rand() % bonusPlayer[playerId].size();
             bonusIndex = rand() % bonusPlayer[playerId][bonusTypeIndex].size();
             bonusIndexes = {bonusTypeIndex, bonusIndex};
             it = bonusesChosen.find(bonusIndexes);
@@ -178,6 +179,12 @@ void CardsManager::choseCard()
     SDL_Texture* menuCards = GameManager::assets->GetTexture("menuCards");
     SDL_Rect destRectMenu = {0, 0, 1280, 736};
 	SDL_RenderCopyEx(GameManager::renderer, menuCards, NULL, &destRectMenu, 0, NULL, SDL_FLIP_NONE);
+
+    if(GameManager::isVsIA && !hasChosen["player2"])
+    {
+        indexSelection["player2"] = rand()%nbChoices["player2"];
+        select("player2");
+    }
 
     if(hasChosen["player1"] && hasChosen["player2"])
     {
