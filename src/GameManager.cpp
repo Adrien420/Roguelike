@@ -260,7 +260,7 @@ void GameManager::createPlayers()
 	}
 	entitiesManager.refresh();
 	
-	float baseSpeed = 0.5;
+	float baseSpeed = 0.1;
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
 	player1 = new Entity(StatisticsComponent(500, 100, baseSpeed, 500, 3), TransformComponent(300,336,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 17, 0, 30, 50), KeyboardController("player1"), HealthComponent("player1"));
 	if(!isVsIA)

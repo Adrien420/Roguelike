@@ -31,7 +31,7 @@ class CardsManager
         void init();
         int computeStartX(std::string playerId);
         int computeSelectY(std::string playerId);
-        void displayPlayerCards(std::string playerId);
+        void displayPlayerCards(std::string playerId, bool selected);
         void choseCard();
         void changeCard(std::string playerId, SDL_Rect& destRectSelect_, double& angleSelect_, int side); //side == -1 si left, 1 si right
         void select(std::string playerId);

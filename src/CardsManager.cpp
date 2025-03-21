@@ -5,7 +5,7 @@
 #include "Bonus.hpp"
 #define PI 3.14
 
-std::vector<Bonus> bonusBase;
+std::vector<Bonus> bonusBase, bonusProjectile;
 std::map<std::string,std::vector<std::vector<Bonus>>> bonusPlayer;
 bool CardsManager::bonusInitialized = false;
 
@@ -29,10 +29,10 @@ void CardsManager::initBonus()
     bonusBase.emplace_back(bonusNbChoices);
 
     // Bonus de projectiles
-    Bonus bonusProjectiles = Bonus("Tirer des projectiles", 1, []() { changeStat("hasProjectiles", true)();} );
+    Bonus bonusProjectiles = Bonus("Shoot projectiles", 1, []() { changeStat("hasProjectiles", true)();} );
     bonusBase.emplace_back(bonusProjectiles);
-    Bonus bonusNbProjectiles= Bonus("Up NB projectiles (+1)", 4, []() { upgradeStat("nbProjectiles", 1)();} );
-    bonusBase.emplace_back(bonusNbProjectiles);
+    Bonus bonusNbProjectiles= Bonus("Up NB projectiles (+2)", 3, []() { upgradeStat("nbProjectiles", 2)();} );
+    bonusProjectile.emplace_back(bonusNbProjectiles);
 
     bonusPlayer["player1"].emplace_back(bonusBase);
     bonusPlayer["player2"].emplace_back(bonusBase);
@@ -134,7 +134,7 @@ int CardsManager::computeSelectY(std::string playerId)
     return posY;
 }
 
-void CardsManager::displayPlayerCards(std::string playerId)
+void CardsManager::displayPlayerCards(std::string playerId, bool selected)
 {
     for(int i=0; i<nbChoices[playerId]; i++)
 	{
@@ -143,7 +143,20 @@ void CardsManager::displayPlayerCards(std::string playerId)
 		destRect.y = offsetY[playerId] + destRect.w/2 * sin(abs(angle * PI / 180));
 		if((i == 0 || i == nbChoices[playerId]-1) && nbChoices[playerId] > 3)
 			destRect.y += destRect.h * sin(abs(30/(nbChoices[playerId]-1) * PI / 180));
+
+        if(selected)
+        {
+            SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND); // Permet de modifier la couleur / opacité de la texture
+            if(indexSelection[playerId] == i) // Carte sélectionnée
+                SDL_SetTextureColorMod(texture, 255, 210, 0);
+            else
+                SDL_SetTextureAlphaMod(texture, 220);
+        }
 		SDL_RenderCopyEx(GameManager::renderer, texture, NULL, &destRect, angle, NULL, SDL_FLIP_NONE);
+
+        //Reset des modificateurs de couleur / opacité
+        SDL_SetTextureColorMod(texture, 255, 255, 255);
+        SDL_SetTextureAlphaMod(texture, 255);
 
         //Label
         SDL_Rect txtRect = txtDestRects[playerId][i];
@@ -172,8 +185,8 @@ void CardsManager::choseCard()
         GameManager::startNewRound();
     }
 
-    displayPlayerCards("player1");
-    displayPlayerCards("player2");
+    displayPlayerCards("player1", hasChosen["player1"]);
+    displayPlayerCards("player2", hasChosen["player2"]);
 
     if (GameManager::event.type == SDL_KEYDOWN)
     {
@@ -203,14 +216,19 @@ void CardsManager::choseCard()
         }
     }	
 
-    SDL_RenderCopyEx(GameManager::renderer, textureSelect, NULL, &destRectSelect, angleSelect, NULL, SDL_FLIP_NONE);
-    SDL_RenderCopyEx(GameManager::renderer, textureSelect, NULL, &destRectSelect2, angleSelect2, NULL, SDL_FLIP_NONE);
+    if(!hasChosen["player1"])
+        SDL_RenderCopyEx(GameManager::renderer, textureSelect, NULL, &destRectSelect, angleSelect, NULL, SDL_FLIP_NONE);
+    if(!hasChosen["player2"])
+        SDL_RenderCopyEx(GameManager::renderer, textureSelect, NULL, &destRectSelect2, angleSelect2, NULL, SDL_FLIP_NONE);
 
     SDL_RenderPresent(GameManager::renderer);
 }
 
 void CardsManager::changeCard(std::string playerId, SDL_Rect& destRectSelect_, double& angleSelect_, int side)
 {
+    if(hasChosen[playerId])
+        return;
+    
     //Changement de bonus sélectionné
     if((destRectSelect_.x == startX[playerId]) && (side == -1))
         indexSelection[playerId] = nbChoices[playerId]-1;
@@ -253,6 +271,7 @@ void CardsManager::select(std::string playerId)
         return;
     std::vector<Bonus>& bonusVect = bonusPlayer[playerId][currentBonusIndexes[playerId][0]];
     Bonus& bonus = bonusVect[currentBonusIndexes[playerId][1]];
+    std::string label = bonus.label;
     if(playerId == "player1")
         bonus.player = GameManager::player1;
     else
@@ -260,5 +279,10 @@ void CardsManager::select(std::string playerId)
     bonus.applyBonus();
     if(bonus.nbUses == 0) // Suppression du bonus si épuisé
         bonusVect.erase(bonusVect.begin() + currentBonusIndexes[playerId][1]);
+    if (bonusVect.empty()) // Si le vecteur de bonus (ex : bonusProjectiles) n'a plus de bonus disponibles, on le supprime
+        bonusPlayer[playerId].erase(bonusPlayer[playerId].begin() + currentBonusIndexes[playerId][0]);
     hasChosen[playerId] = true;
+
+    if(label == "Shoot projectiles")
+        bonusPlayer[playerId].emplace_back(bonusProjectile);
 }
