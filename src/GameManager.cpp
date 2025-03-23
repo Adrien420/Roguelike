@@ -51,6 +51,7 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 
 	assets->AddTexture("menu", "../assets/menu.png");
 	assets->AddTexture("button", "../assets/button.png");
+	assets->AddTexture("p1Keys", "../assets/player1Keys.png");
 	assets->AddTexture("orc", "../assets/orc.png");
 	assets->AddTexture("health", "../assets/health.png");
 	assets->AddTexture("projectile", "../assets/projectile.png");
@@ -286,6 +287,10 @@ void GameManager::homeMenu()
 	SDL_Texture* buttonPlayer = GameManager::assets->GetTexture("button");
 	SDL_RenderCopyEx(GameManager::renderer, buttonPlayer, NULL, &destRectButtonPlayer, 0, NULL, SDL_FLIP_NONE);
 	SDL_RenderCopyEx(GameManager::renderer, buttonPlayer, NULL, &destRectButtonIA, 0, NULL, SDL_FLIP_NONE);
+
+	SDL_Texture* player1Keys = GameManager::assets->GetTexture("p1Keys");
+    SDL_Rect destRectP1Keys = {0, 486, 250, 250};
+	SDL_RenderCopyEx(GameManager::renderer, player1Keys, NULL, &destRectP1Keys, 0, NULL, SDL_FLIP_NONE);
 
 	SDL_Rect txtDestRectPlayer, txtDestRectIA;
 	TTF_Font* font = GameManager::assets->GetFont("mainFont");

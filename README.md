@@ -13,6 +13,12 @@ git add <nom_de_fichier> # Préparer
 git commit -m "Message" # Commit
 git push # Envoyer
 ```
+## Installation
+Installer les bibliothèques :
+Boost.Test : 
+```
+sudo apt-get install libboost-test-dev
+```
 ## Lancer le jeu
 Créer un dossier de build
 ```

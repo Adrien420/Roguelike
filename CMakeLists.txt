@@ -28,3 +28,9 @@ set(EXEC Game)
 # Définit les dossiers
 set(SRC ${CMAKE_SOURCE_DIR}/src)
 add_subdirectory(${SRC})
+
+# Recherche Boost pour les tests
+find_package(Boost 1.65.0 REQUIRED COMPONENTS unit_test_framework)
+
+# Ajoute le dossier de tests
+add_subdirectory(tests)

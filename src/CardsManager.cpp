@@ -183,6 +183,8 @@ void CardsManager::choseCard()
     if(GameManager::isVsIA && !hasChosen["player2"])
     {
         indexSelection["player2"] = rand()%nbChoices["player2"];
+        currentBonusIndexes["player2"][0] = selectedBonusIndexes["player2"][indexSelection["player2"]][0];
+        currentBonusIndexes["player2"][1] = selectedBonusIndexes["player2"][indexSelection["player2"]][1];
         select("player2");
     }
 
