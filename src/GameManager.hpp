@@ -10,9 +10,11 @@
 #include "AssetManager.hpp"
 #include "Entity.hpp"
 #include "CardsManager.hpp"
+#include "SoundManager.hpp"
 
 class AssetManager;
 class CardsManager;
+class SoundManager;
 
 class GameManager
 {
@@ -42,6 +44,7 @@ class GameManager
         static AssetManager* assets;
         static EntitiesManager entitiesManager;
         static CardsManager cardsManager;
+        static SoundManager* soundManager;
         static Entity* player1;
         static Entity* player2;
         static int nbwinRounds;

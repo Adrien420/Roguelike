@@ -12,6 +12,7 @@ bool GameManager::isVsIA = false;
 AssetManager* GameManager::assets = new AssetManager();
 EntitiesManager GameManager::entitiesManager;
 CardsManager GameManager::cardsManager;
+SoundManager* GameManager::soundManager = &SoundManager::getInstance();
 Entity *GameManager::player1, *GameManager::player2;
 Entity *UI;
 int GameManager::nbwinRounds = 99;
@@ -61,6 +62,9 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 
 	assets->AddFont("mainFont","../assets/04B_30__.TTF", 24);
 	assets->AddFont("cardsFont","../assets/SF.ttf", 20);
+
+	GameManager::soundManager->loadMusic("mainBGM", "../assets/Sounds/mainBGM.mp3");
+	GameManager::soundManager->playMusic("mainBGM");
 
     // Ajout d'un texte au jeu
     UI = new Entity(UILabelComponent("mainFont", "Hello", {255, 0, 0, 255}));
@@ -248,6 +252,8 @@ void GameManager::clean()
         SDL_DestroyWindow(window);
         window = nullptr;
     }
+
+    soundManager->clean(); 
 
     TTF_Quit();
     SDL_Quit();
