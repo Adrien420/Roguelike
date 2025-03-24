@@ -21,9 +21,9 @@ void CardsManager::initBonus()
     bonusBase.emplace_back(bonusSpeed);
     Bonus bonusAttackSpeed = Bonus("Up ATK speed (+20%)", -1, []() { upgradeStatPercent("attackDuration", -0.2f)();} );
     bonusBase.emplace_back(bonusAttackSpeed);
-    Bonus bonusHealth = Bonus("Up health (+20%)", -1, []() { upgradeStatPercent("health", 0.2f)();} );
+    Bonus bonusHealth = Bonus("Up HP (+20%)", -1, []() { upgradeStatPercent("health", 0.2f)();} );
     bonusBase.emplace_back(bonusHealth);
-    Bonus bonusDamages = Bonus("Up damages (+20%)", -1, []() { upgradeStatPercent("damages", 0.2f)();} );
+    Bonus bonusDamages = Bonus("Up DMG sword(+20%)", -1, []() { upgradeStatPercent("damagesSword", 0.2f)();} );
     bonusBase.emplace_back(bonusDamages);
     Bonus bonusNbChoices= Bonus("Up NB choices (+1)", 2, []() { upgradeStat("nbCardsChoice", 1)();} );
     bonusBase.emplace_back(bonusNbChoices);
@@ -33,6 +33,8 @@ void CardsManager::initBonus()
     bonusBase.emplace_back(bonusProjectiles);
     Bonus bonusNbProjectiles= Bonus("Up NB projectiles (+2)", 3, []() { upgradeStat("nbProjectiles", 2)();} );
     bonusProjectile.emplace_back(bonusNbProjectiles);
+    Bonus bonusDamagesProjectiles = Bonus("Up DMG projectiles (+20%)", -1, []() { upgradeStatPercent("damagesProjectiles", 0.2f)();} );
+    bonusBase.emplace_back(bonusDamagesProjectiles);
 
     bonusPlayer["player1"].emplace_back(bonusBase);
     bonusPlayer["player2"].emplace_back(bonusBase);

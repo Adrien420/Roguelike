@@ -13,12 +13,13 @@ class StatisticsComponent : public Component
         using StatType = std::variant<int, float, bool>;
         std::map<std::string, StatType> stats = {
             {"attackDuration", StatType(500.0f)}, 
-            {"damages", StatType(100.0f)}, 
+            {"damagesSword", StatType(100.0f)}, 
             {"speed", StatType(0.07f)}, 
             {"health", StatType(100.0f)}, 
             {"nbCardsChoice", StatType(3)}, 
             {"hasProjectiles", StatType(false)},
             {"nbProjectiles", StatType(1)},
+            {"damagesProjectiles", StatType(20.0f)},
             {"isAttacking", StatType(false)}
         };
 

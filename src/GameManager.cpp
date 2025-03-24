@@ -149,17 +149,19 @@ void GameManager::update()
 		if (entity->hasComponent<ColliderComponent>()) {
 			auto& entityCollider = entity->getComponent<ColliderComponent>();
 
-			// Vérifier les collisions avec player1
-			if (entityCollider.tag == "sword" || entityCollider.tag == "projectile"){
+			// Vérifier les collisions avec player
+			if (entityCollider.tag == "sword" || entityCollider.tag == "projectile") {
+				std::string damageType = (entityCollider.tag == "sword") ? "damagesSword" : "damagesProjectiles";
+
 				if (entity->playerId != "player1" && entityCollider.checkCollision(player1Collider)) {
 					isCollision = true;
-					float damage = std::get<float>(player2->getComponent<StatisticsComponent>().stats["damages"]);
+					float damage = std::get<float>(player2->getComponent<StatisticsComponent>().stats[damageType]);
 					player1->getComponent<HealthComponent>().updateHealth(-damage);
 					entity->destroy();
 				}
 				if (entity->playerId != "player2" && entityCollider.checkCollision(player2Collider)) {
 					isCollision = true;
-					float damage = std::get<float>(player1->getComponent<StatisticsComponent>().stats["damages"]);
+					float damage = std::get<float>(player1->getComponent<StatisticsComponent>().stats[damageType]);
 					player2->getComponent<HealthComponent>().updateHealth(-damage);
 					entity->destroy();
 				}
