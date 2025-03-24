@@ -1,0 +1,190 @@
+@startuml DiagrammeUML
+
+' Configuration graphique
+skinparam classAttributeIconSize 0
+
+' ===== Classes Principales =====
+
+class GameManager {
+    +GameManager(title, width, height, fullscreen)
+    +handleEvents()
+    +update()
+    +render()
+    +clean()
+    +createPlayers()
+    +homeMenu()
+    +initGame()
+    +pause()
+    +endOfRound()
+    +startNewRound()
+    -window: SDL_Window*
+    -renderer: SDL_Renderer*
+    -event: SDL_Event
+    -assets: AssetManager*
+    -entitiesManager: EntitiesManager
+    -cardsManager: CardsManager
+    -player1, player2: Entity*
+    -nbWinsPlayer: map<string, int>
+    -...
+}
+
+class AssetManager {
+    +LoadTexture(fileName: const char*): SDL_Texture*
+    +AddTexture(id: string, path: const char*)
+    +GetTexture(id: string): SDL_Texture*
+    +AddFont(id: string, path: string, fontSize: int)
+    +GetFont(id: string): TTF_Font*
+    +AddTxt(txt: string, font: TTF_Font*, color: SDL_Color, destRect: SDL_Rect*, scale: float): SDL_Texture*
+    -textures: map<string, SDL_Texture*>
+    -fonts: map<string, TTF_Font*>
+}
+
+class CardsManager {
+    +init()
+    +initBonus()
+    +initBonusPlayer(playerId: string)
+    +choseCard()
+    +displayPlayerCards(playerId: string, selected: bool)
+    +changeCard(playerId: string, destRect: SDL_Rect&, angle: double&, side: int)
+    +select(playerId: string)
+    -bonusInitialized: bool
+    -bonusPlayer: map<string, vector<vector<Bonus>>>
+    -selectedBonusIndexes: map<string, vector<array<int,2>>>
+    -txtTextures, txtDestRects: map<string, vector<SDL_Texture*> / SDL_Rect>
+    -...
+}
+
+class Bonus {
+    +Bonus(label: string, nbUses: int, apply: function)
+    +applyBonus()
+    <<static>> -player: Entity*
+    -label: string
+    -nbUses: int
+    -apply: function
+}
+
+class Entity {
+    +getComponent<T>()
+    +addComponent(...)
+    +destroy()
+    -label: string
+    -playerId: string
+}
+
+class Map {
+    +Map(path: string)
+    +LoadTextures()
+    +LoadMap(path: string)
+    +DrawMap(renderer: SDL_Renderer*)
+    +getColliders(): vector<SDL_Rect>
+    -mapData: vector<vector<int>>
+    -colliders: vector<SDL_Rect>
+}
+
+class EntitiesManager {
+    +addEntity(e: Entity*)
+    +refresh()
+    +update()
+    +draw()
+    +reset()
+    -entities: vector<Entity*>
+}
+
+' ===== Composants =====
+
+class UILabelComponent {
+  +SDL_Rect destRect
+  +SDL_Color color
+  +setText()
+  +setPosition()
+  +SDL_DestroyTexture()
+  +SDL_FreeSurface()
+  +SDL_RenderCopy()
+}
+
+class TransformComponent {
+  +Vector2D position
+  +Vector2D direction
+  +TransformComponent()
+}
+
+class StatisticsComponent {
+  +StatisticsComponent()
+}
+
+class SpriteComponent {
+  +setTex()
+  +setAnimation()
+  +Play()
+  +initAnimations()
+  +SDL_RenderCopyEx()
+}
+
+class ProjectileComponent {
+  +Vector2D direction
+  +SDL_Rect destRect
+  +float speed
+  +SDL_QueryTexture()
+  +SDL_RenderCopyEx()
+}
+
+class KeyboardController {
+  +SDL_Keycode upKey
+  +int attackDuration
+  +Uint32 attackStart
+  +applyDirection()
+  +attack()
+  +changeDirection()
+}
+
+class IAControllerComponent {
+  +Uint32 decisionStart
+  +int direction
+  +attack()
+  +applyDirection()
+}
+
+class HealthComponent {
+  +Uint32 deathStart
+  +float health
+  +updateHealth()
+  +SDL_QueryTexture()
+  +SDL_SetRenderDrawColor()
+  +SDL_RenderFillRect()
+  +SDL_RenderCopyEx()
+}
+
+class ColliderComponent {
+  +SDL_SetRenderDrawColor()
+  +SDL_RenderDrawRect()
+}
+
+' ===== Relations =====
+
+GameManager --> AssetManager : utilise
+GameManager --> CardsManager : utilise
+GameManager --> EntitiesManager : utilise
+GameManager --> Entity : possède
+GameManager --> Map : possède
+
+CardsManager --> Bonus : contient
+CardsManager --> GameManager : dépendance (statique)
+CardsManager --> AssetManager : utilise
+CardsManager --> Entity : via Bonus::player
+
+Bonus --> Entity : association (static)
+
+Entity --> StatisticsComponent : possède
+Entity --> HealthComponent : possède
+Entity --> ColliderComponent : possède
+Entity --> TransformComponent : possède
+Entity --> UILabelComponent : possède
+Entity --> KeyboardController : possède
+Entity --> IAControllerComponent : possède
+Entity --> SpriteComponent : possède
+Entity --> ProjectileComponent : possède
+
+Map --> AssetManager : dépendance
+Map --> GameManager : dépendance (statique)
+
+@enduml
