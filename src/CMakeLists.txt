@@ -12,9 +12,6 @@ set(SRC AssetManager.cpp GameManager.cpp main.cpp Map.cpp CardsManager.cpp Bonus
 # Crée l'exécutable à partir du fichier main.cpp
 add_executable(${EXEC} ${SRC})
 
-# Ajoute la définition DEBUG uniquement si on compile en Debug
-target_compile_definitions(${EXEC} PRIVATE $<$<CONFIG:Debug>:DEBUG>)
-
 # Lie l'exécutable avec la bibliothèque SDL2
 target_link_libraries(${EXEC} ${SDL2_LIBRARIES} SDL2_image SDL2_ttf)
 

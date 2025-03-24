@@ -2,9 +2,7 @@
 #include <string>
 #include "Components.hpp"
 
-/*
-Utiliser -DDEBUG dans les options du compilateur pour activer le mode debug
-*/
+bool modeDEBUG = true; // Affiche le collider ou pas
 
 class ColliderComponent : public Component
 {
@@ -47,11 +45,13 @@ public:
 
     void draw() override
     {
-#ifdef DEBUG
-        SDL_SetRenderDrawColor(GameManager::renderer, 255, 0, 0, 255);  // Mettre le collider en rouge
-        SDL_RenderDrawRect(GameManager::renderer, &collider);
-        SDL_SetRenderDrawColor(GameManager::renderer, 255, 255, 255, 255);  // Réinitialiser la couleur du rendu au blanc 
-#endif
+        if (modeDEBUG)
+        {
+            SDL_SetRenderDrawColor(GameManager::renderer, 255, 0, 0, 255);  // Mettre le collider en rouge
+            SDL_RenderDrawRect(GameManager::renderer, &collider);
+            SDL_SetRenderDrawColor(GameManager::renderer, 255, 255, 255, 255);  // Réinitialiser la couleur du rendu au blanc 
+        
+        }
     }
 
     bool checkCollision(const ColliderComponent& other) const

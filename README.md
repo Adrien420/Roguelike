@@ -30,11 +30,6 @@ Compiler
 cmake ..
 make
 ```
-Compiler en mode DEBUG
-```
-cmake -DCMAKE_BUILD_TYPE=Debug ..
-make
-```
 Exécuter
 ```
 ./src/Game

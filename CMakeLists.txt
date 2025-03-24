@@ -1,11 +1,6 @@
 # Version minimale de CMake requise
 cmake_minimum_required(VERSION 3.10)
 
-# Définit le type de build par défaut à Release, mais permet de le changer
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type: Debug or Release" FORCE)
-endif()
-
 # Nom du projet
 project(Roguelike)
 
