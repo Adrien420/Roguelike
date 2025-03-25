@@ -37,12 +37,11 @@ class GameManager
         static void createPlayers();
         void homeMenu();
         void initGame();
-        void pause(bool isPausing_);
         void preventMvt(TransformComponent& playerPos, SDL_Rect playerCollider, SDL_Rect obstacleCollider);
 
         static SDL_Renderer *renderer;
         static SDL_Event event;
-        static bool isRunning, inHomeMenu, isPausing, chosingCards, inDeathAnimation, isVsIA, modeDEBUG;
+        static bool isRunning, inHomeMenu, chosingCards, inDeathAnimation, isVsIA, modeDEBUG;
         static AssetManager* assets;
         static EntitiesManager entitiesManager;
         static CardsManager cardsManager;
