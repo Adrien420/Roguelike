@@ -1,9 +1,9 @@
 #define BOOST_TEST_MODULE ProjectileComponentTest
 #include <boost/test/included/unit_test.hpp>
-#include "ProjectileComponent.hpp"
-#include "TransformComponent.hpp"
-#include "StatisticsComponent.hpp"
-#include "Entity.hpp"
+#include "../src/ProjectileComponent.hpp"
+#include "../src/TransformComponent.hpp"
+#include "../src/StatisticsComponent.hpp"
+#include "../src/Entity.hpp"
 #include "SDL2/SDL.h"
 
 // Mock des classes utilisées par ProjectileComponent

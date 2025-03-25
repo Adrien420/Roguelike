@@ -12,7 +12,7 @@ include_directories(${SDL2_MIXER_INCLUDE_DIRS})
 set(PROJECT_SOURCES ../src/GameManager.cpp ../src/AssetManager.cpp ../src/Map.cpp ../src/CardsManager.cpp ../src/Bonus.cpp ../src/SoundManager.cpp)
 
 #Ajout des fichiers source
-set(TESTS test_entity.cpp test_gamemanager.cpp test_assetmanager.cpp test_bonus.cpp)
+set(TESTS test_entity.cpp test_gamemanager.cpp test_assetmanager.cpp test_bonus.cpp test_collidercomponent.cpp test_healthcomponent.cpp test_spritecomponent.cpp test_transformcomponent.cpp test_projectile.cpp)
 
 # Crée l'exécutable à partir du fichier main.cpp
 add_executable(Roguelike_tests ${TESTS} ${PROJECT_SOURCES})

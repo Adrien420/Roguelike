@@ -1,7 +1,7 @@
 #include <boost/test/included/unit_test.hpp>
-#include "ColliderComponent.hpp"
-#include "TransformComponent.hpp"
-#include "Entity.hpp"
+#include "../src/ColliderComponent.hpp"
+#include "../src/TransformComponent.hpp"
+#include "../src/Entity.hpp"
 
 // Fixture pour configurer une entité avec un collider
 struct ColliderTestFixture {

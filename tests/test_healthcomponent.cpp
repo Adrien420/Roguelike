@@ -1,10 +1,10 @@
 #include <boost/test/included/unit_test.hpp>
-#include "HealthComponent.hpp"
-#include "Entity.hpp"
-#include "StatisticsComponent.hpp"
-#include "TransformComponent.hpp"
-#include "SpriteComponent.hpp"
-#include "GameManager.hpp"
+#include "../src/HealthComponent.hpp"
+#include "../src/Entity.hpp"
+#include "../src/StatisticsComponent.hpp"
+#include "../src/TransformComponent.hpp"
+#include "../src/SpriteComponent.hpp"
+#include "../src/GameManager.hpp"
 
 // Fixture pour initialiser une entité avec HealthComponent et ses dépendances
 struct HealthTestFixture {

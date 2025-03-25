@@ -1,7 +1,7 @@
 #include <boost/test/included/unit_test.hpp>
-#include "TransformComponent.hpp"
-#include "Entity.hpp"
-#include "StatisticsComponent.hpp"
+#include "../src/TransformComponent.hpp"
+#include "../src/Entity.hpp"
+#include "../src/StatisticsComponent.hpp"
 
 // Fixture pour initialiser une entité avec TransformComponent et StatisticsComponent
 struct TransformTestFixture {

@@ -1,9 +1,9 @@
 #include <boost/test/included/unit_test.hpp>
-#include "SpriteComponent.hpp"
-#include "Entity.hpp"
-#include "StatisticsComponent.hpp"
-#include "TransformComponent.hpp"
-#include "GameManager.hpp"
+#include "../src/SpriteComponent.hpp"
+#include "../src/Entity.hpp"
+#include "../src/StatisticsComponent.hpp"
+#include "../src/TransformComponent.hpp"
+#include "../src/GameManager.hpp"
 
 // Fixture pour initialiser une entité avec SpriteComponent et ses dépendances
 struct SpriteTestFixture {
