@@ -5,7 +5,6 @@ SDL_Renderer* GameManager::renderer = nullptr;
 SDL_Event GameManager::event;
 bool GameManager::isRunning = false;
 bool GameManager::inHomeMenu = true;
-bool GameManager::isPausing = false;
 bool GameManager::chosingCards = false;
 bool GameManager::inDeathAnimation = false;
 bool GameManager::isVsIA = false;
@@ -54,6 +53,7 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	assets->AddTexture("menu", "../assets/menu.png");
 	assets->AddTexture("button", "../assets/button.png");
 	assets->AddTexture("p1Keys", "../assets/player1Keys.png");
+	assets->AddTexture("p2Keys", "../assets/player2Keys.png");
 	assets->AddTexture("orc", "../assets/orc.png");
 	assets->AddTexture("health", "../assets/health.png");
 	assets->AddTexture("projectile", "../assets/projectile.png");
@@ -82,41 +82,31 @@ void GameManager::handleEvents()
 
 	switch (event.type)
 	{
-	case SDL_KEYDOWN:
-		switch(event.key.keysym.sym)
-		{
-			case SDLK_p:
-				pause(!isPausing);
-				break;
-			default:
-				break;
-		}
-		break;
-	case SDL_MOUSEBUTTONDOWN:
-		int mouseX, mouseY;
-        SDL_GetMouseState(&mouseX, &mouseY);
-		if(inHomeMenu)
-		{
-			if(mouseX >= destRectButtonPlayer.x && mouseX <= destRectButtonPlayer.x + destRectButtonPlayer.w
-				&& mouseY >= destRectButtonPlayer.y && mouseY <= destRectButtonPlayer.y + destRectButtonPlayer.h)
+		case SDL_MOUSEBUTTONDOWN:
+			int mouseX, mouseY;
+			SDL_GetMouseState(&mouseX, &mouseY);
+			if(inHomeMenu)
 			{
-				isVsIA = false;
-				initGame();
+				if(mouseX >= destRectButtonPlayer.x && mouseX <= destRectButtonPlayer.x + destRectButtonPlayer.w
+					&& mouseY >= destRectButtonPlayer.y && mouseY <= destRectButtonPlayer.y + destRectButtonPlayer.h)
+				{
+					isVsIA = false;
+					initGame();
+				}
+				if(mouseX >= destRectButtonIA.x && mouseX <= destRectButtonIA.x + destRectButtonIA.w
+					&& mouseY >= destRectButtonIA.y && mouseY <= destRectButtonIA.y + destRectButtonIA.h)
+				{
+					isVsIA = true;
+					initGame();
+				}
+					
 			}
-			if(mouseX >= destRectButtonIA.x && mouseX <= destRectButtonIA.x + destRectButtonIA.w
-				&& mouseY >= destRectButtonIA.y && mouseY <= destRectButtonIA.y + destRectButtonIA.h)
-			{
-				isVsIA = true;
-				initGame();
-			}
-				
-		}
-		break;
-	case SDL_QUIT :
-		isRunning = false;
-		break;
-	default:
-		break;
+			break;
+		case SDL_QUIT :
+			isRunning = false;
+			break;
+		default:
+			break;
 	}
 }
 
@@ -252,7 +242,31 @@ void GameManager::render() {
     // Affichage de la map
     map.DrawMap(renderer);
     
+	// Rendus des composants des entités actives
     entitiesManager.draw();
+
+	// Etat de la partie (nombre de manches et nombre de manches gagnées)
+	TTF_Font* font = GameManager::assets->GetFont("cardsFont");
+	SDL_Color color = {255, 255, 255, 255};
+	SDL_Rect txtRectNbRounds, txtRectNbWinsP1, txtRectNbWinsP2;
+	int nbRounds = GameManager::nbWinsPlayer["player1"] + GameManager::nbWinsPlayer["player2"] + 1;
+	std::string txtNbRounds = "Manche : " + std::to_string(nbRounds);
+	SDL_Texture* textNbRounds = GameManager::assets->AddTxt(txtNbRounds, font, color, &txtRectNbRounds, 1.5);
+	txtRectNbRounds.x = 5;
+	txtRectNbRounds.y = 5;
+	SDL_RenderCopyEx(GameManager::renderer, textNbRounds, NULL, &txtRectNbRounds, 0, NULL, SDL_FLIP_NONE);
+
+	std::string txtNbWinsP1 = "Player1 : " + std::to_string(GameManager::nbWinsPlayer["player1"]) + " / " + std::to_string(nbwinRounds);
+	SDL_Texture* textNbWinsP1 = GameManager::assets->AddTxt(txtNbWinsP1, font, color, &txtRectNbWinsP1, 1.5);
+	txtRectNbWinsP1.x = 5;
+	txtRectNbWinsP1.y = 5 + txtRectNbRounds.h;
+	SDL_RenderCopyEx(GameManager::renderer, textNbWinsP1, NULL, &txtRectNbWinsP1, 0, NULL, SDL_FLIP_NONE);
+	std::string txtNbWinsP2 = "Player2 : " + std::to_string(GameManager::nbWinsPlayer["player2"]) + " / " + std::to_string(nbwinRounds);
+	SDL_Texture* textNbWinsP2 = GameManager::assets->AddTxt(txtNbWinsP2, font, color, &txtRectNbWinsP2, 1.5);
+	txtRectNbWinsP2.x = 5;
+	txtRectNbWinsP2.y = 10 + txtRectNbRounds.h + txtRectNbWinsP1.h;
+	SDL_RenderCopyEx(GameManager::renderer, textNbWinsP2, NULL, &txtRectNbWinsP2, 0, NULL, SDL_FLIP_NONE);
+
     SDL_RenderPresent(renderer);
 }
 
@@ -326,6 +340,9 @@ void GameManager::homeMenu()
 	SDL_Texture* player1Keys = GameManager::assets->GetTexture("p1Keys");
     SDL_Rect destRectP1Keys = {0, 486, 250, 250};
 	SDL_RenderCopyEx(GameManager::renderer, player1Keys, NULL, &destRectP1Keys, 0, NULL, SDL_FLIP_NONE);
+	SDL_Texture* player2Keys = GameManager::assets->GetTexture("p2Keys");
+    SDL_Rect destRectP2Keys = {1030, 486, 250, 250};
+	SDL_RenderCopyEx(GameManager::renderer, player2Keys, NULL, &destRectP2Keys, 0, NULL, SDL_FLIP_NONE);
 
 	SDL_Rect txtDestRectPlayer, txtDestRectIA;
 	TTF_Font* font = GameManager::assets->GetFont("mainFont");
@@ -350,17 +367,10 @@ void GameManager::initGame()
 	GameManager::soundManager->playMusic("battleBGM");
 }
 
-void GameManager::pause(bool isPausing_)
-{
-    isPausing = isPausing_;
-}
-
 void GameManager::endOfRound(std::string playerId)
 {
 	GameManager::soundManager->stopAllSounds();
 	GameManager::nbWinsPlayer[playerId]++;
-	std::cout << playerId << " a remporté la manche : " 
-	<< GameManager::nbWinsPlayer[playerId] << " / " << GameManager::nbwinRounds << " !" << std::endl;
 	if(GameManager::nbWinsPlayer[playerId] >= GameManager::nbwinRounds)
 	{
 		std::cout << playerId << " a remporté la partie !" << std::endl;

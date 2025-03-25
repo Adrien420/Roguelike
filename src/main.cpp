@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
             game_manager.cardsManager.choseCard();
         }
 
-        if(game_manager.inHomeMenu || game_manager.isPausing || game_manager.chosingCards)
+        if(game_manager.inHomeMenu || game_manager.chosingCards)
             continue;
 
         frameStart = SDL_GetTicks();
