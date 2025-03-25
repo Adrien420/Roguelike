@@ -8,10 +8,13 @@ include_directories(/usr/include/SDL2)
 include_directories(${SDL2_MIXER_INCLUDE_DIRS})
 
 # Ajout des fichiers source
-set(SRC AssetManager.cpp GameManager.cpp main.cpp Map.cpp CardsManager.cpp Bonus.cpp SoundManager.cpp)  # Ajout de SoundManager.cpp
+set(SRC AssetManager.cpp GameManager.cpp main.cpp Map.cpp CardsManager.cpp Bonus.cpp SoundManager.cpp)
 
 # Crée l'exécutable à partir du fichier main.cpp
 add_executable(${EXEC} ${SRC})
 
 # Lie l'exécutable avec les bibliothèques SDL2
-target_link_libraries(${EXEC} ${SDL2_LIBRARIES} SDL2_image SDL2_ttf SDL2_mixer)
+target_link_libraries(${EXEC} ${SDL2_LIBRARIES} SDL2_image SDL2_ttf SDL2_mixer glib-2.0)
+
+# Installation de l'exécutable
+install(TARGETS ${EXEC} RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/bin)

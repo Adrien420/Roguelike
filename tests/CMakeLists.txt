@@ -21,7 +21,7 @@ add_executable(Roguelike_tests ${TESTS} ${PROJECT_SOURCES})
 target_include_directories(Roguelike_tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 # Lier Boost.Test et SDL2
-target_link_libraries(Roguelike_tests ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} ${SDL2_LIBRARIES} SDL2_image SDL2_ttf SDL2_mixer)
+target_link_libraries(Roguelike_tests ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} ${SDL2_LIBRARIES} SDL2_image SDL2_ttf SDL2_mixer glib-2.0)
 
 # Installation de l'exécutable
 install(TARGETS Roguelike_tests RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/bin)

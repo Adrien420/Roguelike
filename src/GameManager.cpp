@@ -70,11 +70,6 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	GameManager::soundManager->loadSoundEffect("projectileSE", "../assets/Sounds/projectileSE.mp3");
 	GameManager::soundManager->loadSoundEffect("damageSE", "../assets/Sounds/damageSE.mp3", 128*0.5);
 	GameManager::soundManager->playMusic("mainBGM");
-
-    // Ajout d'un texte au jeu
-    // UI = new Entity(UILabelComponent("mainFont", "Hello", {255, 0, 0, 255}));
-    // UI->getComponent<UILabelComponent>().setPosition(500, 500);
-    // entitiesManager.addEntity(UI);
 }
 
 GameManager::~GameManager()

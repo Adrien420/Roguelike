@@ -20,9 +20,9 @@ BOOST_AUTO_TEST_CASE(ResetTest) {
     projectile->label = "projectile";
     GameManager::entitiesManager.addEntity(projectile);
 
-    BOOST_CHECK_EQUAL(GameManager::entitiesManager.entities.size(), 3); //3 et non 2 car entité UI créée dans le constructeur
+    BOOST_CHECK_EQUAL(GameManager::entitiesManager.entities.size(), 2);
     GameManager::reset();
-    BOOST_CHECK_EQUAL(GameManager::entitiesManager.entities.size(), 1);
+    BOOST_CHECK_EQUAL(GameManager::entitiesManager.entities.size(), 0);
 }
 
 // Test de la création des joueurs
