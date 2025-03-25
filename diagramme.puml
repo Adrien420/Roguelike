@@ -113,16 +113,6 @@ class Component {
 	+~Component()
 }
 
-class UILabelComponent {
-  +SDL_Rect destRect
-  +SDL_Color color
-  +setText()
-  +setPosition()
-  +SDL_DestroyTexture()
-  +SDL_FreeSurface()
-  +SDL_RenderCopy()
-}
-
 class TransformComponent {
   +Vector2D position
   +Vector2D direction
@@ -197,7 +187,6 @@ Component <-- StatisticsComponent
 Component <-- HealthComponent
 Component <-- ColliderComponent
 Component <-- TransformComponent
-Component <-- UILabelComponent
 Component <-- KeyboardController
 KeyboardController <-- IAControllerComponent
 Component <-- SpriteComponent

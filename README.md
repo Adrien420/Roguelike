@@ -7,7 +7,45 @@ Clarence PFISTER
 
 ## Présentation du projet
 
+## Comment jouer ?
 
+Au lancement du jeu, le joueur choisit entre :
+
+- Un mode Joueur vs Joueur (en local, sur un même clavier) ;
+- Un mode Joueur vs IA, où l'adversaire est contrôlé par une intelligence artificielle.
+
+Chaque round se joue en temps réel. À la fin de chaque round, les deux joueurs se voient proposer des cartes d’amélioration aléatoires. Ces cartes permettent de renforcer les caractéristiques de leur personnage pour les prochains rounds (par exemple : vitesse, puissance d’attaque, projectiles, ...).
+
+Commandes :
+
+Joueur contre Joueur :
+
+    Joueur 1 :
+
+        Déplacement : Z (haut), S (bas), Q (gauche), D (droite)
+
+        Attaque : Espace
+
+    Joueur 2 :
+
+        Déplacement : ↑ (haut), ↓ (bas), ← (gauche), → (droite)
+
+        Attaque : M
+
+Joueur contre IA :
+
+    Joueur 1 uniquement :
+
+        Déplacement : Z / Q / S / D
+
+        Attaque : Espace
+
+Choix des cartes d'amélioration :
+
+Lors de la phase d'amélioration entre deux rounds :
+
+- La navigation dans les cartes se fait avec les touches de déplacement (ZQSD ou ↑↓←→ selon le joueur).
+- La validation du choix se fait avec la même touche que pour attaquer (Espace pour le joueur 1, M pour le joueur 2).
 
 ## Installation
 Cloner le dossier :
@@ -46,5 +84,3 @@ Lancer le jeu
 ```
 ./../bin/Game
 ```
-
-## Comment jouer ?
