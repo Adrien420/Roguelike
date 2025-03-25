@@ -78,7 +78,7 @@ sudo apt-get install libboost-test-dev
 ```
 
 ## Compiler & Lancer le jeu
-Compilation (à la racine du dossier cloné)
+Compiler :
 ```
 cd Roguelike
 mkdir -p build
@@ -87,7 +87,7 @@ cmake ..
 make install
 ```
 
-Lancer le jeu
+Lancer le jeu :
 ```
 ./../bin/Game
 ```
