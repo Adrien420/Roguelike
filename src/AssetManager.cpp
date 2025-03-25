@@ -1,23 +1,50 @@
 #include "AssetManager.hpp"
 
+AssetManager::~AssetManager()
+{
+    for (auto& pair : textures) {
+        SDL_DestroyTexture(pair.second);
+    }
+    textures.clear();
+    for (auto& pair : fonts) {
+        TTF_CloseFont(pair.second);
+    }
+    fonts.clear();
+}
+
 SDL_Texture* AssetManager::LoadTexture(const char* fileName)
 {
-	SDL_Surface* tempSurface = IMG_Load(fileName);
-	SDL_Texture* tex = SDL_CreateTextureFromSurface(GameManager::renderer, tempSurface);
-	SDL_FreeSurface(tempSurface);
-	
-	return tex;
+    SDL_Surface* tempSurface = IMG_Load(fileName);
+    if (!tempSurface) {
+        std::cerr << "Erreur : Impossible de charger l'image " << fileName << " : " << IMG_GetError() << std::endl;
+        return nullptr;
+    }
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(GameManager::renderer, tempSurface);
+    SDL_FreeSurface(tempSurface);
+    if (!tex) {
+        std::cerr << "Erreur : Impossible de créer la texture pour " << fileName << " : " << SDL_GetError() << std::endl;
+    }
+    return tex;
 }
 
 void AssetManager::AddTexture(std::string id, const char* path)
 {
-	textures.emplace(id, AssetManager::LoadTexture(path));
+	SDL_Texture* texture = LoadTexture(path);
+    if (texture)
+    {
+        textures.emplace(id, texture);
+    }
 }
 
 SDL_Texture* AssetManager::GetTexture(std::string id)
 {
-	return textures[id];
+    if (textures.find(id) == textures.end()) {
+        std::cerr << "Erreur : texture " << id << " non trouvée !" << std::endl;
+        return nullptr;
+    }
+    return textures[id];
 }
+
 
 void AssetManager::AddFont(std::string id, std::string path, int fontSize)
 {

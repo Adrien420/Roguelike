@@ -69,7 +69,7 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	GameManager::soundManager->loadMusic("cardsBGM", "../assets/Sounds/cardsBGM.mp3");
 	GameManager::soundManager->loadSoundEffect("swordSE", "../assets/Sounds/swordSE.mp3");
 	GameManager::soundManager->loadSoundEffect("projectileSE", "../assets/Sounds/projectileSE.mp3");
-	GameManager::soundManager->loadSoundEffect("damageSE", "../assets/Sounds/damageSE.mp3", 128*0.5);
+	GameManager::soundManager->loadSoundEffect("damageSE", "../assets/Sounds/damageSE.mp3", 128*0.2);
 	GameManager::soundManager->playMusic("mainBGM");
 }
 
@@ -281,9 +281,8 @@ void GameManager::clean()
         window = nullptr;
     }
 
-    soundManager->clean(); 
-
     TTF_Quit();
+	IMG_Quit();
     SDL_Quit();
 }
 

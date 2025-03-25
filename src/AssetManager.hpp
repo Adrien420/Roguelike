@@ -14,7 +14,7 @@ class AssetManager
 
     public:
         AssetManager(){};
-        ~AssetManager(){};
+        ~AssetManager();
 
         //texture management
         SDL_Texture* LoadTexture(const char* fileName);
