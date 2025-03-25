@@ -51,7 +51,7 @@ Choix des cartes d'amélioration :
 
 Lors de la phase d'amélioration entre deux rounds :
 
-- La navigation dans les cartes se fait avec les touches de déplacement (ZQSD ou ↑↓←→ selon le joueur).
+- La navigation dans les cartes se fait avec les touches de déplacement (QD ou ←→ selon le joueur).
 - La validation du choix se fait avec la même touche que pour attaquer (Espace pour le joueur 1, M pour le joueur 2).
 
 ## Installation
