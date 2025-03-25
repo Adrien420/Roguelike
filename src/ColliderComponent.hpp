@@ -2,8 +2,6 @@
 #include <string>
 #include "Components.hpp"
 
-bool modeDEBUG = false; // Affiche le collider ou pas
-
 class ColliderComponent : public Component
 {
 public:
@@ -50,7 +48,6 @@ public:
             SDL_SetRenderDrawColor(GameManager::renderer, 255, 0, 0, 255);  // Mettre le collider en rouge
             SDL_RenderDrawRect(GameManager::renderer, &collider);
             SDL_SetRenderDrawColor(GameManager::renderer, 255, 255, 255, 255);  // Réinitialiser la couleur du rendu au blanc 
-        
         }
     }
 
