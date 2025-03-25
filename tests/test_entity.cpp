@@ -3,7 +3,7 @@
 #include "../src/Entity.hpp"
 
 // Composant factice pour les tests
-class DummyComponent : public Component {
+class RandomComponent : public Component {
 public:
     bool initialized = false;
     void init() override { initialized = true; }
@@ -14,9 +14,9 @@ public:
 BOOST_AUTO_TEST_CASE(AddComponentTest)
 {
     Entity entity;
-    auto& comp = entity.addComponent<DummyComponent>();
+    auto& comp = entity.addComponent<RandomComponent>();
     
-    BOOST_CHECK(entity.hasComponent<DummyComponent>());
+    BOOST_CHECK(entity.hasComponent<RandomComponent>());
     BOOST_CHECK(comp.initialized == true);
 }
 
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(RemoveInactiveEntitiesTest)
 BOOST_AUTO_TEST_CASE(UpdateAndResetTest)
 {
     Entity entity;
-    auto& comp = entity.addComponent<DummyComponent>();
+    auto& comp = entity.addComponent<RandomComponent>();
 
     entity.update();
     entity.reset();

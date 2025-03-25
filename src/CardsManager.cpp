@@ -5,7 +5,9 @@
 #include "Bonus.hpp"
 #define PI 3.14
 
+// Vecteurs de bonus
 std::vector<Bonus> bonusBase, bonusProjectile;
+// Bonus disponibles pour les joueurs
 std::map<std::string,std::vector<std::vector<Bonus>>> bonusPlayer;
 bool CardsManager::bonusInitialized = false;
 
@@ -61,6 +63,7 @@ void CardsManager::initBonusPlayer(std::string playerId)
         std::set<std::array<int, 2>>::iterator it = bonusesChosen.find(bonusIndexes);
         int limitDuration = 100; //Evite une boucle infinie
         Uint32 startTimer = SDL_GetTicks();
+        // On met une condition sur le temps pris pour trouver un bonus distinct => pour éviter de potentielles boucles infinies
         while(it != bonusesChosen.end() && SDL_GetTicks()-startTimer < limitDuration)
         {
             bonusTypeIndex = rand() % bonusPlayer[playerId].size();
@@ -88,6 +91,7 @@ void CardsManager::initBonusPlayer(std::string playerId)
 
 void CardsManager::init()
 {
+    // Récupèration du nombre de choix pour chaque joueur
     nbChoices["player1"] = std::get<int>(GameManager::player1->getComponent<StatisticsComponent>().stats["nbCardsChoice"]);
     nbChoices["player2"] = std::get<int>(GameManager::player2->getComponent<StatisticsComponent>().stats["nbCardsChoice"]);
     
@@ -96,13 +100,16 @@ void CardsManager::init()
         initBonus();
         bonusInitialized = true;
     }
+    // Choix d'une graine aléatoire
     srand(time(NULL));
+    // Tirage aléatoire des bonus proposés
     initBonusPlayer("player1");
     initBonusPlayer("player2");
 
     indexSelection["player1"] = indexSelection["player2"] = 0;
     hasChosen["player1"] = hasChosen["player2"] = false;
     
+    // UI pour indiquer quelle carte est actuellement sélectionnée
     texture = GameManager::assets->GetTexture("border");
     textureSelect = GameManager::assets->GetTexture("selection");
     SDL_QueryTexture(texture, NULL, NULL, &imgWidth, &imgHeight);
@@ -131,6 +138,7 @@ int CardsManager::computeStartX(std::string playerId)
 
 int CardsManager::computeSelectY(std::string playerId)
 {
+    // Un peu de trigo pour prendre en compte l'orientation des cartes
     int posY = offsetY[playerId] + destRect.w/2 * sin(abs(angleSelect * PI / 180));
     if(nbChoices[playerId] > 3)
         posY += destRect.w * sin(abs(30/(nbChoices[playerId]-1) * PI / 180));
@@ -141,13 +149,14 @@ void CardsManager::displayPlayerCards(std::string playerId, bool selected)
 {
     for(int i=0; i<nbChoices[playerId]; i++)
 	{
-		angle = startAngle + i*30.0/(nbChoices[playerId]-1);
+		// Angle calculé de sorte à avoir une présentation sous forme de "deck en main"
+        angle = startAngle + i*30.0/(nbChoices[playerId]-1);
 		destRect.x = startX[playerId] + i * (destRect.w + margin[playerId]);
 		destRect.y = offsetY[playerId] + destRect.w/2 * sin(abs(angle * PI / 180));
 		if((i == 0 || i == nbChoices[playerId]-1) && nbChoices[playerId] > 3)
 			destRect.y += destRect.h * sin(abs(30/(nbChoices[playerId]-1) * PI / 180));
 
-        if(selected)
+        if(selected) // Si la carte a été choisie
         {
             SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND); // Permet de modifier la couleur / opacité de la texture
             if(indexSelection[playerId] == i) // Carte sélectionnée
@@ -182,7 +191,7 @@ void CardsManager::choseCard()
     SDL_Rect destRectMenu = {0, 0, 1280, 736};
 	SDL_RenderCopyEx(GameManager::renderer, menuCards, NULL, &destRectMenu, 0, NULL, SDL_FLIP_NONE);
 
-    if(GameManager::isVsIA && !hasChosen["player2"])
+    if(GameManager::isVsIA && !hasChosen["player2"]) // Choix automatique et aléatoire pour l'IA
     {
         indexSelection["player2"] = rand()%nbChoices["player2"];
         currentBonusIndexes["player2"][0] = selectedBonusIndexes["player2"][indexSelection["player2"]][0];
@@ -190,7 +199,7 @@ void CardsManager::choseCard()
         select("player2");
     }
 
-    if(hasChosen["player1"] && hasChosen["player2"])
+    if(hasChosen["player1"] && hasChosen["player2"]) // Si les 2 joueurs ont fait leur choix : nouvelle manche
     {
         initilized = false;
         GameManager::startNewRound();
@@ -280,13 +289,16 @@ void CardsManager::select(std::string playerId)
 {
     if(hasChosen[playerId])
         return;
+    // Récupèration par référence du bonus choisi à partir de ses indices dans les vecteurs de bonus
     std::vector<Bonus>& bonusVect = bonusPlayer[playerId][currentBonusIndexes[playerId][0]];
     Bonus& bonus = bonusVect[currentBonusIndexes[playerId][1]];
     std::string label = bonus.label;
+    // On indique au bonus sur quel joueur son effet doit être appliqué
     if(playerId == "player1")
         bonus.player = GameManager::player1;
     else
         bonus.player = GameManager::player2;
+    // Application du bonus
     bonus.applyBonus();
     if(bonus.nbUses == 0) // Suppression du bonus si épuisé
         bonusVect.erase(bonusVect.begin() + currentBonusIndexes[playerId][1]);

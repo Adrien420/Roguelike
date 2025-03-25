@@ -1,6 +1,7 @@
 #include "GameManager.hpp"
 #include "Components.hpp"
 
+// Initialisation des variables statiques
 SDL_Renderer* GameManager::renderer = nullptr;
 SDL_Event GameManager::event;
 bool GameManager::isRunning = false;
@@ -44,12 +45,14 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
         isRunning = false;
     }
 
+	// Création de la map
 	map = Map("../assets/map.txt", "../assets/map_overlay.txt");
 
 	// Home Menu
 	destRectButtonPlayer = {1280/2-buttonPlayerWidth/2, 736/3-buttonPlayerHeight/2, buttonPlayerWidth, buttonPlayerHeight};
 	destRectButtonIA = {1280/2-buttonPlayerWidth/2, 2*736/3-buttonPlayerHeight/2, buttonPlayerWidth, buttonPlayerHeight};
 
+	// Chargement des ressources graphiques et audios
 	assets->AddTexture("menu", "../assets/menu.png");
 	assets->AddTexture("button", "../assets/button.png");
 	assets->AddTexture("p1Keys", "../assets/player1Keys.png");
@@ -78,14 +81,15 @@ GameManager::~GameManager()
 
 void GameManager::handleEvents()
 {
-    SDL_PollEvent(&event);
+    // Récupération du dernier événement (souris, clavier)
+	SDL_PollEvent(&event);
 
 	switch (event.type)
 	{
-		case SDL_MOUSEBUTTONDOWN:
+		case SDL_MOUSEBUTTONDOWN: // Clic de souris
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
-			if(inHomeMenu)
+			if(inHomeMenu) // Si l'un des 2 modes de jeu est sélectionné : lancement de la partie
 			{
 				if(mouseX >= destRectButtonPlayer.x && mouseX <= destRectButtonPlayer.x + destRectButtonPlayer.w
 					&& mouseY >= destRectButtonPlayer.y && mouseY <= destRectButtonPlayer.y + destRectButtonPlayer.h)
@@ -112,24 +116,26 @@ void GameManager::handleEvents()
 
 void GameManager::preventMvt(TransformComponent& playerPos, SDL_Rect playerCollider, SDL_Rect obstacleCollider)
 {
+	// Calculs des distances entre le collider du joueur est celui de l'obstacle
 	int distX = playerCollider.x + playerCollider.w - obstacleCollider.x;
 	int distX2 = obstacleCollider.x + obstacleCollider.w - playerCollider.x;
 	int distY = playerCollider.y + playerCollider.h - obstacleCollider.y;
 	int distY2 = obstacleCollider.y + obstacleCollider.h - playerCollider.y;
+	// Margin permet d'éviter d'être bloqué si les colliders s'effleurent
 	int margin = 5;
 
-	if(playerPos.direction.x != 0)
+	if(playerPos.direction.x != 0) // Si le joueur avance horizontalement
 	{
-		if(distX >= 0 && distX <= obstacleCollider.w/2 && abs(distY) > margin && abs(distY2) > margin)
-			playerPos.position.x -= distX;
-		else if(distX2 >= 0 && distX2 <= obstacleCollider.w/2 && abs(distY) > margin && abs(distY2) > margin)
+		if(distX >= 0 && distX <= obstacleCollider.w/2 && abs(distY) > margin && abs(distY2) > margin) // Obstacle à droite et dans le joueur
+			playerPos.position.x -= distX; // On "sort" le joueur de l'obstacle
+		else if(distX2 >= 0 && distX2 <= obstacleCollider.w/2 && abs(distY) > margin && abs(distY2) > margin) // Obstacle à gauche et dans le joueur
 			playerPos.position.x += distX2;
 	}
 	else if(playerPos.direction.y != 0)
 	{
-		if(distY >= 0 && distY <= obstacleCollider.h/2 && abs(distX) > margin && abs(distX2) > margin)
+		if(distY >= 0 && distY <= obstacleCollider.h/2 && abs(distX) > margin && abs(distX2) > margin) // Obstacle en-dessous et dans le joueur
 			playerPos.position.y -= distY;
-		else if(distY2 >= 0 && distY2 <= obstacleCollider.h/2 && abs(distX) > margin && abs(distX2) > margin)
+		else if(distY2 >= 0 && distY2 <= obstacleCollider.h/2 && abs(distX) > margin && abs(distX2) > margin) // Obstacle au-dessus et dans le joueur
 			playerPos.position.y += distY2;
 	}
 }
@@ -148,11 +154,9 @@ void GameManager::update()
 	// Vérifier les collisions entre les joueurs et les obstacles de la map
 	for (const auto& collider : map.getColliders()) {
 		if (player1Collider.checkCollision(collider)) {
-			// Empêche le déplacement dans cette direction
 			preventMvt(player1Transform, player1Collider.collider, collider);
 		}
 		if (player2Collider.checkCollision(collider)) {
-			// Empêche le déplacement dans cette direction
 			preventMvt(player2Transform, player2Collider.collider, collider);
 		}
 	}
@@ -170,7 +174,7 @@ void GameManager::update()
 					float damage = std::get<float>(player2->getComponent<StatisticsComponent>().stats[damageType]);
 					player1->getComponent<HealthComponent>().updateHealth(-damage);
 					entity->destroy();
-					// Éviter le chevauchement des damageSE
+					// Éviter le chevauchement des damagees (pour ne pas mettre des dégâts en continue)
 					if (!std::get<bool>(player1->getComponent<StatisticsComponent>().stats["isTakingDamages"])){
 						GameManager::soundManager->playSoundEffect("damageSE");
 						player1->getComponent<StatisticsComponent>().stats["isTakingDamages"] = true;
@@ -181,7 +185,7 @@ void GameManager::update()
 					float damage = std::get<float>(player1->getComponent<StatisticsComponent>().stats[damageType]);
 					player2->getComponent<HealthComponent>().updateHealth(-damage);
 					entity->destroy();
-					// Éviter le chevauchement des damageSE
+					// Éviter le chevauchement des damagees
 					if (!std::get<bool>(player2->getComponent<StatisticsComponent>().stats["isTakingDamages"])){
 						GameManager::soundManager->playSoundEffect("damageSE");
 						player2->getComponent<StatisticsComponent>().stats["isTakingDamages"] = true;
@@ -329,6 +333,7 @@ void GameManager::homeMenu()
 {
 	SDL_RenderClear(renderer);
 
+	// Affichage du fond , des infos pour les touches et des boutons pour les modes de jeu
 	SDL_Texture* menu = GameManager::assets->GetTexture("menu");
     SDL_Rect destRectMenu = {0, 0, 1280, 736};
 	SDL_RenderCopyEx(GameManager::renderer, menu, NULL, &destRectMenu, 0, NULL, SDL_FLIP_NONE);
@@ -371,7 +376,7 @@ void GameManager::endOfRound(std::string playerId)
 {
 	GameManager::soundManager->stopAllSounds();
 	GameManager::nbWinsPlayer[playerId]++;
-	if(GameManager::nbWinsPlayer[playerId] >= GameManager::nbwinRounds)
+	if(GameManager::nbWinsPlayer[playerId] >= GameManager::nbwinRounds) // Si un joueur gagne la partie
 	{
 		std::cout << playerId << " a remporté la partie !" << std::endl;
 		// Réinitialisation complète du jeu
