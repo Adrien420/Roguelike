@@ -252,19 +252,19 @@ void GameManager::render() {
 	int nbRounds = GameManager::nbWinsPlayer["player1"] + GameManager::nbWinsPlayer["player2"] + 1;
 	std::string txtNbRounds = "Manche : " + std::to_string(nbRounds);
 	SDL_Texture* textNbRounds = GameManager::assets->AddTxt(txtNbRounds, font, color, &txtRectNbRounds, 1.5);
-	txtRectNbRounds.x = 5;
-	txtRectNbRounds.y = 5;
+	txtRectNbRounds.x = 30;
+	txtRectNbRounds.y = 25;
 	SDL_RenderCopyEx(GameManager::renderer, textNbRounds, NULL, &txtRectNbRounds, 0, NULL, SDL_FLIP_NONE);
 
-	std::string txtNbWinsP1 = "Player1 : " + std::to_string(GameManager::nbWinsPlayer["player1"]) + " / " + std::to_string(nbwinRounds);
+	std::string txtNbWinsP1 = "Player 1 : " + std::to_string(GameManager::nbWinsPlayer["player1"]) + " / " + std::to_string(nbwinRounds);
 	SDL_Texture* textNbWinsP1 = GameManager::assets->AddTxt(txtNbWinsP1, font, color, &txtRectNbWinsP1, 1.5);
-	txtRectNbWinsP1.x = 5;
-	txtRectNbWinsP1.y = 5 + txtRectNbRounds.h;
+	txtRectNbWinsP1.x = 30;
+	txtRectNbWinsP1.y = 25 + txtRectNbRounds.h;
 	SDL_RenderCopyEx(GameManager::renderer, textNbWinsP1, NULL, &txtRectNbWinsP1, 0, NULL, SDL_FLIP_NONE);
-	std::string txtNbWinsP2 = "Player2 : " + std::to_string(GameManager::nbWinsPlayer["player2"]) + " / " + std::to_string(nbwinRounds);
+	std::string txtNbWinsP2 = "Player 2 : " + std::to_string(GameManager::nbWinsPlayer["player2"]) + " / " + std::to_string(nbwinRounds);
 	SDL_Texture* textNbWinsP2 = GameManager::assets->AddTxt(txtNbWinsP2, font, color, &txtRectNbWinsP2, 1.5);
-	txtRectNbWinsP2.x = 5;
-	txtRectNbWinsP2.y = 10 + txtRectNbRounds.h + txtRectNbWinsP1.h;
+	txtRectNbWinsP2.x = 30;
+	txtRectNbWinsP2.y = 30 + txtRectNbRounds.h + txtRectNbWinsP1.h;
 	SDL_RenderCopyEx(GameManager::renderer, textNbWinsP2, NULL, &txtRectNbWinsP2, 0, NULL, SDL_FLIP_NONE);
 
     SDL_RenderPresent(renderer);

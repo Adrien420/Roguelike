@@ -1,9 +1,20 @@
 @startuml DiagrammeUML
+top to bottom direction
 
 ' Configuration graphique
 skinparam classAttributeIconSize 0
 
 ' ===== Classes Principales =====
+
+class Map {
+    +Map(path: string)
+    +LoadTextures()
+    +LoadMap(path: string)
+    +DrawMap(renderer: SDL_Renderer*)
+    +getColliders(): vector<SDL_Rect>
+    -mapData: vector<vector<int>>
+    -colliders: vector<SDL_Rect>
+}
 
 class GameManager {
     +GameManager(title, width, height, fullscreen)
@@ -20,9 +31,10 @@ class GameManager {
     -window: SDL_Window*
     -renderer: SDL_Renderer*
     -event: SDL_Event
-    -assets: AssetManager*
-    -entitiesManager: EntitiesManager
-    -cardsManager: CardsManager
+    +assets : AssetManager*
+    +entitiesManager : EntitiesManager
+    +cardsManager : CardsManager
+    +soundManager : SoundManager*
     -player1, player2: Entity*
     -nbWinsPlayer: map<string, int>
     -...
@@ -37,6 +49,24 @@ class AssetManager {
     +AddTxt(txt: string, font: TTF_Font*, color: SDL_Color, destRect: SDL_Rect*, scale: float): SDL_Texture*
     -textures: map<string, SDL_Texture*>
     -fonts: map<string, TTF_Font*>
+}
+
+class EntitiesManager {
+    +addEntity(e: Entity*)
+    +refresh()
+    +update()
+    +draw()
+    +reset()
+    -entities: vector<Entity*>
+}
+
+class SoundManager {
+  -soundEffects std::map<std::string, Mix_Chunk*>
+  -musicTracks std::map<std::string, Mix_Music*>
+  +loadSoundEffect(const std::string& id, const std::string& file, int volume = MIX_MAX_VOLUME)
+  +loadMusic(const std::string& id, const std::string& file, int volume = MIX_MAX_VOLUME)
+  +playSoundEffect(const std::string& id, int loops = 0)
+  +playMusic(const std::string& id, int loops = -1)
 }
 
 class CardsManager {
@@ -58,9 +88,9 @@ class Bonus {
     +Bonus(label: string, nbUses: int, apply: function)
     +applyBonus()
     <<static>> -player: Entity*
-    -label: string
-    -nbUses: int
-    -apply: function
+    +label: string
+    +nbUses: int
+    -f: function
 }
 
 class Entity {
@@ -71,26 +101,17 @@ class Entity {
     -playerId: string
 }
 
-class Map {
-    +Map(path: string)
-    +LoadTextures()
-    +LoadMap(path: string)
-    +DrawMap(renderer: SDL_Renderer*)
-    +getColliders(): vector<SDL_Rect>
-    -mapData: vector<vector<int>>
-    -colliders: vector<SDL_Rect>
-}
-
-class EntitiesManager {
-    +addEntity(e: Entity*)
-    +refresh()
-    +update()
-    +draw()
-    +reset()
-    -entities: vector<Entity*>
-}
-
 ' ===== Composants =====
+
+class Component {
+  +Entity* entity;
+
+	+init()
+	+update()
+	+draw()
+  +reset()
+	+~Component()
+}
 
 class UILabelComponent {
   +SDL_Rect destRect
@@ -109,6 +130,7 @@ class TransformComponent {
 }
 
 class StatisticsComponent {
+  +stats std::map<std::string, StatType> 
   +StatisticsComponent()
 }
 
@@ -155,36 +177,30 @@ class HealthComponent {
 }
 
 class ColliderComponent {
+  +collider SDL_Rect
+  +tag std::string
   +SDL_SetRenderDrawColor()
   +SDL_RenderDrawRect()
 }
 
 ' ===== Relations =====
 
-GameManager --> AssetManager : utilise
-GameManager --> CardsManager : utilise
-GameManager --> EntitiesManager : utilise
-GameManager --> Entity : possède
-GameManager --> Map : possède
+GameManager *-- AssetManager
+GameManager *-- CardsManager
+GameManager *-- EntitiesManager
+GameManager *-- SoundManager
 
-CardsManager --> Bonus : contient
-CardsManager --> GameManager : dépendance (statique)
-CardsManager --> AssetManager : utilise
-CardsManager --> Entity : via Bonus::player
+Bonus *-- Entity
+Component *-- Entity
 
-Bonus --> Entity : association (static)
-
-Entity --> StatisticsComponent : possède
-Entity --> HealthComponent : possède
-Entity --> ColliderComponent : possède
-Entity --> TransformComponent : possède
-Entity --> UILabelComponent : possède
-Entity --> KeyboardController : possède
-Entity --> IAControllerComponent : possède
-Entity --> SpriteComponent : possède
-Entity --> ProjectileComponent : possède
-
-Map --> AssetManager : dépendance
-Map --> GameManager : dépendance (statique)
+Component <-- StatisticsComponent
+Component <-- HealthComponent
+Component <-- ColliderComponent
+Component <-- TransformComponent
+Component <-- UILabelComponent
+Component <-- KeyboardController
+KeyboardController <-- IAControllerComponent
+Component <-- SpriteComponent
+Component <-- ProjectileComponent
 
 @enduml
