@@ -9,8 +9,8 @@ class SoundManager {
 public:
     static SoundManager& getInstance();  // Singleton pour un accès global
 
-    bool loadSoundEffect(const std::string& id, const std::string& file);
-    bool loadMusic(const std::string& id, const std::string& file);
+    bool loadSoundEffect(const std::string& id, const std::string& file, int volume = MIX_MAX_VOLUME);
+    bool loadMusic(const std::string& id, const std::string& file, int volume = MIX_MAX_VOLUME);
 
     void playSoundEffect(const std::string& id, int loops = 0);
     void playMusic(const std::string& id, int loops = -1);

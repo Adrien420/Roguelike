@@ -15,7 +15,7 @@ CardsManager GameManager::cardsManager;
 SoundManager* GameManager::soundManager = &SoundManager::getInstance();
 Entity *GameManager::player1, *GameManager::player2;
 Entity *UI;
-int GameManager::nbwinRounds = 99;
+int GameManager::nbwinRounds = 4;
 std::map<std::string, int> GameManager::nbWinsPlayer = {{"player1", 0}, {"player2", 0}};
 
 GameManager::GameManager(const char* title, int width, int height, bool fullscreen)
@@ -64,12 +64,17 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
 	assets->AddFont("cardsFont","../assets/SF.ttf", 20);
 
 	GameManager::soundManager->loadMusic("mainBGM", "../assets/Sounds/mainBGM.mp3");
+	GameManager::soundManager->loadMusic("battleBGM", "../assets/Sounds/battleBGM.mp3");
+	GameManager::soundManager->loadMusic("cardsBGM", "../assets/Sounds/cardsBGM.mp3");
+	GameManager::soundManager->loadSoundEffect("swordSE", "../assets/Sounds/swordSE.mp3");
+	GameManager::soundManager->loadSoundEffect("projectileSE", "../assets/Sounds/projectileSE.mp3");
+	GameManager::soundManager->loadSoundEffect("damageSE", "../assets/Sounds/damageSE.mp3", 128*0.5);
 	GameManager::soundManager->playMusic("mainBGM");
 
     // Ajout d'un texte au jeu
-    UI = new Entity(UILabelComponent("mainFont", "Hello", {255, 0, 0, 255}));
-    UI->getComponent<UILabelComponent>().setPosition(500, 500);
-    entitiesManager.addEntity(UI);
+    // UI = new Entity(UILabelComponent("mainFont", "Hello", {255, 0, 0, 255}));
+    // UI->getComponent<UILabelComponent>().setPosition(500, 500);
+    // entitiesManager.addEntity(UI);
 }
 
 GameManager::~GameManager()
@@ -166,13 +171,6 @@ void GameManager::update()
 		}
 	}
 
-	bool isCollision = false;
-
-	// Vérifier la collision entre les deux joueurs
-	if (player1Collider.checkCollision(player2Collider)) {
-		isCollision = true;
-	}
-
 	// Parcourir toutes les entités pour vérifier les collisions avec "sword" et "projectile"
 	for (Entity* entity : entitiesManager.entities) {
 		if (entity->hasComponent<ColliderComponent>()) {
@@ -183,27 +181,35 @@ void GameManager::update()
 				std::string damageType = (entityCollider.tag == "sword") ? "damagesSword" : "damagesProjectiles";
 
 				if (entity->playerId != "player1" && entityCollider.checkCollision(player1Collider)) {
-					isCollision = true;
 					float damage = std::get<float>(player2->getComponent<StatisticsComponent>().stats[damageType]);
 					player1->getComponent<HealthComponent>().updateHealth(-damage);
 					entity->destroy();
+					// Éviter le chevauchement des damageSE
+					if (!std::get<bool>(player1->getComponent<StatisticsComponent>().stats["isTakingDamages"])){
+						GameManager::soundManager->playSoundEffect("damageSE");
+						player1->getComponent<StatisticsComponent>().stats["isTakingDamages"] = true;
+					}
+					
 				}
 				if (entity->playerId != "player2" && entityCollider.checkCollision(player2Collider)) {
-					isCollision = true;
 					float damage = std::get<float>(player1->getComponent<StatisticsComponent>().stats[damageType]);
 					player2->getComponent<HealthComponent>().updateHealth(-damage);
 					entity->destroy();
+					// Éviter le chevauchement des damageSE
+					if (!std::get<bool>(player2->getComponent<StatisticsComponent>().stats["isTakingDamages"])){
+						GameManager::soundManager->playSoundEffect("damageSE");
+						player2->getComponent<StatisticsComponent>().stats["isTakingDamages"] = true;
+					}
 				}
 			}
 		}
 	}
-
-	// Mise à jour de l'UI
-	std::string newText = isCollision ? "Collision" : "Not Collision";
-	if (UI->getComponent<UILabelComponent>().getText() != newText) {
-		UI->getComponent<UILabelComponent>().setText(newText);
+	if (std::get<bool>(player1->getComponent<StatisticsComponent>().stats["isTakingDamages"])){
+		player1->getComponent<StatisticsComponent>().stats["isTakingDamages"] = false;
 	}
-
+	if (std::get<bool>(player2->getComponent<StatisticsComponent>().stats["isTakingDamages"])){
+		player2->getComponent<StatisticsComponent>().stats["isTakingDamages"] = false;
+	}
 
 	// Récupérer la taille de la fenêtre
     int windowWidth, windowHeight;
@@ -344,6 +350,8 @@ void GameManager::initGame()
 {
 	createPlayers();
 	inHomeMenu = false;
+	GameManager::soundManager->stopMusic();
+	GameManager::soundManager->playMusic("battleBGM");
 }
 
 void GameManager::pause(bool isPausing_)
@@ -353,6 +361,7 @@ void GameManager::pause(bool isPausing_)
 
 void GameManager::endOfRound(std::string playerId)
 {
+	GameManager::soundManager->stopAllSounds();
 	GameManager::nbWinsPlayer[playerId]++;
 	std::cout << playerId << " a remporté la manche : " 
 	<< GameManager::nbWinsPlayer[playerId] << " / " << GameManager::nbwinRounds << " !" << std::endl;
@@ -364,14 +373,18 @@ void GameManager::endOfRound(std::string playerId)
 		GameManager::nbWinsPlayer["player1"] = 0;
 		GameManager::nbWinsPlayer["player2"] = 0;
 		GameManager::reset();
+		GameManager::soundManager->playMusic("mainBGM");
 		inHomeMenu = true;
 		return;
 	}
+	GameManager::soundManager->playMusic("cardsBGM");
 	chosingCards = true;
 }
 
 void GameManager::startNewRound()
 {
 	GameManager::reset();
+	GameManager::soundManager->stopMusic();
+	GameManager::soundManager->playMusic("battleBGM");
 	chosingCards = false;
 }

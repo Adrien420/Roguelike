@@ -17,23 +17,25 @@ SoundManager& SoundManager::getInstance() {
     return instance;
 }
 
-bool SoundManager::loadSoundEffect(const std::string& id, const std::string& file) {
+bool SoundManager::loadSoundEffect(const std::string& id, const std::string& file, int volume) {
     Mix_Chunk* chunk = Mix_LoadWAV(file.c_str());
     if (!chunk) {
         std::cerr << "Erreur chargement effet sonore " << file << ": " << Mix_GetError() << std::endl;
         return false;
     }
+    Mix_VolumeChunk(chunk, volume);
     soundEffects[id] = chunk;
     return true;
 }
 
-bool SoundManager::loadMusic(const std::string& id, const std::string& file) {
+bool SoundManager::loadMusic(const std::string& id, const std::string& file, int volume) {
     Mix_Music* music = Mix_LoadMUS(file.c_str());
     if (!music) {
         std::cerr << "Erreur chargement musique " << file << ": " << Mix_GetError() << std::endl;
         return false;
     }
     musicTracks[id] = music;
+    Mix_VolumeMusic(volume);
     return true;
 }
 

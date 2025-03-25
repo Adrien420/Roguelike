@@ -157,6 +157,7 @@ class KeyboardController : public Component
 			sword->label = "sword";
 			sword->playerId = playerId;
 			entitiesManager.addEntity(sword);
+			GameManager::soundManager->playSoundEffect("swordSE");
 
 			// Gestion des projectiles
 			if (std::get<bool>(stats->stats["hasProjectiles"]) && !projectileSent)
@@ -180,7 +181,7 @@ class KeyboardController : public Component
 					projectile->playerId = playerId;
 					entitiesManager.addEntity(projectile);
 				}
-
+				GameManager::soundManager->playSoundEffect("projectileSE");
 				projectileSent = true;
 			}
 		}

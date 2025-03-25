@@ -20,7 +20,8 @@ class StatisticsComponent : public Component
             {"hasProjectiles", StatType(false)},
             {"nbProjectiles", StatType(1)},
             {"damagesProjectiles", StatType(20.0f)},
-            {"isAttacking", StatType(false)}
+            {"isAttacking", StatType(false)},
+            {"isTakingDamages", StatType(false)}
         };
 
         StatisticsComponent(){}
