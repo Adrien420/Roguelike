@@ -15,6 +15,7 @@
 class AssetManager;
 class CardsManager;
 class SoundManager;
+class TransformComponent;
 
 class GameManager
 {
@@ -37,6 +38,7 @@ class GameManager
         void homeMenu();
         void initGame();
         void pause(bool isPausing_);
+        void preventMvt(TransformComponent& playerPos, SDL_Rect playerCollider, SDL_Rect obstacleCollider);
 
         static SDL_Renderer *renderer;
         static SDL_Event event;

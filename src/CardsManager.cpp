@@ -34,7 +34,7 @@ void CardsManager::initBonus()
     Bonus bonusNbProjectiles= Bonus("Up NB projectiles (+2)", 3, []() { upgradeStat("nbProjectiles", 2)();} );
     bonusProjectile.emplace_back(bonusNbProjectiles);
     Bonus bonusDamagesProjectiles = Bonus("Up DMG projectiles (+20%)", -1, []() { upgradeStatPercent("damagesProjectiles", 0.2f)();} );
-    bonusBase.emplace_back(bonusDamagesProjectiles);
+    bonusProjectile.emplace_back(bonusDamagesProjectiles);
 
     bonusPlayer["player1"].emplace_back(bonusBase);
     bonusPlayer["player2"].emplace_back(bonusBase);

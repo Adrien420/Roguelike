@@ -44,7 +44,7 @@ GameManager::GameManager(const char* title, int width, int height, bool fullscre
         isRunning = false;
     }
 
-	map = Map("../assets/map.txt");
+	map = Map("../assets/map.txt", "../assets/map_overlay.txt");
 
 	// Home Menu
 	destRectButtonPlayer = {1280/2-buttonPlayerWidth/2, 736/3-buttonPlayerHeight/2, buttonPlayerWidth, buttonPlayerHeight};
@@ -119,29 +119,54 @@ void GameManager::handleEvents()
 	}
 }
 
+void GameManager::preventMvt(TransformComponent& playerPos, SDL_Rect playerCollider, SDL_Rect obstacleCollider)
+{
+	int distX = playerCollider.x + playerCollider.w - obstacleCollider.x;
+	int distX2 = obstacleCollider.x + obstacleCollider.w - playerCollider.x;
+	int distY = playerCollider.y + playerCollider.h - obstacleCollider.y;
+	int distY2 = obstacleCollider.y + obstacleCollider.h - playerCollider.y;
+	int margin = 5;
+
+	if(playerPos.direction.x != 0)
+	{
+		if(distX >= 0 && distX <= obstacleCollider.w/2 && abs(distY) > margin && abs(distY2) > margin)
+			playerPos.position.x -= distX;
+		else if(distX2 >= 0 && distX2 <= obstacleCollider.w/2 && abs(distY) > margin && abs(distY2) > margin)
+			playerPos.position.x += distX2;
+	}
+	else if(playerPos.direction.y != 0)
+	{
+		if(distY >= 0 && distY <= obstacleCollider.h/2 && abs(distX) > margin && abs(distX2) > margin)
+			playerPos.position.y -= distY;
+		else if(distY2 >= 0 && distY2 <= obstacleCollider.h/2 && abs(distX) > margin && abs(distX2) > margin)
+			playerPos.position.y += distY2;
+	}
+}
+
 void GameManager::update()
 {	
 	entitiesManager.refresh();
 	entitiesManager.update();
 
+	// Récupération des composants collider et transform des joueurs
+	auto& player1Collider = player1->getComponent<ColliderComponent>();
+	auto& player2Collider = player2->getComponent<ColliderComponent>();
+	auto& player1Transform = player1->getComponent<TransformComponent>();
+	auto& player2Transform = player2->getComponent<TransformComponent>();
+
 	// Vérifier les collisions entre les joueurs et les obstacles de la map
 	for (const auto& collider : map.getColliders()) {
-		if (player1->getComponent<ColliderComponent>().checkCollision(collider)) {
-			std::cout << "Collision avec un obstacle de la map !" << std::endl;
-
-			// Annule le déplacement si le joueur entre en collision avec un obstacle
-			player1->getComponent<TransformComponent>().position.x -= 
-				player1->getComponent<TransformComponent>().direction.x * player1->getComponent<TransformComponent>().speed;
-			player1->getComponent<TransformComponent>().position.y -= 
-				player1->getComponent<TransformComponent>().direction.y * player1->getComponent<TransformComponent>().speed;
+		if (player1Collider.checkCollision(collider)) {
+			// Empêche le déplacement dans cette direction
+			preventMvt(player1Transform, player1Collider.collider, collider);
+		}
+		if (player2Collider.checkCollision(collider)) {
+			// Empêche le déplacement dans cette direction
+			preventMvt(player2Transform, player2Collider.collider, collider);
 		}
 	}
 
 	bool isCollision = false;
-
-	// Récupération des composants collider des joueurs
-	auto& player1Collider = player1->getComponent<ColliderComponent>();
-	auto& player2Collider = player2->getComponent<ColliderComponent>();
 
 	// Vérifier la collision entre les deux joueurs
 	if (player1Collider.checkCollision(player2Collider)) {
@@ -269,13 +294,13 @@ void GameManager::createPlayers()
 	}
 	entitiesManager.refresh();
 	
-	float baseSpeed = 0.15;
+	float baseSpeed = 0.3;
 	// Attention, l'ordre d'ajout des composants a une importance, car certains dépendent des autres, et chaque composant est ajouté et initialisé dans l'ordre de passage en paramètre
-	player1 = new Entity(StatisticsComponent(500, 100, baseSpeed, 500, 3), TransformComponent(300,336,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 17, 0, 30, 50), KeyboardController("player1"), HealthComponent("player1"));
+	player1 = new Entity(StatisticsComponent(500, 100, baseSpeed, 500, 3), TransformComponent(300,336,64,64,2), SpriteComponent("orc", true), ColliderComponent("player1", 20, 8, 24, 34), KeyboardController("player1"), HealthComponent("player1"));
 	if(!isVsIA)
-		player2 = new Entity(StatisticsComponent(500, 100, baseSpeed, 500, 3), TransformComponent(916,336,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), KeyboardController("player2"), HealthComponent("player2"));
+		player2 = new Entity(StatisticsComponent(500, 100, baseSpeed, 500, 3), TransformComponent(916,336,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 20, 8, 24, 34), KeyboardController("player2"), HealthComponent("player2"));
 	else
-		player2 = new Entity(StatisticsComponent(500, 100, baseSpeed, 500, 3), TransformComponent(916,336,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 17, 0, 30, 50), IAControllerComponent("player2", player1), HealthComponent("player2"));
+		player2 = new Entity(StatisticsComponent(500, 100, baseSpeed, 500, 3), TransformComponent(916,336,64,64,2), SpriteComponent("orc", true), ColliderComponent("player2", 20, 8, 24, 34), IAControllerComponent("player2", player1), HealthComponent("player2"));
 	player1->label = "player";
 	player2->label = "player";
 	player1->playerId = "player1";

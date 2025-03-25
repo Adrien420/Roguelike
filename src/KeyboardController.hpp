@@ -171,7 +171,7 @@ class KeyboardController : public Component
 					Vector2D projDirection = attackDirection.rotate(angleOffset); // Rotation du vecteur directionnel
 
 					Entity* projectile = new Entity(
-						TransformComponent(attackPosition.x + p_offsetX, attackPosition.y + p_offsetY, 64, 64, 0.75, 0.3),
+						TransformComponent(attackPosition.x + p_offsetX, attackPosition.y + p_offsetY, 64, 64, 0.75, 0.6),
 						ProjectileComponent(projDirection),
 						ColliderComponent("projectile", 0, 0, 64, 64)
 					);

@@ -5,10 +5,11 @@
 #include <iomanip>
 #include "GameManager.hpp"
 
-Map::Map(std::string path)
+Map::Map(std::string pathMain, std::string pathOverlay)
 {
     LoadTextures();
-    LoadMap(path);
+    LoadMap(pathMain, "main");
+    LoadMap(pathOverlay, "overlay");
 }
 
 Map::~Map() {
@@ -39,7 +40,7 @@ void Map::LoadTextures() {
     }
 }
 
-void Map::LoadMap(std::string path) {
+void Map::LoadMap(std::string path, std::string mapType) {
     std::ifstream mapFile(path);
     
     if (!mapFile.is_open()) {
@@ -47,6 +48,8 @@ void Map::LoadMap(std::string path) {
         perror("Détails de l'erreur");
         return;
     }
+
+    std::vector<int> blockingTiles = {44, 45, 46, 48, 49, 50, 51, 52, 53, 54, 55, 56, 58, 60, 63, 64, 67, 68, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79};
 
     int value;
     std::vector<int> row;
@@ -59,14 +62,17 @@ void Map::LoadMap(std::string path) {
                 row.push_back(value);
 
                 // 🔹 Ajout d’un collider pour certaines tuiles bloquantes (ex: arbres, murs)
-                if (value == 130 || value == 131) {  // Choisis les tuiles à bloquer
+                if (std::find(blockingTiles.begin(), blockingTiles.end(), value) != blockingTiles.end()) {  // Choisis les tuiles à bloquer
                     SDL_Rect collider = {x * tileSize, y * tileSize, tileSize, tileSize};
                     colliders.emplace_back(collider);
                 }
             }
         }
         if (!row.empty()) {
-            mapData.push_back(row);
+            if(mapType == "overlay")
+                mapOverlayData.push_back(row);
+            else
+                mapData.push_back(row);
         }
         y++;
     }
@@ -82,16 +88,24 @@ void Map::DrawMap(SDL_Renderer* renderer) {
     for (size_t y = 0; y < mapData.size(); y++) {
         for (size_t x = 0; x < mapData[y].size(); x++) {
             int tileType = mapData[y][x];
+            int tileOverlayType = mapOverlayData[y][x];
 
             if (tileType >= 0 && tileType <= 131) {
                 src.x = src.y = 0;
                 dest.x = x * tileSize;
                 dest.y = y * tileSize;
                 SDL_RenderCopyEx(GameManager::renderer, GameManager::assets->GetTexture(std::to_string(tileType)), NULL, &dest, 0, NULL, SDL_FLIP_NONE);
+                SDL_RenderCopyEx(GameManager::renderer, GameManager::assets->GetTexture(std::to_string(tileOverlayType)), NULL, &dest, 0, NULL, SDL_FLIP_NONE);
             } else {
                 std::cerr << "Erreur : Tuile invalide à (" << x << ", " << y << ") : " << tileType << std::endl;
             }
         }
+    }
+    for(int i=0; i< colliders.size(); i++)
+    {
+        SDL_SetRenderDrawColor(GameManager::renderer, 255, 0, 0, 255);  // Mettre le collider en rouge
+		SDL_RenderDrawRect(GameManager::renderer, &colliders[i]);
+		SDL_SetRenderDrawColor(GameManager::renderer, 255, 255, 255, 255);  // Réinitialiser la couleur du rendu au blanc 
     }
 }
 
