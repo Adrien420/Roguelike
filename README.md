@@ -21,7 +21,7 @@ sudo apt-get install libboost-test-dev
 ```
 SDL2_Mmixer : 
 ```
-sudo apt-get install libsdl2-mixer-dev
+sudo apt install libsdl2-mixer-dev
 ```
 ## Lancer le jeu
 Créer un dossier de build
