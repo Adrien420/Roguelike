@@ -1,40 +1,50 @@
 # Roguelike
+
 ## Auteurs
 Adrien MILLE  
 Bastien COUQUE  
 Clarence PFISTER  
 
-## Commandes Git
-```
-cd Roguelike
-git pull # Synchroniser
+## Présentation du projet
 
-git add <nom_de_fichier> # Préparer
-git commit -m "Message" # Commit
-git push # Envoyer
-```
+
+
 ## Installation
+Cloner le dossier :
+```
+git clone https://github.com/Adrien420/Roguelike.git
+```
+
 Installer les bibliothèques :
-Boost.Test : 
+SDL2 :
 ```
-sudo apt-get install libboost-test-dev
+sudo apt update
+sudo apt install libsdl2-dev
 ```
+
 SDL2_Mmixer : 
 ```
 sudo apt install libsdl2-mixer-dev
 ```
-## Lancer le jeu
-Créer un dossier de build
+
+Boost.Test : 
 ```
+sudo apt-get install libboost-test-dev
+```
+
+## Compiler & Lancer le jeu
+Compilation (à la racine du dossier cloné)
+```
+cd Roguelike
 mkdir -p build
 cd build
-```
-Compiler
-```
 cmake ..
-make
+make install
 ```
-Exécuter
+
+Lancer le jeu
 ```
-./src/Game
+./../bin/Game
 ```
+
+## Comment jouer ?
