@@ -61,18 +61,18 @@ git clone https://github.com/Adrien420/Roguelike.git
 ```
 
 Installer les bibliothèques :
-SDL2 :
+- SDL2 :
 ```
 sudo apt update
 sudo apt install libsdl2-dev
 ```
 
-SDL2_Mmixer : 
+- SDL2_Mixer : 
 ```
 sudo apt install libsdl2-mixer-dev
 ```
 
-Boost.Test : 
+- Boost.Test : 
 ```
 sudo apt-get install libboost-test-dev
 ```
