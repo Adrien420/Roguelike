@@ -9,9 +9,9 @@ BOOST_AUTO_TEST_CASE(ApplyBonusTest) {
     Entity* player = new Entity(StatisticsComponent(100.0, 100.0, 100.0, 100.0, 5));
     Bonus::player = player;
 
-    Bonus bonusDamages = Bonus("Up damages (+20%)", -1, []() { upgradeStatPercent("damages", 0.2f)();} );
+    Bonus bonusDamages = Bonus("Up damages (+20%)", -1, []() { upgradeStatPercent("damagesSword", 0.2f)();} );
     bonusDamages.applyBonus();
-    BOOST_CHECK_EQUAL(std::get<float>(player->getComponent<StatisticsComponent>().stats["damages"]), 120.0);
+    BOOST_CHECK_EQUAL(std::get<float>(player->getComponent<StatisticsComponent>().stats["damagesSword"]), 120.0);
 
     Bonus bonusNbChoices= Bonus("Up NB choices (+1)", 2, []() { upgradeStat("nbCardsChoice", 1)();} );
     bonusNbChoices.applyBonus();

@@ -13,20 +13,17 @@ class KeyboardController : public Component
 		EntitiesManager& entitiesManager = GameManager::entitiesManager;
 		StatisticsComponent *stats;
 		std::string playerId;
-		SDL_Keycode upKey;
 		int attackDuration;
-		Uint32 attackStart;
+		Uint32 attackStart; // Variable déterminant l'instant où une attaque est lancée
 		bool isAttacking = false;
 		// isSpamming : Empêche de pouvoir attaquer en continu en maintenant la touche d'attaque 
 		// => Permet d'éviter de devoir utiliser des threads
 		bool isSpamming = false; 
 		bool projectileSent = false;
-		// Commentaire temporaire : 
-		// Si d est pressé (direction.x = 1), puis q est pressé (direction.x = -1) et relâché (direction = 0)
-		// Même si d est toujours pressé, direction.x reste à 0
-		// Donc l'idée de ce dictionnaire est de vérifier si la touche pour la direction opposée a bien été relâchée avant de remettre la direction à 0
+		// Map permettant de mémoriser quelles touches sont en train d'être pressées
 		std::map<const std::string, bool> isBeingPressed = {{"Up",false}, {"Down",false}, {"Left",false}, {"Right",false}};
 		std::map<const std::string, int> velocity = {{"Up",-1}, {"Down",1}, {"Left",-1}, {"Right",1}};
+		// Touches des joueurs
 		std::map<const std::string, std::map<const std::string, const SDL_Keycode>> playerKeys = {{"player1", {{"Up",SDLK_z}, {"Down",SDLK_s}, {"Left",SDLK_q}, {"Right",SDLK_d}, {"Attack",SDLK_SPACE}}},
 		{"player2", {{"Up",SDLK_UP}, {"Down",SDLK_DOWN}, {"Left",SDLK_LEFT}, {"Right",SDLK_RIGHT}, {"Attack",SDLK_m}}}};
 
@@ -49,7 +46,7 @@ class KeyboardController : public Component
 
 		void applyDirection(std::string direction)
 		{
-			if(direction == "None")
+			if(direction == "None") // Si le joueur ne bouge plus
 			{
 				transform->direction.y = 0;
 				transform->direction.x = 0;
@@ -57,7 +54,7 @@ class KeyboardController : public Component
 			}
 
 			isBeingPressed[direction] = true;
-			if(isAttacking)
+			if(isAttacking) // L'animation d'attaque empêche toute autre action
 				return;
 			else if(direction == "Up" || direction == "Down")
 			{
@@ -188,21 +185,21 @@ class KeyboardController : public Component
 
 		bool checkPlayerState()
 		{
-			if(GameManager::inDeathAnimation)
+			if(GameManager::inDeathAnimation) // Si une animation de mort est en cours, le joueur ne peut plus rien faire
 			{
 				for (auto& pair : isBeingPressed) {
-					pair.second = false;
+					pair.second = false; // Evite des mouvements inattendus lors de la prochaine manche
 				}
 				return true;
 			}
 			
-			if(isAttacking && (SDL_GetTicks() - attackStart > attackDuration))
+			if(isAttacking && (SDL_GetTicks() - attackStart > attackDuration)) // Fin de l'animation d'attaque
 			{
 				isAttacking = false;
 				stats->stats["isAttacking"] = isAttacking;
 				projectileSent = false;
 				
-				int directionIndex = sprite->animIndex%4;
+				int directionIndex = sprite->animIndex%4; // Modifie l'animation en fonction de la direction de l'attaque
 				switch(directionIndex)
 				{
 					case 0:
@@ -230,7 +227,7 @@ class KeyboardController : public Component
 			if(earlyReturn)
 				return;
 
-			if (GameManager::event.type == SDL_KEYDOWN)
+			if (GameManager::event.type == SDL_KEYDOWN) // Touche pressée
 			{
 				SDL_Keycode key = GameManager::event.key.keysym.sym;
 				switch (key)
@@ -263,7 +260,7 @@ class KeyboardController : public Component
 				}
 			}
 		
-			if (GameManager::event.type == SDL_KEYUP)
+			if (GameManager::event.type == SDL_KEYUP) // Touche relâchée
 			{
 				SDL_Keycode key = GameManager::event.key.keysym.sym;
 				switch (key)

@@ -10,7 +10,9 @@ class IAControllerComponent : public KeyboardController
         TransformComponent *transformPlayer1;
         int currentDirection = -1;
         std::string currentDirectionLabel = "Down";
+        // Durée séparant chaque changement de décision
         int timeUntilNextDecision = 200;
+        // Instant auquel la dernière décision a été prise
         Uint32 decisionStart;
     
     public:
@@ -18,13 +20,16 @@ class IAControllerComponent : public KeyboardController
 
         void init() override
         {
+            // On appelle la méthode d'initialisation du KeyboardController
             KeyboardController::init();
+            // On récupère les informations nécessaires sur le joueur humain
             transformPlayer1 = &player1->getComponent<TransformComponent>();
             srand(time(NULL));
             decisionStart = timeUntilNextDecision;
         }
 
-        bool isTargetInRange(std::string direction)
+        // Méthode vérifiant si le joueur humain est à portée d'attaque
+        bool isTargetInRange(std::string direction) 
         {
             bool hasProjectiles = std::get<bool>(stats->stats["hasProjectiles"]);
             if(direction == "Vertical")
@@ -40,9 +45,11 @@ class IAControllerComponent : public KeyboardController
             return false;
         }
 
+        // Choix d'attaquer ou non en fonction de différents paramètres (portée et aspct aléatoire ici)
         bool attackingDecision()
         {
             bool inRange = false;
+            // Si l'IA fait bien face au joueur, on vérifie s'il est à portée d'attaque
             if((currentDirectionLabel == "Up" && (transform->position.y >= transformPlayer1->position.y))
             || (currentDirectionLabel == "Down" && (transform->position.y <= transformPlayer1->position.y)))
                 inRange = isTargetInRange("Vertical");
@@ -62,6 +69,7 @@ class IAControllerComponent : public KeyboardController
                 return false;
         }
 
+        // Choix d'une direction pour avancer vers le joueur
         int targetPlayerDirection()
         {
             int direction;
@@ -84,6 +92,7 @@ class IAControllerComponent : public KeyboardController
             return direction;
         }
 
+        // Choix d'une direction aléatoire
         int randomDirection()
         {
             return rand()%4;
