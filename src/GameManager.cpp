@@ -213,17 +213,18 @@ void GameManager::update()
 	// Supprimer les entités non désirables
     for (Entity* e : entitiesManager.entities) 
     {
-		// Supprime les projectiles hors écran
+		// Supprime les projectiles qui touche au mur
         if (e->label == "projectile")
         {
-            auto& transform = e->getComponent<TransformComponent>();
+            auto& projectileCollider = e->getComponent<ColliderComponent>();
 
-            // Vérifier si le projectile est hors des limites de l'écran
-            if (transform.position.x < 0 || transform.position.x > windowWidth ||
-                transform.position.y < 0 || transform.position.y > windowHeight) 
-            {
-                e->destroy();
-            }
+            for (const auto& collider : map.getColliders())
+			{
+				if (projectileCollider.checkCollision(collider))
+				{
+					e->destroy();
+				}
+			}
         }
 		// Supprime les épées hors attaque
 		if (e->label == "sword")
