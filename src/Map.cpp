@@ -101,11 +101,14 @@ void Map::DrawMap(SDL_Renderer* renderer) {
             }
         }
     }
-    for(int i=0; i< colliders.size(); i++)
+    if (GameManager::modeDEBUG)
     {
-        SDL_SetRenderDrawColor(GameManager::renderer, 255, 0, 0, 255);  // Mettre le collider en rouge
-		SDL_RenderDrawRect(GameManager::renderer, &colliders[i]);
-		SDL_SetRenderDrawColor(GameManager::renderer, 255, 255, 255, 255);  // Réinitialiser la couleur du rendu au blanc 
+        for(int i=0; i< colliders.size(); i++)
+        {
+            SDL_SetRenderDrawColor(GameManager::renderer, 255, 0, 0, 255);  // Mettre le collider en rouge
+            SDL_RenderDrawRect(GameManager::renderer, &colliders[i]);
+            SDL_SetRenderDrawColor(GameManager::renderer, 255, 255, 255, 255);  // Réinitialiser la couleur du rendu au blanc 
+        }
     }
 }
 

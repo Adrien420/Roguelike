@@ -2,7 +2,7 @@
 #include <string>
 #include "Components.hpp"
 
-bool modeDEBUG = true; // Affiche le collider ou pas
+bool modeDEBUG = false; // Affiche le collider ou pas
 
 class ColliderComponent : public Component
 {
@@ -45,7 +45,7 @@ public:
 
     void draw() override
     {
-        if (modeDEBUG)
+        if (GameManager::modeDEBUG)
         {
             SDL_SetRenderDrawColor(GameManager::renderer, 255, 0, 0, 255);  // Mettre le collider en rouge
             SDL_RenderDrawRect(GameManager::renderer, &collider);

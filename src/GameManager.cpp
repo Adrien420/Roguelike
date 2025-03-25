@@ -9,6 +9,7 @@ bool GameManager::isPausing = false;
 bool GameManager::chosingCards = false;
 bool GameManager::inDeathAnimation = false;
 bool GameManager::isVsIA = false;
+bool GameManager::modeDEBUG = false; // Affiche le collider
 AssetManager* GameManager::assets = new AssetManager();
 EntitiesManager GameManager::entitiesManager;
 CardsManager GameManager::cardsManager;
