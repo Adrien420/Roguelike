@@ -248,12 +248,24 @@ void GameManager::render() {
 	// Etat de la partie (nombre de manches et nombre de manches gagnées)
 	TTF_Font* font = GameManager::assets->GetFont("cardsFont");
 	SDL_Color color = {255, 255, 255, 255};
-	SDL_Rect txtRectNbRounds;
-	std::string txtNbRounds = "Nombre de manches : " + std::to_string(GameManager::nbwinRounds);
+	SDL_Rect txtRectNbRounds, txtRectNbWinsP1, txtRectNbWinsP2;
+	int nbRounds = GameManager::nbWinsPlayer["player1"] + GameManager::nbWinsPlayer["player2"] + 1;
+	std::string txtNbRounds = "Manche : " + std::to_string(nbRounds);
 	SDL_Texture* textNbRounds = GameManager::assets->AddTxt(txtNbRounds, font, color, &txtRectNbRounds, 1.5);
 	txtRectNbRounds.x = 5;
 	txtRectNbRounds.y = 5;
 	SDL_RenderCopyEx(GameManager::renderer, textNbRounds, NULL, &txtRectNbRounds, 0, NULL, SDL_FLIP_NONE);
+
+	std::string txtNbWinsP1 = "Player1 : " + std::to_string(GameManager::nbWinsPlayer["player1"]) + " / " + std::to_string(nbwinRounds);
+	SDL_Texture* textNbWinsP1 = GameManager::assets->AddTxt(txtNbWinsP1, font, color, &txtRectNbWinsP1, 1.5);
+	txtRectNbWinsP1.x = 5;
+	txtRectNbWinsP1.y = 5 + txtRectNbRounds.h;
+	SDL_RenderCopyEx(GameManager::renderer, textNbWinsP1, NULL, &txtRectNbWinsP1, 0, NULL, SDL_FLIP_NONE);
+	std::string txtNbWinsP2 = "Player2 : " + std::to_string(GameManager::nbWinsPlayer["player2"]) + " / " + std::to_string(nbwinRounds);
+	SDL_Texture* textNbWinsP2 = GameManager::assets->AddTxt(txtNbWinsP2, font, color, &txtRectNbWinsP2, 1.5);
+	txtRectNbWinsP2.x = 5;
+	txtRectNbWinsP2.y = 10 + txtRectNbRounds.h + txtRectNbWinsP1.h;
+	SDL_RenderCopyEx(GameManager::renderer, textNbWinsP2, NULL, &txtRectNbWinsP2, 0, NULL, SDL_FLIP_NONE);
 
     SDL_RenderPresent(renderer);
 }
