@@ -7,6 +7,13 @@ Clarence PFISTER
 
 ## Présentation du projet
 
+Ce jeu s’inspire du genre roguelike. L’univers de jeu est structuré en rounds successifs, où deux personnages s'affrontent en combat dans une arène. Le joueur peut choisir de jouer contre un autre joueur local ou bien affronter une intelligence artificielle.
+
+Objectif du jeu :
+
+Le but est de réduire les points de vie de l’adversaire à zéro en l’attaquant. Chaque round remporté rapproche le joueur de la victoire finale. La partie est gagnée par le premier joueur remportant quatre rounds.
+Déroulement d’une partie
+
 ## Comment jouer ?
 
 Au lancement du jeu, le joueur choisit entre :
