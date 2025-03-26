@@ -5,6 +5,7 @@
 #include "Components.hpp"
 #include "GameManager.hpp"
 
+// Classe qui gère la santé d'une entité (affichage de la barre de vie, détection de mort)
 class HealthComponent : public Component
 {
     private:
@@ -44,6 +45,7 @@ class HealthComponent : public Component
 
         void update() override
         {
+            // Si l'entité est déjà morte et que l’animation est terminée, on déclare la fin de la manche
             if(isDead && (SDL_GetTicks() - deathStart > sprite->deathAnimDuration))
             {
                 if(playerId == "player1")
@@ -51,12 +53,11 @@ class HealthComponent : public Component
                 else
                     GameManager::endOfRound("player1");
             }
+            // Si une animation de mort est en cours, on ne fait rien
             else if(GameManager::inDeathAnimation)
                 return;
             
-            if(health > 0)
-                updateHealth(0);
-            else
+            if(health <= 0) // Si la vie est tombée à 0, on lance l’animation de mort
             {
                 isDead = true;
                 deathStart = SDL_GetTicks();
@@ -64,6 +65,7 @@ class HealthComponent : public Component
                 GameManager::inDeathAnimation = true;
             }
 
+            // Si encore en vie, on met à jour l'affichage de la vie
             healthPercent = health / fullHealth;
 
             destRect.w = imgWidth/20 * transform->scale;

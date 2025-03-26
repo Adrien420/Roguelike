@@ -5,6 +5,7 @@
 #include "Components.hpp"
 #include "GameManager.hpp"
 
+// Classe qui gére le comportement d’un projectile (déplacement, affichage)
 class ProjectileComponent : public Component
 {
     private:

@@ -5,9 +5,12 @@
 #include <map>
 #include <string>
 
+// Classe qui gère le chargement, la lecture et l'arrêt des effets sonores et musiques
+// On l'implémente en singleton pour qu'une seule instance soit utilisée globalement dans le jeu
 class SoundManager {
 public:
-    static SoundManager& getInstance();  // Singleton pour un accès global
+     // Permet d'accéder à l'unique instance (singleton)
+    static SoundManager& getInstance(); 
 
     bool loadSoundEffect(const std::string& id, const std::string& file, int volume = MIX_MAX_VOLUME);
     bool loadMusic(const std::string& id, const std::string& file, int volume = MIX_MAX_VOLUME);

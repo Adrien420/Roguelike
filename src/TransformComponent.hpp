@@ -19,6 +19,7 @@ public:
 	}
 };
 
+// Composant associé à une entité pour gérer sa position, son déplacement, sa taille, etc
 class TransformComponent : public Component
 {
 	private:
@@ -34,8 +35,6 @@ class TransformComponent : public Component
 		float scale = 1.0;
 
 		float speed = 0.07;
-
-		bool blocked = false;
 
 		TransformComponent() {}
 
@@ -57,8 +56,11 @@ class TransformComponent : public Component
 			}
 		}
 
+
+		// Met à jour la position de l'entité à chaque frame
 		void update() override
 		{
+			// Si une animation de mort est en cours, on ne met plus à jour la position
 			if (GameManager::inDeathAnimation)
 				return;
 

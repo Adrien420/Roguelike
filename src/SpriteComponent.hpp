@@ -8,6 +8,7 @@
 
 class StatisticsComponent; 
 
+// Classe qui gère l'affichage d'une entité (image + animations)
 class SpriteComponent : public Component
 {
 private:
@@ -37,6 +38,7 @@ public:
 
 	~SpriteComponent() {}
 
+	// Permet de charger une texture via l’AssetManager
 	void setTex(std::string id)
 	{
 		texture = GameManager::assets->GetTexture(id);
@@ -80,6 +82,7 @@ public:
 		srcRect.h = transform->height;
 	}
 
+	// Met à jour le sprite à chaque frame
 	void update() override
 	{
 		if(GameManager::inDeathAnimation && animIndex != 12)
@@ -92,7 +95,6 @@ public:
 			// Dès que frameTime ms passsent, elapsedTime / frameTime augmente de 1, et la frame suivante de l'animation est sélectionnée
 			// La durée totale de l'animation est donc de frameTime * frames ms
 			srcRect.x = srcRect.w * static_cast<int>((elapsedTime / frameTime) % frames);
-			//std::cout << elapsedTime << " / " << srcRect.x / srcRect.w << std::endl;
 		}
 
 		srcRect.y = animIndex * transform->height;
@@ -108,6 +110,7 @@ public:
 		SDL_RenderCopyEx(GameManager::renderer, texture, &srcRect, &destRect, 0, NULL, SDL_FLIP_NONE);
 	}
 
+	// Permet de réinitialiser les animations 
 	void reset() override
 	{
 		if(animated)
@@ -116,6 +119,7 @@ public:
 		}
 	}
 
+	// Permet de jouer une animation donnée (Idle, Walk, Attack, etc.)
 	void Play(const std::string animName)
 	{
 		frames = animations[animName]["frames"];

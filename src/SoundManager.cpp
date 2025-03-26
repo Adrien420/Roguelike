@@ -17,6 +17,7 @@ SoundManager& SoundManager::getInstance() {
     return instance;
 }
 
+// Permet de charger un effet sonore et l’associe à un identifiant
 bool SoundManager::loadSoundEffect(const std::string& id, const std::string& file, int volume) {
     Mix_Chunk* chunk = Mix_LoadWAV(file.c_str());
     if (!chunk) {
@@ -24,10 +25,11 @@ bool SoundManager::loadSoundEffect(const std::string& id, const std::string& fil
         return false;
     }
     Mix_VolumeChunk(chunk, volume);
-    soundEffects[id] = chunk;
+    soundEffects[id] = chunk;  //On enregistre le son avec son identifiant
     return true;
 }
 
+// On charge une musique de fond et l’associe à un identifiant
 bool SoundManager::loadMusic(const std::string& id, const std::string& file, int volume) {
     Mix_Music* music = Mix_LoadMUS(file.c_str());
     if (!music) {

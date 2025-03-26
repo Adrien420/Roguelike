@@ -5,8 +5,8 @@
 class ColliderComponent : public Component
 {
 public:
-    SDL_Rect collider{};
-    std::string tag;
+    SDL_Rect collider{};  // Rectangle représentant la hitbox de l'entité
+    std::string tag; // Tag utilisé pour identifier le type de collider (ex: "player", "enemy", "terrain")
     TransformComponent* transform = nullptr;
     int offsetX, offsetY; // Décalage du collider par rapport à l'entité
     int offsetW, offsetH; // Taille du collider
@@ -43,6 +43,7 @@ public:
 
     void draw() override
     {
+        // Affiche le collider en rouge à l’écran si le mode DEBUG est activé
         if (GameManager::modeDEBUG)
         {
             SDL_SetRenderDrawColor(GameManager::renderer, 255, 0, 0, 255);  // Mettre le collider en rouge
@@ -51,6 +52,7 @@ public:
         }
     }
 
+    // Permet de vérifier si le collider entre en collision avec un autre ColliderComponent
     bool checkCollision(const ColliderComponent& other) const
     {
         const auto& recA = collider;
@@ -62,6 +64,7 @@ public:
                recB.y + recB.h >= recA.y;
     }
 
+    // Permet de vérifier si le collider entre en collision avec un rectangle SDL brut (map)
     bool checkCollision(const SDL_Rect& other) const
     {
         const auto& recA = collider;

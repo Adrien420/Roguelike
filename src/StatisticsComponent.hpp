@@ -7,9 +7,12 @@
 #include "SDL2/SDL.h"
 #include "GameManager.hpp"
 
+// Composant de statistiques pour les entités (joueurs, projectiles, etc.)
+// Permet de stocker et centraliser toutes les valeurs liées aux capacités et à l’état d’une entité
 class StatisticsComponent : public Component
 {
     public:
+        // Permet de définir un type générique pouvant contenir un int, un float ou un booléen
         using StatType = std::variant<int, float, bool>;
         std::map<std::string, StatType> stats = {
             {"attackDuration", StatType(500.0f)}, 
